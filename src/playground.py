@@ -1,22 +1,76 @@
 from src.constants import *
+from collections import namedtuple
+from contextlib import contextmanager
 import csv
 from itertools import islice
 
 
-def data_reader(f_name):
-    f = open(f_name)
+# headers = ('make', 'model', 'year', 'vin', 'color')
+
+# def get_dialect(file_obj):
+#     sample = file_obj.read(2000)
+#     dialect = csv.Sniffer().sniff(sample)
+#     file_obj.seek(0)
+#     return dialect
+
+@contextmanager
+def data_reader(file_name, single_parser, single_class_name):
+    file_obj = open(file_name)
     try:
-        dialect = csv.Sniffer().sniff(f.read(2000))
-        f.seek(0)
-        reader = csv.reader(f, dialect=dialect)
-        yield from reader
+        dialect = csv.Sniffer().sniff(file_obj.read(2000))
+        file_obj.seek(0)
+        reader = csv.reader(file_obj, dialect)
+        headers = map(lambda l: l.lower(), next(reader))
+        DataTuple = namedtuple(single_class_name, headers)
+        yield (DataTuple(*(fn(value) for value, fn
+                           in zip(row, single_parser))) for row in reader)
+
     finally:
-        f.close()
+        try:
+            next(file_obj)
+        except StopIteration:
+            pass
+        # print('closing file')
+        file_obj.close()
+    f = open(file_name)
+    # try:
+    #     file_obj = open(file_name)
+    #     reader = csv.reader(file_obj,
+    #                         get_dialect(file_obj))
+    #     headers = map(lambda l: l.lower(), next(reader))
+    #     _nt = namedtuple(class_name, headers)
+    #     dialect = csv.Sniffer().sniff(f.read(2000))
+    #     f.seek(0)
+    #     reader = csv.reader(f, dialect=dialect)
+    #     yield from reader
+    # finally:
+    #     f.close()
 
 
-cars = data_reader(fcars)
+cars = data_reader(fcars, cars_parser, cars_class_name)
 
 
-# print('20:', *list(islice(cars, 10)), sep='\n')
-# for row in cars:
-#     print(row)
+with cars as c:
+    # for row in c:
+    #     print(row)
+    print('20:', *list(islice(c, 20)), sep='\n')
+
+# @contextmanager
+# def gen_file_context_manager(file_name, single_parser, single_class_name):
+#     file_obj = open(file_name)
+#     try:
+#         dialect = csv.Sniffer().sniff(file_obj.read(2000))
+#         file_obj.seek(0)
+#         reader = csv.reader(file_obj, dialect)
+#         headers = map(lambda l: l.lower(), next(reader))
+#         DataTuple = namedtuple(single_class_name, headers)
+#         yield (DataTuple(*(fn(value) for value, fn
+#                            in zip(row, single_parser))) for row in reader)
+#
+#     finally:
+#         try:
+#             next(file_obj)
+#         except StopIteration:
+#             pass
+#         # print('closing file')
+#         file_obj.close()
