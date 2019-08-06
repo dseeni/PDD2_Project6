@@ -1,7 +1,7 @@
 
 # Files
 # cars.csv = 407 rows
-fcars = 'data/cars.csv'
+fcars = 'input_data/cars.csv'
 
 # ['Car', 'MPG', 'Cylinders', 'Displacement', 'Horsepower',
 #  'Weight', 'Acceleration', 'Model', 'Origin']

@@ -104,7 +104,7 @@ def infer_data_type(data_key):
             data_key[data_key.index(value)] = str(value)
 
 
-# data parser needs headers and data_key sent to it
+# input_data parser needs headers and data_key sent to it
 def data_parser(file_name):
     data = data_reader(file_name)
     next(data)  # skip header row
@@ -147,7 +147,7 @@ def broadcast(targets):
 
 @coroutine
 def filter_data(filter_predicate, target):
-    # sent the data tuple from reader
+    # sent the input_data tuple from reader
     while True:
         data_tuple = yield
         if filter_predicate(data_tuple):
