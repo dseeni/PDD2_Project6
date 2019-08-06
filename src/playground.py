@@ -4,6 +4,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 import csv
 from itertools import islice
+import ast
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -56,7 +57,30 @@ from itertools import islice
 #
 #         else:
 #             self.data_key[self.data_key.index(value)] = str(value)
-with pipeline() as pipe:
-        data = data_parser()
-        for row in data:
-                pipe.send(row)
+# with pipeline() as pipe:
+#         data = data_parser()
+#         for row in data:
+#                 pipe.send(row)
+
+
+data_key = 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
+
+
+def infer_data_type(data_key):
+    for value in data_key:
+        if value is None:
+            data_key[data_key.index(value)] = None
+        elif all(c.isdigit() for c in value):
+            data_key[data_key.index(value)] = int(value)
+
+        elif value.count('.') == 1:
+            try:
+                data_key[data_key.index(value)] = float(value)
+            except ValueError:
+                data_key[data_key.index(value)] = str(value)
+
+        else:
+            data_key[data_key.index(value)] = str(value)
+
+
+print(type(ast.literal_eval('6.2')))
