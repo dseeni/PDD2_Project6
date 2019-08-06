@@ -18,7 +18,7 @@ a files nested dictionary:
 
 for file in files_dictionary:
     with file open:
-        -extract headers --> creat named tuple named tuple send next(line) to
+        -extract headers --> create named tuple named tuple send next(line) to
         infer
 
         -infer data type--> sample the line and return a string
