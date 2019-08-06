@@ -6,12 +6,17 @@ femployment = 'input_data/employment.csv'
 fticket = 'input_data/nyc_parking_tickets_extract.csv'
 fpersonal = 'input_data/personal_info.csv'
 
+fnames = fcars, femployment, fticket, fpersonal
+
 
 # Named Tuple Class Names
 cars_class_name = 'Vehicle_Info'
 employment_class_name = 'Employment_Info'
 ticket_class_name = 'Ticket_Info'
 personal_class_name = 'Personal_Info'
+
+class_names = (cars_class_name, employment_class_name,
+               ticket_class_name, personal_class_name)
 
 
 # idx_make = 0
