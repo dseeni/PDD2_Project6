@@ -36,25 +36,41 @@ def coroutine(fn):
         return g
     return inner
 
+
+def header_extract(file_name):
+    file_obj = open(file_name)
+    try:
+        # file_obj = open(file_name)
+        dialect = csv.Sniffer().sniff(file_obj.read(2000))
+        file_obj.seek(0)
+        reader = csv.reader(file_obj, dialect)
+        headers = tuple(map(lambda l: l.lower(), next(reader)))
+        return headers
+    finally:
+        file_obj.close()
+
 @contextmanager
-def data_reader(file_name, single_parser, single_class_name):
+def data_reader(file_name, single_parser, headers, single_class_name):
     file_obj = open(file_name)
     try:
         dialect = csv.Sniffer().sniff(file_obj.read(2000))
         file_obj.seek(0)
         reader = csv.reader(file_obj, dialect)
-        headers = map(lambda l: l.lower(), next(reader))
+        # skip the header row
+        next(reader)
+        # headers = header_extract(file_name, file_obj)
+        print(headers)
         DataTuple = namedtuple(single_class_name, headers)
         yield (DataTuple(*(fn(value) for value, fn
                            in zip(row, single_parser))) for row in reader)
-
     finally:
         try:
             next(file_obj)
         except StopIteration:
             pass
-        # print('closing file')
+        print('closing file')
         file_obj.close()
+
 
 @coroutine
 def save_data(f_name, headers):
@@ -107,4 +123,11 @@ def pipeline_coro():
         broadcaster.send(data_row)
 
 
+@contextmanager
+def pipeline():
+    p = pipeline_coro()
+    try:
+        yield p
+    finally:
+        p.close()
 
