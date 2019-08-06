@@ -5,7 +5,6 @@ from contextlib import contextmanager
 import csv
 from itertools import islice
 from datetime import datetime
-import ast
 import dateparser
 
 # cars_header = header_extract(fcars)
@@ -117,10 +116,8 @@ except Exception:
 
 # print(date_getter())
 
-
-print(dateparser.parse('12/12/12'))
-
-
-print(dateparser.parse('2017-10-07T00:14:42Z'))
-print(type(dateparser.parse('2017-10-07T00:14:42Z')))
-print(datetime.strptime('12/12/2012', '%d/%m/%Y'))
+# Use date parser for dates:
+# print(dateparser.parse('12/12/12'))
+# print(dateparser.parse('2017-10-07T00:14:42Z'))
+# print(type(dateparser.parse('2017-10-07T00:14:42Z')))
+# print(datetime.strptime('12/12/2012', '%d/%m/%Y'))

@@ -3,6 +3,8 @@ from collections import namedtuple
 from contextlib import contextmanager
 import csv
 from itertools import islice
+import dateparser
+import datetime
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
 # We can do this be making the reader yield and row and send it to parser that
@@ -135,6 +137,11 @@ def data_reader(file_name, single_parser, headers, single_class_name):
             pass
         print('closing file')
         file_obj.close()
+
+
+@contextmanager
+def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+    return datetime.strptime(value, fmt)
 
 
 @coroutine

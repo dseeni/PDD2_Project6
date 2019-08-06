@@ -32,13 +32,12 @@ date_key1 = '%d/%m/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 date_keys = (date_key1, date_key2)
 
+# get rid of these
 
-
-
-# idx_make = 0
-# idx_model = 1
-# idx_year = 2
-# idx_vin = 3
-# idx_color = 4
+idx_make = 0
+idx_model = 1
+idx_year = 2
+idx_vin = 3
+idx_color = 4
 
 
