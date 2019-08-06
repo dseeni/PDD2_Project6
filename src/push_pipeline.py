@@ -2,9 +2,8 @@ from src.constants import *
 from collections import namedtuple
 from contextlib import contextmanager
 import csv
-from itertools import islice
 import dateparser
-import datetime
+
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
 # We can do this be making the reader yield and row and send it to parser that
