@@ -20,8 +20,16 @@ from itertools import islice
 # TODO: Implement averager for average length of lines in file
 # # TODO: Lookup the print_file_row() function in Fred's notes on GitHub.
 
-
 # headers = ('make', 'model', 'year', 'vin', 'color')
+
+
+@contextmanager
+def pipeline():
+    p = pipeline_coro()
+    try:
+        yield p
+    finally:
+        p.close()
 
 # def get_dialect(file_obj):
 #     sample = file_obj.read(2000)
@@ -29,6 +37,8 @@ from itertools import islice
 #     file_obj.seek(0)
 #     return dialect
 
+
+# this coroutine decorator will prime your sub generators
 def coroutine(fn):
     def inner(*args, **kwargs):
         g = fn(*args, **kwargs)
@@ -37,6 +47,33 @@ def coroutine(fn):
     return inner
 
 
+@coroutine
+def pipeline_coro():
+    out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
+    out_ford_green = save_data('ford_green.csv', header_extract(fcars))
+    out_older = save_data('older.csv', header_extract(fcars))
+
+    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+                                   out_pink_cars)
+
+    # predicates can be defined as filters..
+    def pred_ford_green(data_row):
+        return (data_row[idx_make].lower() == 'ford'
+                and data_row[idx_color].lower() == 'green')
+
+    filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+    filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+
+    filters = (filter_pink_cars, filter_ford_green, filter_older)
+
+    broadcaster = broadcast(filters)
+
+    while True:
+        data_row = yield
+        broadcaster.send(data_row)
+
+
+@coroutine
 def header_extract(file_name):
     file_obj = open(file_name)
     try:
@@ -48,6 +85,34 @@ def header_extract(file_name):
         return headers
     finally:
         file_obj.close()
+
+
+def infer_data_type(data_key):
+    for value in data_key:
+        if value is None:
+            data_key[data_key.index(value)] = None
+        elif all(c.isdigit() for c in value):
+            data_key[data_key.index(value)] = int(value)
+
+        elif value.count('.') == 1:
+            try:
+                data_key[data_key.index(value)] = float(value)
+            except ValueError:
+                data_key[data_key.index(value)] = str(value)
+
+        else:
+            data_key[data_key.index(value)] = str(value)
+
+
+# data parser needs headers and data_key sent to it
+def data_parser(file_name):
+    data = data_reader(file_name)
+    next(data)  # skip header row
+    for row in data:
+        parsed_row = [converter(item)
+                      for converter, item in zip(converters, row)]
+        yield parsed_row
+
 
 @contextmanager
 def data_reader(file_name, single_parser, headers, single_class_name):
@@ -73,6 +138,23 @@ def data_reader(file_name, single_parser, headers, single_class_name):
 
 
 @coroutine
+def broadcast(targets):
+    while True:
+        data_row = yield
+        for target in targets:
+            target.send(data_row)
+
+
+@coroutine
+def filter_data(filter_predicate, target):
+    # sent the data tuple from reader
+    while True:
+        data_tuple = yield
+        if filter_predicate(data_tuple):
+            target.send(data_tuple)
+
+
+@coroutine
 def save_data(f_name, headers):
     with open(f_name, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -82,52 +164,24 @@ def save_data(f_name, headers):
             writer.writerow(data_row)
 
 
-@coroutine
-def filter_data(filter_predicate, target):
-    while True:
-        data_row = yield
-        if filter_predicate(data_row):
-            target.send(data_row)
-
-
-@coroutine
-def broadcast(targets):
-    while True:
-        data_row = yield
-        for target in targets:
-            target.send(data_row)
-
-
-@coroutine
-def pipeline_coro():
-    out_pink_cars = save_data('pink_cars.csv', headers)
-    out_ford_green = save_data('ford_green.csv', headers)
-    out_older = save_data('older.csv', headers)
-
-    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
-                                   out_pink_cars)
-
-    def pred_ford_green(data_row):
-        return (data_row[idx_make].lower() == 'ford'
-                and data_row[idx_color].lower() == 'green')
-
-    filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-    filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-
-    filters = (filter_pink_cars, filter_ford_green, filter_older)
-
-    broadcaster = broadcast(filters)
-
-    while True:
-        data_row = yield
-        broadcaster.send(data_row)
-
-
-@contextmanager
-def pipeline():
-    p = pipeline_coro()
-    try:
-        yield p
-    finally:
-        p.close()
-
+# @contextmanager
+# def data_reader(file_name, single_parser, headers, single_class_name):
+#     file_obj = open(file_name)
+#     try:
+#         dialect = csv.Sniffer().sniff(file_obj.read(2000))
+#         file_obj.seek(0)
+#         reader = csv.reader(file_obj, dialect)
+#         # skip the header row
+#         next(reader)
+#         # headers = header_extract(file_name, file_obj)
+#         print(headers)
+#         DataTuple = namedtuple(single_class_name, headers)
+#         yield (DataTuple(*(fn(value) for value, fn
+#                            in zip(row, single_parser))) for row in reader)
+#     finally:
+#         try:
+#             next(file_obj)
+#         except StopIteration:
+#             pass
+#         print('closing file')
+#         file_obj.close()
