@@ -28,6 +28,13 @@ class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
 
+date_key1 = '%d/%m/%Y'
+date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+date_keys = (date_key1, date_key2)
+
+
+
+
 # idx_make = 0
 # idx_model = 1
 # idx_year = 2

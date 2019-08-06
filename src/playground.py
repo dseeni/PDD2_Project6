@@ -6,6 +6,7 @@ import csv
 from itertools import islice
 from datetime import datetime
 import ast
+import dateparser
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -94,9 +95,32 @@ except ValueError:
     print(str)
 try:
     print(type(ast.literal_eval('6A2')))
-except ValueError:
+except Exception:
     print(str)
 
 
-def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
-    return datetime.strptime(value, fmt)
+# def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+#     return datetime.strptime(value, fmt)
+
+
+# def date_getter():
+#     # for datekey in date_keys:
+#     #     try:
+#     #         parse_date('12/12/12', fmt=datekey)
+#     #     except Exception:
+#     #         return str('none')
+#     for datekey in date_keys:
+#         try:
+#             print(datetime.stiptime('12/12/12', datekey))
+#         except Exception:
+#             print('cant do it')
+
+# print(date_getter())
+
+
+print(dateparser.parse('12/12/12'))
+
+
+print(dateparser.parse('2017-10-07T00:14:42Z'))
+print(type(dateparser.parse('2017-10-07T00:14:42Z')))
+print(datetime.strptime('12/12/2012', '%d/%m/%Y'))
