@@ -4,6 +4,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 import csv
 from itertools import islice
+from datetime import datetime
 import ast
 
 # cars_header = header_extract(fcars)
@@ -95,3 +96,7 @@ try:
     print(type(ast.literal_eval('6A2')))
 except ValueError:
     print(str)
+
+
+def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+    return datetime.strptime(value, fmt)
