@@ -63,10 +63,8 @@ import ast
 #                 pipe.send(row)
 
 
-data_key = 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
-
-
-def infer_data_type(data_key):
+def infer_data_type():
+    data_key = yield
     for value in data_key:
         if value is None:
             data_key[data_key.index(value)] = None
@@ -82,5 +80,18 @@ def infer_data_type(data_key):
         else:
             data_key[data_key.index(value)] = str(value)
 
+# try date first, then literal, then str
+
 
 print(type(ast.literal_eval('6.2')))
+
+print(type(ast.literal_eval('6.')))
+print(type(ast.literal_eval('6')))
+try:
+    print(type(ast.literal_eval('6-2')))
+except ValueError:
+    print(str)
+try:
+    print(type(ast.literal_eval('6A2')))
+except ValueError:
+    print(str)

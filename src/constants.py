@@ -1,6 +1,10 @@
 
-# Files
 # cars.csv = 407 rows
+# employment.csv = 1001 rows
+# nyc_parking_ticket_extract.csv = 1001 rows
+# personal_info.csv = 1001 rows
+
+# Files
 fcars = 'input_data/cars.csv'
 femployment = 'input_data/employment.csv'
 fticket = 'input_data/nyc_parking_tickets_extract.csv'
