@@ -1,3 +1,5 @@
+--------------------------------------------------------------------------------
+
 User Provides:
 a files nested dictionary:
         {filename_1: {outputfile_1: lambda filter
@@ -9,6 +11,10 @@ a files nested dictionary:
                      outputfile_3: lambda filter}}
 --------------------------------------------------------------------------------
 
+# pytest plugins for async test and coroutine test
+# file overrite
+# append os path with file name
+# date parsing
 
 
         file name, a dictionary of filters
@@ -59,3 +65,7 @@ def filterpredicate(tuple: track_fileds):
 
     
 "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+
+
+
+
