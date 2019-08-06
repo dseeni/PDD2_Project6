@@ -140,8 +140,8 @@ def data_reader(file_name, single_parser, headers, single_class_name):
 
 
 @contextmanager
-def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
-    return datetime.strptime(value, fmt)
+def parse_date(value):
+    return dateparser.parse(value)
 
 
 @coroutine
