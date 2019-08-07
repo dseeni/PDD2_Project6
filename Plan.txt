@@ -11,10 +11,21 @@ a files nested dictionary:
                      outputfile_3: lambda filter}}
 --------------------------------------------------------------------------------
 
+# date parsing - DONE
+# pytest plugins for async test a
+# overwrite file
+# if file exists delete
+# concatenate file name
+# join os path
+# read and overwrite a file in Python
+# asyncio plugin pytest pytest-aysncio
 # pytest plugins for async test and coroutine test
-# file overrite
-# append os path with file name
-# date parsing
+# pytest coroutine plugin
+# pytest capturing of the stdout/stderr output
+# pytest temp directory and testing csv
+
+# make your test objects send to targets based on
+# arguments, easy to test then
 
 
         file name, a dictionary of filters
