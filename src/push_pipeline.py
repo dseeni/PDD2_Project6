@@ -3,6 +3,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 import csv
 import dateparser
+import os
 
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
@@ -157,17 +158,28 @@ def filter_data(filter_predicate, target):
     while True:
         data_tuple = yield
         if filter_predicate(data_tuple):
-            target.send(data_tuple)
+            target.send(target)
 
 
 @coroutine
-def save_data(f_name, headers):
-    with open(f_name, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        while True:
-            data_row = yield
-            writer.writerow(data_row)
+def save_data(f_name, headers, dir_name):
+    try:
+        # Create target Directory
+        os.mkdir(dir_name)
+        print("Directory ", dir_name, " Created ")
+    except FileExistsError:
+        print("Directory ", dir_name, " already exists")
+    finally:
+        os.chdir(dir_name)
+        try:
+            with open(f_name, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                while True:
+                    data_row = yield
+                    writer.writerow(data_row)
+        finally:
+            os.chdir('..')
 
 
 # @contextmanager

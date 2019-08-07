@@ -14,11 +14,6 @@ a files nested dictionary:
 
 # TODO: date parsing - DONE
 
-# TODO: pytest plugins for async test a
-# TODO: asyncio plugin pytest pytest-aysncio
-# TODO: pytest plugins for async test and coroutine test
-# TODO: pytest coroutine plugin
-
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
 

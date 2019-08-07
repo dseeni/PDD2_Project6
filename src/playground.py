@@ -6,6 +6,8 @@ import csv
 from itertools import islice
 from datetime import datetime
 import dateparser
+import os
+
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -64,38 +66,38 @@ import dateparser
 #                 pipe.send(row)
 
 
-def infer_data_type():
-    data_key = yield
-    for value in data_key:
-        if value is None:
-            data_key[data_key.index(value)] = None
-        elif all(c.isdigit() for c in value):
-            data_key[data_key.index(value)] = int(value)
-
-        elif value.count('.') == 1:
-            try:
-                data_key[data_key.index(value)] = float(value)
-            except ValueError:
-                data_key[data_key.index(value)] = str(value)
-
-        else:
-            data_key[data_key.index(value)] = str(value)
+# def infer_data_type():
+#     data_key = yield
+#     for value in data_key:
+#         if value is None:
+#             data_key[data_key.index(value)] = None
+#         elif all(c.isdigit() for c in value):
+#             data_key[data_key.index(value)] = int(value)
+#
+#         elif value.count('.') == 1:
+#             try:
+#                 data_key[data_key.index(value)] = float(value)
+#             except ValueError:
+#                 data_key[data_key.index(value)] = str(value)
+#
+#         else:
+#             data_key[data_key.index(value)] = str(value)
 
 # try date first, then literal, then str
 
 
-print(type(ast.literal_eval('6.2')))
-
-print(type(ast.literal_eval('6.')))
-print(type(ast.literal_eval('6')))
-try:
-    print(type(ast.literal_eval('6-2')))
-except ValueError:
-    print(str)
-try:
-    print(type(ast.literal_eval('6A2')))
-except Exception:
-    print(str)
+# print(type(ast.literal_eval('6.2')))
+#
+# print(type(ast.literal_eval('6.')))
+# print(type(ast.literal_eval('6')))
+# try:
+#     print(type(ast.literal_eval('6-2')))
+# except ValueError:
+#     print(str)
+# try:
+#     print(type(ast.literal_eval('6A2')))
+# except Exception:
+#     print(str)
 
 
 # def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
@@ -121,3 +123,4 @@ except Exception:
 # print(dateparser.parse('2017-10-07T00:14:42Z'))
 # print(type(dateparser.parse('2017-10-07T00:14:42Z')))
 # print(datetime.strptime('12/12/2012', '%d/%m/%Y'))
+
