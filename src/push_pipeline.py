@@ -91,16 +91,7 @@ def infer_data_type(data_key):
 
         else:
             data_key[data_key.index(value)] = str(value)
-
-
 # input_data parser needs headers and data_key sent to it
-def data_parser(file_name):
-    data = data_reader(file_name)
-    next(data)  # skip header row
-    for row in data:
-        parsed_row = [converter(item)
-                      for converter, item in zip(converters, row)]
-        yield parsed_row
 
 
 @coroutine
@@ -136,6 +127,15 @@ def data_reader(file_name, single_parser, headers, single_class_name):
             pass
         print('closing file')
         file_obj.close()
+
+
+def data_parser(file_name):
+    data = data_reader(file_name)
+    next(data)  # skip header row
+    for row in data:
+        parsed_row = [converter(item)
+                      for converter, item in zip(converters, row)]
+        yield parsed_row
 
 
 @coroutine
