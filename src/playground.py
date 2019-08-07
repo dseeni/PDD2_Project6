@@ -1,11 +1,11 @@
-from src.constants import *
+# from src.constants import *
 from src.push_pipeline import *
-from collections import namedtuple
-from contextlib import contextmanager
-import csv
-from itertools import islice
-from datetime import datetime
-import os
+# from collections import namedtuple
+# from contextlib import contextmanager
+# import csv
+# from itertools import islice
+# from datetime import datetime
+# import os
 
 
 # cars_header = header_extract(fcars)
@@ -139,6 +139,3 @@ cvars = myvar()
 h = header_extract(cvars)
 file_obj = open(fnames[0])
 h.send(file_obj)
-
-
-
