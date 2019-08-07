@@ -141,17 +141,18 @@ def data_reader(file_name, single_parser, headers, single_class_name):
 @coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
-    for _ in range(len(date_keys_tuple)):
-        while valid_date is None:
-            try:
-                print('try:', _)
-                valid_date = datetime.strptime(value, date_keys_tuple[_])
-            except ValueError:
-                _ += 1
-            except IndexError:
-                print('Unrecognizable Date Format: cast as str')
-                valid_date = str(value)
-                continue
+    while True:
+        for _ in range(len(date_keys_tuple)):
+            while valid_date is None:
+                try:
+                    print('try:', _)
+                    valid_date = datetime.strptime(value, date_keys_tuple[_])
+                except ValueError:
+                    _ += 1
+                except IndexError:
+                    print('Unrecognizable Date Format: cast as str')
+                    valid_date = str(value)
+                    pass
         yield valid_date
 
 

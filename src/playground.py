@@ -128,14 +128,18 @@ from src.push_pipeline import *
 # print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime)
 # print(type(next(parse_date('12/x2/2012', date_keys))) == str)
 
-@coroutine
-def myvar():
-    while True:
-        var = yield
-        print(var)
+
+# @coroutine
+# def myvar():
+#     while True:
+#         var = yield
+#         print(var)
 
 
-cvars = myvar()
-h = header_extract(cvars)
-file_obj = open(fnames[0])
-h.send(file_obj)
+# cvars = myvar()
+# h = header_extract(cvars)
+# file_obj = open(fnames[0])
+# h.send(file_obj)
+
+
+
