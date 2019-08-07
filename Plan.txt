@@ -12,8 +12,6 @@ a files nested dictionary:
 --------------------------------------------------------------------------------
 # TODO: Checklist
 
-# TODO: updaate Date parser to non-depercated
-
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
 
@@ -27,11 +25,11 @@ a files nested dictionary:
 # TODO: pytest temp directory and testing csv
 --------------------------------------------------------------------------------
 
-
-        file name, a dictionary of filters
-        {file_name1: (car, make, year), filter_name_2: (mode, person, state)}
-        etc: #the keys are the output files, the values are the fitlers (in
-        this case headers)}
+USER_INPUT:
+    file name, a dictionary of filters
+    {file_name1: (car, make, year), filter_name_2: (mode, person, state)}
+    etc: #the keys are the output files, the values are the fitlers (in
+    this case headers)}
 
 for file in files_dictionary:
     with file open:

@@ -140,6 +140,7 @@ def data_reader(file_name, single_parser, headers, single_class_name):
         file_obj.close()
 
 
+@coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
     for _ in range(len(date_keys_tuple)):
@@ -149,12 +150,11 @@ def parse_date(value, date_keys_tuple):
                 valid_date = datetime.strptime(value, date_keys_tuple[_])
             except ValueError:
                 _ += 1
-            # except StopIteration:
-            #     pass
             except IndexError:
                 print('did not find a suitable date format')
                 valid_date = str(value)
-    return valid_date
+                continue
+        yield valid_date
 
 
 @coroutine
