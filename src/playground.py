@@ -5,7 +5,6 @@ from contextlib import contextmanager
 import csv
 from itertools import islice
 from datetime import datetime
-import dateparser
 import os
 
 
@@ -121,6 +120,12 @@ import os
 # Use date parser for dates:
 # print(dateparser.parse('12/12/12'))
 # print(dateparser.parse('2017-10-07T00:14:42Z'))
-# print(type(dateparser.parse('2017-10-07T00:14:42Z')))
-# print(datetime.strptime('12/12/2012', '%d/%m/%Y'))
+# print(next(parse_date('12/12/2012', date_keys)))
+# print(next(parse_date('12/12/2012', date_keys)))
+# print(next(parse_date('12/12/2012', date_keys)))
+# print(next(parse_date('2/09/2012', date_keys)))
+# print(next(parse_date('2/09/2012', date_keys)))
+# print(next(parse_date('2020-10-07T00:14:42Z', date_keys)))
+# print(next(parse_date('12/29/2012', date_keys)))
+
 

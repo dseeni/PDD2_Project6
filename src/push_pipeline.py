@@ -1,9 +1,10 @@
 from src.constants import *
 from collections import namedtuple
 from contextlib import contextmanager
+from datetime import datetime
 import csv
-import dateparser
 import os
+from itertools import cycle
 
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
@@ -139,9 +140,21 @@ def data_reader(file_name, single_parser, headers, single_class_name):
         file_obj.close()
 
 
-@contextmanager
-def parse_date(value):
-    return dateparser.parse(value)
+def parse_date(value, date_keys_tuple):
+    valid_date = None
+    for _ in range(len(date_keys_tuple)):
+        while valid_date is None:
+            try:
+                print('try:', _)
+                valid_date = datetime.strptime(value, date_keys_tuple[_])
+            except ValueError:
+                _ += 1
+            # except StopIteration:
+            #     pass
+            except IndexError:
+                print('did not find a suitable date format')
+                valid_date = str(value)
+    return valid_date
 
 
 @coroutine

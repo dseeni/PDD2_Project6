@@ -19,3 +19,14 @@ def test_save_data():
 def test_header_extract():
     # header_reader = header_extract()
     pass
+
+
+def test_parse_date():
+    test_date = parse_date('2017-10-07T00:14:42Z', date_keys)
+    assert test_date.year == 2017
+    assert test_date.month == 10
+    assert test_date.day == int('07')
+    assert type(parse_date('12/x2/2012', date_keys)) == str
+    assert type(parse_date('12/12/2012', date_keys)) == datetime
+    assert type(parse_date('2017-10-07T00:14:42Z', date_keys)) == datetime
+    assert type(parse_date('12/x2/2012', date_keys)) == str
