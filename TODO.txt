@@ -1,5 +1,6 @@
 -------------------------------------------------------------------------------
-
+SAMPLE DATA: "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+-------------------------------------------------------------------------------
 User Provides:
 a files nested dictionary:
         {filename_1: {outputfile_1: lambda filter
@@ -9,9 +10,9 @@ a files nested dictionary:
         filename_1: {outputfile_1: lambda filter
                      outputfile_2: lambda filter
                      outputfile_3: lambda filter}}
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 # TODO: Checklist
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
 
@@ -23,7 +24,7 @@ a files nested dictionary:
 
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 USER_INPUT:
     file name, a dictionary of filters
@@ -53,12 +54,18 @@ for file in files_dictionary:
                 if all namedtuple values exist in named tuple from tracking
                 fileds send to save data else consume it
 
+    broadcaster -->
+    broadcaster = broadcast(filters) # filters = targets
+    
     def pred_ford_green(data_row):
         return (data_row[idx_make].lower() == 'ford'
                 and data_row[idx_color].lower() == 'green')
 
+    filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+
+    filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
         filter_pink_cars = filter_data
-        (lambda d: d[idx_color].lower() =='pink',
+        (lambda d: d[idx_color].lower() == 'pink', out_pink_cars)
 
         filter_ford_green = filter_data(pred_ford_green, out_ford_green)
 
@@ -67,15 +74,38 @@ for file in files_dictionary:
         filters = (filter_pink_cars, filter_ford_green, filter_older)
         broadcaster = broadcast(filters)
 
-# track fields
+# track fields --> Deepak's filter tracker
 def filterpredicate(tuple: track_fileds):
     for track_field in track_fields:
         if all(namedtuple.track_field for trackfield in trackfields):
             return named.tuple
 
     
-"Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+    while True:
+        data_row = yield
+        broadcaster.send(data_row)
 
 
+-------------------------------------------------------------------------------
+@coroutine
+def pipeline_coro():
+    out_pink_cars = save_data('pink_cars.csv', headers)
+    out_ford_green = save_data('ford_green.csv', headers)
+    out_older = save_data('older.csv', headers)
 
+    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+                                  out_pink_cars)
 
+    def pred_ford_green(data_row):
+        return (data_row[idx_make].lower() == 'ford'
+               and data_row[idx_color].lower() == 'green')
+    filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+    filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+
+    filters = (filter_pink_cars, filter_ford_green, filter_older)
+
+    broadcaster = broadcast(filters)
+
+    while True:
+        data_row = yield
+        broadcaster.send(data_row)

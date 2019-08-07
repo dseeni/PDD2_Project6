@@ -55,7 +55,7 @@ def pipeline_coro():
     out_ford_green = save_data('ford_green.csv', header_extract(fcars))
     out_older = save_data('older.csv', header_extract(fcars))
 
-    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',    
                                    out_pink_cars)
 
     # predicates can be defined as filters..
