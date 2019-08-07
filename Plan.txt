@@ -12,7 +12,7 @@ a files nested dictionary:
 --------------------------------------------------------------------------------
 # TODO: Checklist
 
-# TODO: date parsing - DONE
+# TODO: updaate Date parser to non-depercated
 
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
