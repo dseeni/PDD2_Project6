@@ -115,17 +115,28 @@ import os
 #         except Exception:
 #             print('cant do it')
 
-# print(date_getter())
 
-# Use date parser for dates:
-# print(dateparser.parse('12/12/12'))
-# print(dateparser.parse('2017-10-07T00:14:42Z'))
-# print(next(parse_date('12/12/2012', date_keys)))
-# print(next(parse_date('12/12/2012', date_keys)))
-# print(next(parse_date('12/12/2012', date_keys)))
-# print(next(parse_date('2/09/2012', date_keys)))
-# print(next(parse_date('2/09/2012', date_keys)))
-# print(next(parse_date('2020-10-07T00:14:42Z', date_keys)))
-# print(next(parse_date('12/29/2012', date_keys)))
+# test_date = next(parse_date('2017-10-07T00:14:42Z', date_keys))
+# print(test_date.year)
+# print(test_date.month)
+# print(test_date.day)
+# print(test_date)
+# print(type(test_date))
+# print(type(next(parse_date('12/x2/2012', date_keys))) == str)
+# print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))))
+# print(type(next(parse_date('12/12/2012', date_keys))) == datetime)
+# print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime)
+# print(type(next(parse_date('12/x2/2012', date_keys))) == str)
+
+@coroutine
+def myvar():
+    while True:
+        var = yield
+        print(var)
+
+vars = myvar()
+h = header_extract(vars)
+file_obj = open(fnames[0])
+h.send(file_obj)
 
 

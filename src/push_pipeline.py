@@ -76,18 +76,7 @@ def pipeline_coro():
         broadcaster.send(data_row)
 
 
-@coroutine
-def header_extract(file_name):
-    file_obj = open(file_name)
-    try:
-        # file_obj = open(file_name)
-        dialect = csv.Sniffer().sniff(file_obj.read(2000))
-        file_obj.seek(0)
-        reader = csv.reader(file_obj, dialect)
-        headers = tuple(map(lambda l: l.lower(), next(reader)))
-        return headers
-    finally:
-        file_obj.close()
+
 
 
 def infer_data_type(data_key):
@@ -115,6 +104,18 @@ def data_parser(file_name):
         parsed_row = [converter(item)
                       for converter, item in zip(converters, row)]
         yield parsed_row
+
+
+@coroutine
+def header_extract(target):
+    while True:
+        file_obj = yield
+        # file_obj = open(file_name)
+        dialect = csv.Sniffer().sniff(file_obj.read(2000))
+        file_obj.seek(0)
+        reader = csv.reader(file_obj, dialect)
+        headers = tuple(map(lambda l: l.lower(), next(reader)))
+        target.send(headers)
 
 
 @contextmanager
@@ -151,7 +152,7 @@ def parse_date(value, date_keys_tuple):
             except ValueError:
                 _ += 1
             except IndexError:
-                print('did not find a suitable date format')
+                print('Unrecognizable Date Format: cast as str')
                 valid_date = str(value)
                 continue
         yield valid_date
