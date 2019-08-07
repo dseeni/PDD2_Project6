@@ -20,7 +20,7 @@ from itertools import cycle
 # Any 3 filters will result with 2 records on the screen only
 # if you did it all right
 
-# TODO: Implement averager for average length of lines in file
+# TODO: Implement function to average length of lines in file
 # # TODO: Lookup the print_file_row() function in Fred's notes on GitHub.
 
 # headers = ('make', 'model', 'year', 'vin', 'color')
@@ -129,15 +129,6 @@ def data_reader(file_name, single_parser, headers, single_class_name):
         file_obj.close()
 
 
-def data_parser(file_name):
-    data = data_reader(file_name)
-    next(data)  # skip header row
-    for row in data:
-        parsed_row = [converter(item)
-                      for converter, item in zip(converters, row)]
-        yield parsed_row
-
-
 @coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
@@ -155,6 +146,14 @@ def parse_date(value, date_keys_tuple):
                     pass
         yield valid_date
 
+
+def data_parser(file_name):
+    data = data_reader(file_name)
+    next(data)  # skip header row
+    for row in data:
+        parsed_row = [converter(item)
+                      for converter, item in zip(converters, row)]
+        yield parsed_row
 
 @coroutine
 def broadcast(targets):
