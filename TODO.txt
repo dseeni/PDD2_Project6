@@ -1,4 +1,4 @@
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 User Provides:
 a files nested dictionary:
@@ -9,9 +9,9 @@ a files nested dictionary:
         filename_1: {outputfile_1: lambda filter
                      outputfile_2: lambda filter
                      outputfile_3: lambda filter}}
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 # TODO: Checklist
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
 
@@ -23,7 +23,7 @@ a files nested dictionary:
 
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 USER_INPUT:
     file name, a dictionary of filters
@@ -57,7 +57,8 @@ for file in files_dictionary:
         return (data_row[idx_make].lower() == 'ford'
                 and data_row[idx_color].lower() == 'green')
 
-        filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+        filter_pink_cars = filter_data
+        (lambda d: d[idx_color].lower() =='pink',
 
         filter_ford_green = filter_data(pred_ford_green, out_ford_green)
 

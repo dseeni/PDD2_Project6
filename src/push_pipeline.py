@@ -33,7 +33,6 @@ def pipeline():
         yield p
     finally:
         p.close()
-
 # def get_dialect(file_obj):
 #     sample = file_obj.read(2000)
 #     dialect = csv.Sniffer().sniff(sample)
@@ -76,24 +75,30 @@ def pipeline_coro():
         broadcaster.send(data_row)
 
 
-def infer_data_type(data_key):
-    for value in data_key:
-        if value is None:
-            data_key[data_key.index(value)] = None
-        elif all(c.isdigit() for c in value):
-            data_key[data_key.index(value)] = int(value)
+@coroutine
+def infer_data_type(target):
+    data_list = yield
+    for value in data_list:
+        try:
+            if not parse_date(value, date_keys):
+                if value is None:
+                    data_list[data_list.index(value)] = None
+                elif all(c.isdigit() for c in value):
+                    data_list[data_list.index(value)] = int(value)
 
-        elif value.count('.') == 1:
-            try:
-                data_key[data_key.index(value)] = float(value)
-            except ValueError:
-                data_key[data_key.index(value)] = str(value)
+                elif value.count('.') == 1:
+                    try:
+                        data_list[data_list.index(value)] = float(value)
+                    except ValueError:
+                        data_list[data_list.index(value)] = str(value)
 
-        else:
-            data_key[data_key.index(value)] = str(value)
+                else:
+                    data_list[data_list.index(value)] = str(value)
+        finally:
+            target.send(data_list)
+
+
 # input_data parser needs headers and data_key sent to it
-
-
 @coroutine
 def header_extract(target):
     while True:
@@ -142,7 +147,7 @@ def parse_date(value, date_keys_tuple):
                     _ += 1
                 except IndexError:
                     print('Unrecognizable Date Format: cast as str')
-                    valid_date = str(value)
+                    valid_date = None
                     pass
         yield valid_date
 
