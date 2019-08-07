@@ -80,7 +80,7 @@ def filterpredicate(tuple: track_fileds):
         if all(namedtuple.track_field for trackfield in trackfields):
             return named.tuple
 
-    
+
     while True:
         data_row = yield
         broadcaster.send(data_row)
