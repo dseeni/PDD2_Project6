@@ -134,9 +134,11 @@ def myvar():
         var = yield
         print(var)
 
-vars = myvar()
-h = header_extract(vars)
+
+cvars = myvar()
+h = header_extract(cvars)
 file_obj = open(fnames[0])
 h.send(file_obj)
+
 
 

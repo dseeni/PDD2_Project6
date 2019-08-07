@@ -76,9 +76,6 @@ def pipeline_coro():
         broadcaster.send(data_row)
 
 
-
-
-
 def infer_data_type(data_key):
     for value in data_key:
         if value is None:

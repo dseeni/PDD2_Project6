@@ -29,4 +29,3 @@ def test_parse_date():
     assert type(next(parse_date('12/x2/2012', date_keys))) == str
     assert type(next(parse_date('12/12/2012', date_keys))) == datetime
     assert type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime
-    assert type(next(parse_date('12/x2/2012', date_keys))) == str
