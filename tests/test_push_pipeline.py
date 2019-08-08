@@ -29,3 +29,10 @@ def test_parse_date():
     assert type(next(parse_date('12/x2/2012', date_keys))) == str
     assert type(next(parse_date('12/12/2012', date_keys))) == datetime
     assert type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime
+
+
+def test_infer_data_type(dummy_target):  # from --> sample_data
+    sample_row = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+    infer_func = infer_data_type(dummy_target)
+    infer_func.send(sample_row)
+    assert dummy_target[0] == sample_row
