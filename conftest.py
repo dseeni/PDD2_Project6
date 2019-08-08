@@ -8,17 +8,28 @@ def set_test_directory():
     os.chdir('src/')
 
 
-@fixture('function', autouse=True)
-@coroutine
+@fixture('function')
 def dummy_target():
-    def myvar():
-        container = []
+    @coroutine
+    def test_sink():
+        ml = []
         while True:
-            var = yield
-            container.append(var)
-            return container
-    return myvar
+            row = yield
+            for element in row:
+                ml.append(element)
+            yield ml
+    return test_sink
 
+
+# @fixture('function', autouse=True)
+# def dummy_sender():
+#     @coroutine
+#     def myvar():
+#         while True:
+#             var = yield
+#             container.append(var)
+#             return container
+#     return myvar
 
 # @coroutine
 # def myvar():

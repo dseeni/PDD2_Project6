@@ -77,26 +77,30 @@ def pipeline_coro():
 
 @coroutine
 def infer_data_type(target):  # from --> sample_data
-    data_row = yield
-    list_data = list(*data_row)
-    for value in list_data:
-        try:
-            if not parse_date(value, date_keys):
-                if value is None:
-                    list_data[list_data.index(value)] = None
-                elif all(c.isdigit() for c in value):
-                    list_data[list_data.index(value)] = int(value)
+    while True:
+        data_row = yield
+        # data_row = list(*data_row)
+        for value in data_row:
+            # try:
+            if parse_date(value, date_keys) is None:
 
+                if value is None:
+                    data_row[data_row.index(value)] = None
+                elif all(c.isdigit() for c in value):
+                    data_row[data_row.index(value)] = int(value)
                 elif value.count('.') == 1:
                     try:
-                        list_data[list_data.index(value)] = float(value)
+                        data_row[data_row.index(value)] = float(value)
                     except ValueError:
-                        list_data[list_data.index(value)] = str(value)
-
+                        data_row[data_row.index(value)] = str(value)
                 else:
-                    list_data[list_data.index(value)] = str(value)
-        finally:
-            target.send(list_data)
+                    data_row[data_row.index(value)] = str(value)
+
+            else:
+                data_row[data_row.index(value)] = parse_date(value, date_keys)
+            # finally:
+        else:
+            yield target.send(data_row)
 
 
 # input_data parser needs headers and data_key sent to it
@@ -135,22 +139,24 @@ def data_reader(file_name, single_parser, headers, single_class_name):
         file_obj.close()
 
 
-@coroutine
+# @coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
     while True:
         for _ in range(len(date_keys_tuple)):
-            while valid_date is None:
+            # while valid_date is None:
+            # while True:
                 try:
                     print('try:', _)
                     valid_date = datetime.strptime(value, date_keys_tuple[_])
                 except ValueError:
                     _ += 1
+                    continue
                 except IndexError:
                     print('Unrecognizable Date Format: cast as str')
                     valid_date = None
-                    pass
-        yield valid_date
+                    break
+        return valid_date
 
 
 def data_parser(file_name):
@@ -160,6 +166,7 @@ def data_parser(file_name):
         parsed_row = [converter(item)
                       for converter, item in zip(converters, row)]
         yield parsed_row
+
 
 @coroutine
 def broadcast(targets):

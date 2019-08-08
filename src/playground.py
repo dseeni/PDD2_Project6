@@ -131,15 +131,22 @@ from src.push_pipeline import *
 
 # @coroutine
 # def myvar():
+#     container = []
 #     while True:
 #         var = yield
-#         print(var)
-
-
+#         container.append(var)
+#         yield container
+#
+#
+#
 # cvars = myvar()
+# print(cvars.send('hi'))
+
 # h = header_extract(cvars)
 # file_obj = open(fnames[0])
 # h.send(file_obj)
 
-
-
+# sample_row = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+# ml = sample_row.split(';')
+# print(ml)
+# print(type(ml))
