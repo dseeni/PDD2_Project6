@@ -79,7 +79,8 @@ def pipeline_coro():
 def infer_data_type(target):  # from --> sample_data
     while True:
         data_row = yield
-        # data_row = list(*data_row)
+        _ = tuple(data_row)
+        data_row = list(_)
         for value in data_row:
             # try:
             if parse_date(value, date_keys) is None:

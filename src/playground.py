@@ -6,7 +6,7 @@ from src.push_pipeline import *
 # from itertools import islice
 # from datetime import datetime
 # import os
-
+from inspect import getgeneratorstate, getgeneratorlocals
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -150,3 +150,33 @@ from src.push_pipeline import *
 # ml = sample_row.split(';')
 # print(ml)
 # print(type(ml))
+
+
+
+@coroutine
+def test_sink():
+    ml = []
+    while True:
+        # try:
+            row = yield
+            print('sink got data')
+            for element in row:
+                ml.append(element)
+            print('sink yielding list')
+            yield ml
+        # except StopIteration:
+        #     continue
+
+
+file_str = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+
+data_row = file_str.split(';')
+sink = test_sink()
+sender = infer_data_type(sink)
+
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+
