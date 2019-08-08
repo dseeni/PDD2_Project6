@@ -5,6 +5,7 @@ from datetime import datetime
 import csv
 import os
 from itertools import cycle
+from copy import deepcopy
 
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
@@ -77,31 +78,30 @@ def pipeline_coro():
 
 @coroutine
 def infer_data_type(target):  # from --> sample_data
+    row_copy = None
     while True:
-        data_row = yield
-        _ = tuple(data_row)
-        data_row = list(_)
-        for value in data_row:
+        data_row = yield row_copy
+        row_copy = deepcopy(data_row)
+        for value in row_copy:
             # try:
             if parse_date(value, date_keys) is None:
 
                 if value is None:
-                    data_row[data_row.index(value)] = None
+                    row_copy[row_copy.index(value)] = None
                 elif all(c.isdigit() for c in value):
-                    data_row[data_row.index(value)] = int(value)
+                    row_copy[row_copy.index(value)] = int(value)
                 elif value.count('.') == 1:
                     try:
-                        data_row[data_row.index(value)] = float(value)
+                        row_copy[row_copy.index(value)] = float(value)
                     except ValueError:
-                        data_row[data_row.index(value)] = str(value)
+                        row_copy[row_copy.index(value)] = str(value)
                 else:
-                    data_row[data_row.index(value)] = str(value)
+                    row_copy[row_copy.index(value)] = str(value)
 
             else:
-                data_row[data_row.index(value)] = parse_date(value, date_keys)
+                row_copy[row_copy.index(value)] = parse_date(value, date_keys)
             # finally:
-        else:
-            yield target.send(data_row)
+        # else:
 
 
 # input_data parser needs headers and data_key sent to it
@@ -148,7 +148,7 @@ def parse_date(value, date_keys_tuple):
             # while valid_date is None:
             # while True:
                 try:
-                    print('try:', _)
+                    # print('try:', _)
                     valid_date = datetime.strptime(value, date_keys_tuple[_])
                 except ValueError:
                     _ += 1

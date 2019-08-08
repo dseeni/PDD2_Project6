@@ -152,26 +152,25 @@ from inspect import getgeneratorstate, getgeneratorlocals
 # print(type(ml))
 
 
-
 @coroutine
-def test_sink():
+def sinky():
     ml = []
     while True:
         # try:
             row = yield
-            print('sink got data')
-            for element in row:
-                ml.append(element)
-            print('sink yielding list')
+            if row is not None:
+                print('sink got data')
+                for element in row:
+                    ml.append(element)
+                print('sink yielding list')
             yield ml
-        # except StopIteration:
-        #     continue
 
 
 file_str = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
 
 data_row = file_str.split(';')
-sink = test_sink()
+data_row2 = file_str.split(';')
+sink = sinky()
 sender = infer_data_type(sink)
 
 print(sender.send(data_row))
@@ -179,4 +178,23 @@ print(sender.send(data_row))
 print(sender.send(data_row))
 print(sender.send(data_row))
 print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+print(sender.send(data_row))
+# print(sender.send(data_row))
+# print(next(sink))
+# print(next(sink))
+# print(next(sink))
+# print(next(sink))
+# print(next(sink))
+# print(next(sink))
 
