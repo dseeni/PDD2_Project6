@@ -1,5 +1,4 @@
 from pytest import fixture
-import os
 from src.push_pipeline import *
 
 

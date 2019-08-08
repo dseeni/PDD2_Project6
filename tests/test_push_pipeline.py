@@ -38,6 +38,4 @@ def test_infer_data_type(dummy_target):  # from --> sample_data
     parsed_data = infer_func.send(data_row)
     assert parsed_data[0] == data_row[0]
     parsed_data = infer_func.send(data_row)
-    assert parsed_data[0] == data_row[0]
-    parsed_data = infer_func.send(data_row)
-    assert parsed_data[1] == float(data_row[1])
+

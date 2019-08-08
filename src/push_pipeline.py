@@ -4,7 +4,6 @@ from contextlib import contextmanager
 from datetime import datetime
 import csv
 import os
-from itertools import cycle
 from copy import deepcopy
 
 
