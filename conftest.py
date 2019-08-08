@@ -14,12 +14,14 @@ def dummy_target():
     def test_sink():
         ml = []
         while True:
-            row = yield ml
-            print('sink got data')
-            for element in row:
-                ml.append(element)
-            print('sink yielding list')
-            # row = yield ml
+            # try:
+            row = yield
+            if row is not None:
+                print('sink got data')
+                for element in row:
+                    ml.append(element)
+                print('sink yielding list')
+            yield ml
     return test_sink
 
 
