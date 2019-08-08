@@ -6,7 +6,6 @@
 # update_status.csv = 1001 row
 
 
-
 # Files
 fcars = 'input_data/cars.csv'
 femployment = 'input_data/employment.csv'
