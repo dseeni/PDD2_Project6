@@ -15,8 +15,10 @@ def dummy_target():
         ml = []
         while True:
             row = yield
+            print('sink got data')
             for element in row:
                 ml.append(element)
+            print('sink yielding list')
             yield ml
     return test_sink
 
