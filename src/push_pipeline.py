@@ -76,26 +76,27 @@ def pipeline_coro():
 
 
 @coroutine
-def infer_data_type(target):
-    data_list = yield
-    for value in data_list:
+def infer_data_type(target):  # from --> sample_data
+    data_row = yield
+    list_data = list(*data_row)
+    for value in list_data:
         try:
             if not parse_date(value, date_keys):
                 if value is None:
-                    data_list[data_list.index(value)] = None
+                    list_data[list_data.index(value)] = None
                 elif all(c.isdigit() for c in value):
-                    data_list[data_list.index(value)] = int(value)
+                    list_data[list_data.index(value)] = int(value)
 
                 elif value.count('.') == 1:
                     try:
-                        data_list[data_list.index(value)] = float(value)
+                        list_data[list_data.index(value)] = float(value)
                     except ValueError:
-                        data_list[data_list.index(value)] = str(value)
+                        list_data[list_data.index(value)] = str(value)
 
                 else:
-                    data_list[data_list.index(value)] = str(value)
+                    list_data[list_data.index(value)] = str(value)
         finally:
-            target.send(data_list)
+            target.send(list_data)
 
 
 # input_data parser needs headers and data_key sent to it

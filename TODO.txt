@@ -109,3 +109,14 @@ def pipeline_coro():
     while True:
         data_row = yield
         broadcaster.send(data_row)
+
+
+-------------------------------------------------------------------------------
+# MISC NOTES
+-------------------------------------------------------------------------------
+# def get_dialect(file_obj):
+# def get_dialect(file_obj):
+#     sample = file_obj.read(2000)
+#     dialect = csv.Sniffer().sniff(sample)
+#     file_obj.seek(0)
+#     return dialect
