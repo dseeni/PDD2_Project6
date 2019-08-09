@@ -35,7 +35,7 @@ def test_parse_date():
 def test_infer_data_type(dummy_target):  # from --> sample_data
     file_str = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
     data_row = file_str.split(';')
-    infer_func = gen_data_type_key(dummy_target)
+    infer_func = row_parse_key_gen(dummy_target)
     parsed_data = infer_func.send(data_row)
     assert parsed_data[0] == data_row[0]
     parsed_data = infer_func.send(data_row)

@@ -27,7 +27,7 @@ from copy import deepcopy
 
 
 @contextmanager
-def pipeline_handler(files_dict, header_target, type_gen_target):
+def pipeline_handler(files_dict, header_target):
     # send to: header_creator, type_generator
     # pass in the dictionary of file/filter/name
     file_obj = None
@@ -38,7 +38,8 @@ def pipeline_handler(files_dict, header_target, type_gen_target):
             dialect = csv.Sniffer().sniff(file_obj.read(2000))
             file_obj.seek(0)
             reader = csv.reader(file_obj, dialect)
-            target.send(reader)
+            # both header extractor and type_genertor need row
+            header_target.send(reader)
         finally:
             if file_obj is not None:
                 file_obj.close()
@@ -58,7 +59,7 @@ def coroutine(fn):
     return inner
 # input_data parser needs headers and data_key sent to it
 @coroutine
-def header_extract(target): # --> send to data_row_parser
+def header_extract(target): # --> send to row_parse_key_gen
     while True:
         reader = yield
         # file_obj = open(file_name)
@@ -94,7 +95,7 @@ def pipeline_coro():
 
 
 @coroutine
-def gen_data_type_key(target):  # from --> sample_data to:--> parse_data
+def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
     row_copy = None
     while True:
         data_row = yield row_copy
