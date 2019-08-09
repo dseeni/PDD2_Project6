@@ -129,18 +129,18 @@ from inspect import getgeneratorstate, getgeneratorlocals
 # print(type(next(parse_date('12/x2/2012', date_keys))) == str)
 
 
-@coroutine
-def myvar():
-    container = []
-    while True:
-        var = yield
-        container.append(var)
-        yield container
-#
-#
-#
-cvars = myvar()
-print(cvars.send('hi'))
+# @coroutine
+# def myvar():
+#     container = []
+#     while True:
+#         var = yield
+#         container.append(var)
+#         yield container
+# #
+# #
+# #
+# cvars = myvar()
+# print(cvars.send('hi'))
 
 # h = header_extract(cvars)
 # file_obj = open(fnames[0])
