@@ -5,7 +5,7 @@ from src.push_pipeline import *
 # import csv
 # from itertools import islice
 # from datetime import datetime
-# import os
+import os
 from inspect import getgeneratorstate, getgeneratorlocals
 
 # cars_header = header_extract(fcars)
@@ -153,6 +153,19 @@ from inspect import getgeneratorstate, getgeneratorlocals
 # print(type(ml))
 
 
+@coroutine
+def test_sink():
+    ml = []
+    while True:
+        # try:
+        row = yield
+        if row is not None:
+            print('sink got data')
+            for element in row:
+                ml.append(element)
+            print('sink yielding list')
+        yield ml
 
-
+sink = test_sink()
+print(sink.send('hi sink'))
 

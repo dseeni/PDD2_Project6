@@ -1,3 +1,4 @@
+import pytest
 from src.push_pipeline import *
 
 
@@ -5,6 +6,7 @@ def test_func():
     pass
 
 
+@pytest.mark.skip
 def test_save_data():
     data_writer = save_data('test_file.csv', ['test_headers'], 'output_data')
     data_writer.send(['this is a test line'])
@@ -23,8 +25,10 @@ def test_header_extract():
 
 
 def test_pipeline_handler(dummy_target):
-    pipeline_handler(fnames, dummy_target)
-    print(dummy_target)
+    dummy = dummy_target()
+    with file_handler(fnames[0]) as ph:
+        assert(next(ph)[0]) == 'Car'
+            # print(dd)
 
 
 def test_parse_date():

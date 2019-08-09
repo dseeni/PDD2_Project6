@@ -27,24 +27,26 @@ from copy import deepcopy
 
 
 @contextmanager
-def pipeline_handler(files_dict, header_target):
+def file_handler(file_name):
     # send to: header_creator, type_generator
     # pass in the dictionary of file/filter/name
-    file_obj = None
     print('pwd', os.getcwd())
-    os.chdir('/src')
-    for file in files_dict:
-        # open each file, sniff, and send rows
+    # os.chdir('./input_data')
+    # open the file, sniff, and send rows
+    file_obj = open(file_name)
+    try:
+        dialect = csv.Sniffer().sniff(file_obj.read(2000))
+        file_obj.seek(0)
+        reader = csv.reader(file_obj, dialect)
+        # both header extractor and type_genertor need row
+
+        yield reader
+    finally:
         try:
-            file_obj = open(file)
-            dialect = csv.Sniffer().sniff(file_obj.read(2000))
-            file_obj.seek(0)
-            reader = csv.reader(file_obj, dialect)
-            # both header extractor and type_genertor need row
-            header_target.send(reader)
-        finally:
-            if file_obj is not None:
-                file_obj.close()
+            next(file_obj)
+        except StopIteration:
+            pass
+        file_obj.close()
 #    def get_dialect(file_obj):
 #    sample = file_obj.read(2000)
 #    dialect = csv.Sniffer().sniff(sample)
@@ -64,6 +66,7 @@ def coroutine(fn):
 def header_extract(target): # --> send to row_parse_key_gen
     while True:
         reader = yield
+        class_name = yield
         # file_obj = open(file_name)
         headers = tuple(map(lambda l: l.lower(), next(reader)))
         target.send(headers)
@@ -126,6 +129,7 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
 
 
 
+# TODO: Refactor out Data_Tuple, let header_extract take care of is
 @coroutine
 def data_caster(file_name, single_parser, headers, single_class_name):
     file_obj = open(file_name)

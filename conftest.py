@@ -17,6 +17,7 @@ def dummy_target():
             row = yield
             if row is not None:
                 print('sink got data')
+                print('row I recieved', row)
                 for element in row:
                     ml.append(element)
                 print('sink yielding list')
