@@ -27,18 +27,26 @@ from copy import deepcopy
 
 
 @contextmanager
-def pipeline(file_names):
-    for file in file_names:
-        p = pipeline_coro()
+def pipeline_handler(files_dict, header_target, type_gen_target):
+    # send to: header_creator, type_generator
+    # pass in the dictionary of file/filter/name
+    file_obj = None
+    for file in files_dict:
+        # open each file, sniff, and send rows
         try:
-            yield p
+            file_obj = open(file)
+            dialect = csv.Sniffer().sniff(file_obj.read(2000))
+            file_obj.seek(0)
+            reader = csv.reader(file_obj, dialect)
+            target.send(reader)
         finally:
-            p.close()
-# def get_dialect(file_obj):
-#     sample = file_obj.read(2000)
-#     dialect = csv.Sniffer().sniff(sample)
-#     file_obj.seek(0)
-#     return dialect
+            if file_obj is not None:
+                file_obj.close()
+#    def get_dialect(file_obj):
+#    sample = file_obj.read(2000)
+#    dialect = csv.Sniffer().sniff(sample)
+#    file_obj.seek(0)
+#    return dialect
 
 
 # this coroutine decorator will prime your sub generators
@@ -48,6 +56,15 @@ def coroutine(fn):
         next(g)
         return g
     return inner
+# input_data parser needs headers and data_key sent to it
+@coroutine
+def header_extract(target): # --> send to data_row_parser
+    while True:
+        reader = yield
+        # file_obj = open(file_name)
+        headers = tuple(map(lambda l: l.lower(), next(reader)))
+        target.send(headers)
+
 
 
 @coroutine
@@ -104,17 +121,6 @@ def gen_data_type_key(target):  # from --> sample_data to:--> parse_data
         # else:
 
 
-# input_data parser needs headers and data_key sent to it
-@coroutine
-def header_extract(target):
-    while True:
-        file_obj = yield
-        # file_obj = open(file_name)
-        dialect = csv.Sniffer().sniff(file_obj.read(2000))
-        file_obj.seek(0)
-        reader = csv.reader(file_obj, dialect)
-        headers = tuple(map(lambda l: l.lower(), next(reader)))
-        target.send(headers)
 
 
 @coroutine

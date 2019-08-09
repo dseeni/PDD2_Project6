@@ -25,22 +25,22 @@ a files nested dictionary:
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
 --------------------------------------------------------------------------------
-
 USER_INPUT:
-    file name, a dictionary of filters
-    {file_name1: (car, make, year), filter_name_2: (mode, person, state)}
-    etc: #the keys are the output files, the values are the fitlers (in
-    this case headers)}
+a dictionary of filters:
+    {tuple(file_name_1, data row name): 'function_name': lambda_func
+    tuple(file_name_2, data row name): 'function_name': lambda_func
+    tuple(file_name_3, data row name): 'function_name': lambda_func}
+    
+    output_file = str(file_name - "input_data") + str(function_name)
 
-for file in files_dictionary:
     pipeline_handler --> opens all the files and closes them:
     (the only context manager in the program)
+        for file in files_dictionary:
+        with file open:
+            -read the row --> send the row for header extraction
+                         \--> send the row for data type key generation
 
-    with file open:
-        -read the row --> send the row for header extraction
-                     \--> send the row for data type key generation
 
-                     
         -extract headers --> create named tuple named tuple send next(line) to
         infer
 
