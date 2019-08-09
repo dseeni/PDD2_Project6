@@ -13,7 +13,7 @@ fticket = 'input_data/nyc_parking_tickets_extract.csv'
 fpersonal = 'input_data/personal_info.csv'
 fupdate = 'input_data/update_status.csv'
 
-fnames = fcars, femployment, fticket, fpersonal
+fnames = fcars, femployment, fticket, fpersonal, fupdate
 
 
 # Named Tuple Class Names
@@ -26,13 +26,23 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
+# (Filter Predicate Name, Filer Predicate) --> (Name, Func)
 
+# Filter Names
+
+
+# Filer Predicate
+
+
+# Output File name = File Name + Filter Name?
+
+
+# Date format keys
 date_key1 = '%d/%m/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 date_keys = (date_key1, date_key2)
 
-# get rid of these
-
+# get rid of these you don't need them probably...
 idx_make = 0
 idx_model = 1
 idx_year = 2

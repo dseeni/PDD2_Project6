@@ -153,19 +153,67 @@ from inspect import getgeneratorstate, getgeneratorlocals
 # print(type(ml))
 
 
-@coroutine
-def test_sink():
-    ml = []
-    while True:
-        # try:
-        row = yield
-        if row is not None:
-            print('sink got data')
-            for element in row:
-                ml.append(element)
-            print('sink yielding list')
-        yield ml
+# @coroutine
+# def test_sink():
+#     ml = []
+#     while True:
+#         # try:
+#         row = yield
+#         if row is not None:
+#             print('sink got data')
+#             for element in row:
+#                 ml.append(element)
+#             print('sink yielding list')
+#         yield ml
+#
+# sink = test_sink()
+# print(sink.send('hi sink'))
 
-sink = test_sink()
-print(sink.send('hi sink'))
+# working on constants.. shape them into UserDict
+
+# a dictionary of filters:
+# {tuple(file_name_1, data row name): 'function_name': lambda_func
+# tuple(file_name_2, data row name): 'function_name': lambda_func
+# tuple(file_name_3, data row name): 'function_name': lambda_func}
+
+file_and_row_tup = tuple(zip(fnames, class_names))
+print(*file_and_row_tup, sep='\n')
+
+
+# example:...
+# filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+#                                out_pink_cars)
+
+
+# def pred_ford_green(data_row):
+#     return (data_row[idx_make].lower() == 'ford'
+#             and data_row[idx_color].lower() == 'green')
+
+# lambda d where d is data_row...
+# example predicate: 'lambda d: d[idx_color].lower()'
+
+# filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+#
+# filters = (filter_pink_cars, filter_ford_green, filter_older)
+
+# cars:
+# 'Car;MPG;Cylinders;Displacement;Horsepower;Weight;Acceleration;Model;Origin'
+# 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
+
+# employment.csv
+# 'employer,department,employee_id,ssn'
+# 'Stiedemann-Bailey,Research and Development,29-0890771,100-53-9824'
+
+# nyc_parking_tickets_extract.csv
+# 'employer,department,employee_id,ssn'
+# '4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION'
+
+# personal_info.csv
+# 'ssn,first_name,last_name,gender,language'
+# '100-53-9824,Sebastiano,Tester,Male,Icelandic'
+
+# update_status.csv
+# 'ssn,last_updated,created'
+# '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
 

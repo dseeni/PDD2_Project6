@@ -25,12 +25,14 @@ a files nested dictionary:
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
 --------------------------------------------------------------------------------
-USER_INPUT:
+user_input:
+# todo: create a funciton that orgaizes the files as ordereddict/subdict maybe?
+format:
 a dictionary of filters:
     {tuple(file_name_1, data row name): 'function_name': lambda_func
     tuple(file_name_2, data row name): 'function_name': lambda_func
     tuple(file_name_3, data row name): 'function_name': lambda_func}
-    
+
     output_file = str(file_name - "input_data") + str(function_name)
 
     pipeline_handler --> opens all the files and closes them:
