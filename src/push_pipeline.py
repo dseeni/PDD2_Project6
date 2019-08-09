@@ -76,7 +76,7 @@ def pipeline_coro():
 
 
 @coroutine
-def infer_data_type(target):  # from --> sample_data
+def gen_data_type_key(target):  # from --> sample_data to:--> parse_data
     row_copy = None
     while True:
         data_row = yield row_copy

@@ -34,6 +34,7 @@ USER_INPUT:
 
 for file in files_dictionary:
     with file open:
+        -read the row --> send the row for header extraction
         -extract headers --> create named tuple named tuple send next(line) to
         infer
 

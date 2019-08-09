@@ -136,11 +136,12 @@ from inspect import getgeneratorstate, getgeneratorlocals
 #         var = yield
 #         container.append(var)
 #         yield container
-# #
-# #
-# #
+#
+#
 # cvars = myvar()
-# print(cvars.send('hi'))
+#
+# for i in range(1000):
+#     print(cvars.send('hi'))
 
 # h = header_extract(cvars)
 # file_obj = open(fnames[0])
