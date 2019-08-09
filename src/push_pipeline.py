@@ -27,12 +27,13 @@ from copy import deepcopy
 
 
 @contextmanager
-def pipeline():
-    p = pipeline_coro()
-    try:
-        yield p
-    finally:
-        p.close()
+def pipeline(file_names):
+    for file in file_names:
+        p = pipeline_coro()
+        try:
+            yield p
+        finally:
+            p.close()
 # def get_dialect(file_obj):
 #     sample = file_obj.read(2000)
 #     dialect = csv.Sniffer().sniff(sample)
@@ -116,8 +117,8 @@ def header_extract(target):
         target.send(headers)
 
 
-@contextmanager
-def data_reader(file_name, single_parser, headers, single_class_name):
+@coroutine
+def data_caster(file_name, single_parser, headers, single_class_name):
     file_obj = open(file_name)
     try:
         dialect = csv.Sniffer().sniff(file_obj.read(2000))
@@ -139,6 +140,21 @@ def data_reader(file_name, single_parser, headers, single_class_name):
         file_obj.close()
 
 
+# data reader --> sends out header, and sends out sample data row
+@coroutine
+def data_reader(file_name, header_targert, row_sample_target):
+    while True:
+        file_obj = open(file_name)
+
+        data = data_caster(file_name)
+        next(data)  # skip header row
+        for row in data:
+            parsed_row = [converter(item)
+                          for converter, item in zip(converters, row)]
+            yield parsed_row
+
+
+
 # @coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
@@ -157,15 +173,6 @@ def parse_date(value, date_keys_tuple):
                     valid_date = None
                     break
         return valid_date
-
-
-def data_parser(file_name):
-    data = data_reader(file_name)
-    next(data)  # skip header row
-    for row in data:
-        parsed_row = [converter(item)
-                      for converter, item in zip(converters, row)]
-        yield parsed_row
 
 
 @coroutine
