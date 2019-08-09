@@ -31,6 +31,8 @@ def pipeline_handler(files_dict, header_target):
     # send to: header_creator, type_generator
     # pass in the dictionary of file/filter/name
     file_obj = None
+    print('pwd', os.getcwd())
+    os.chdir('/src')
     for file in files_dict:
         # open each file, sniff, and send rows
         try:

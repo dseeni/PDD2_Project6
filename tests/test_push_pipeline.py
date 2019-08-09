@@ -22,6 +22,11 @@ def test_header_extract():
     pass
 
 
+def test_pipeline_handler(dummy_target):
+    pipeline_handler(fnames, dummy_target)
+    print(dummy_target)
+
+
 def test_parse_date():
     test_date = parse_date('2017-10-07T00:14:42Z', date_keys)
     assert test_date.year == 2017
