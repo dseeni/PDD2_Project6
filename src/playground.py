@@ -180,11 +180,12 @@ file_and_row_tup = tuple(zip(fnames, class_names))
 print(*file_and_row_tup, sep='\n')
 
 
-# example:...
-# filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
-#                                out_pink_cars)
+# example:...                               |output_file
+# where in d is data_row:
+# lambda d: d[idx_color].lower() == 'pink', out_pink_cars
 
 
+# example:...                               |output_file
 # def pred_ford_green(data_row):
 #     return (data_row[idx_make].lower() == 'ford'
 #             and data_row[idx_color].lower() == 'green')
@@ -216,4 +217,3 @@ print(*file_and_row_tup, sep='\n')
 # update_status.csv
 # 'ssn,last_updated,created'
 # '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
-

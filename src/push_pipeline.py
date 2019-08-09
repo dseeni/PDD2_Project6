@@ -224,5 +224,3 @@ def save_data(f_name, headers, dir_name):
                     writer.writerow(data_row)
         finally:
             os.chdir('..')
-
-
