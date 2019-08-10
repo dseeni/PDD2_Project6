@@ -1,4 +1,3 @@
-
 # cars.csv = 407 rows
 # employment.csv = 1001 rows
 # nyc_parking_ticket_extract.csv = 1001 rows
@@ -26,12 +25,26 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
-# (Filter Predicate Name, Filer Predicate) --> (Name, Func)
+# (Filter predicate name, filer predicate) --> (Name, Func)
+# Write filters by order of file names sda      :o you can zip them together
 
-# Filter Names
+# power_cars_filter:
+# cylinder > 4,  Horsepower > 200,  and Origin:USA
+# cylinder > 4,  horsepower > 200,  and Origin:Europe
+# cylinder > 4,  Horsepower > 200,  and Origin:Japan
+
+# filter names
+# muscle_cars
+
+
+
 
 
 # Filer Predicate
+
+
+
+
 
 
 # Output File name = File Name + Filter Name?

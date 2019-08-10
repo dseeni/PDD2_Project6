@@ -195,7 +195,7 @@ print(*file_and_row_tup, sep='\n')
 
 # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
 # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-#
+
 # filters = (filter_pink_cars, filter_ford_green, filter_older)
 
 # cars:
