@@ -65,7 +65,7 @@ def coroutine(fn):
     return inner
 # input_data parser needs headers and data_key sent to it
 @coroutine
-def header_extract(target): # --> send to row_parse_key_gen
+def header_extract(target):  # --> send to row_parse_key_gen
     while True:
         reader = yield
         class_name = yield
@@ -74,16 +74,23 @@ def header_extract(target): # --> send to row_parse_key_gen
         target.send(headers)
 
 
-
 @coroutine
-def pipeline_coro():
+def pipeline_coro(**data_packages):
+    # for data_package in data_packages:
+    #    for inputfile, classname, outputfile, predicate in datapackage:
+    #    do stuff:
+
+    # instantiate functions parameters..
+    # can you instantiate without symbol binding?
+
+    # instance save data writers:
     out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
     out_ford_green = save_data('ford_green.csv', header_extract(fcars))
     out_older = save_data('older.csv', header_extract(fcars))
 
-    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',    
+    # filter instances with predicates
+    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
                                    out_pink_cars)
-
     # predicates can be defined as filters..
     def pred_ford_green(data_row):
         return (data_row[idx_make].lower() == 'ford'
@@ -94,6 +101,7 @@ def pipeline_coro():
 
     filters = (filter_pink_cars, filter_ford_green, filter_older)
 
+    # your brodcaster must send data from row
     broadcaster = broadcast(filters)
 
     while True:
@@ -129,8 +137,6 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
         # else:
 
 
-
-
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
 @coroutine
 def data_caster(file_name, single_parser, headers, single_class_name):
@@ -160,14 +166,15 @@ def data_caster(file_name, single_parser, headers, single_class_name):
 def data_reader(file_name, header_targert, row_sample_target):
     while True:
         file_obj = open(file_name)
-
+        # TODO: just yield to header
+        #   yield to sample data
+        #   then keep yielding removing the converter code below
         data = data_caster(file_name)
         next(data)  # skip header row
         for row in data:
             parsed_row = [converter(item)
                           for converter, item in zip(converters, row)]
             yield parsed_row
-
 
 
 # @coroutine

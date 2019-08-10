@@ -13,8 +13,7 @@ a files nested dictionary:
 --------------------------------------------------------------------------------
 # TODO: CHECKLIST:
 --------------------------------------------------------------------------------
-# TODO: make your test objects send to targets based on
-# TODO: arguments, easy to test then
+# TODO: functions take in targets as arguments
 
 # TODO: concatenate file name
 # TODO: join os path
@@ -25,12 +24,17 @@ a files nested dictionary:
 --------------------------------------------------------------------------------
 USER_INPUT:
 FORMAT:
-a dictionary of filters:
-    {tuple(file_name_1, data row name): 'function_name': lambda_func
-    tuple(file_name_2, data row name): 'function_name': lambda_func
-    tuple(file_name_3, data row name): 'function_name': lambda_func}
+zip up output files and filter predicates, broadcaster sends them to
+filter_data () and save_data()
 
-    output_file = str(file_name - "input_data") + str(function_name)
+zip up inputfile, classname, outputfile, and predicates
+
+zip up file/predicate tuples into one big tuple, pass that to pipeline_coro()
+
+
+# files and named tuples can be zipped
+# predicates and output files can be zipped
+
 
     pipeline_handler --> opens all the files and closes them:
     (the only context manager in the program)

@@ -38,7 +38,7 @@ class_names = (cars_class_name, employment_class_name,
 muscle_cars = 'American_Muscle_Cars'
 japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
 heavy_cars = 'Heavy_Cars'
-chevy_monte_carlo = 'American_Chevy_Monte_Carlo_Cars'
+chevy_monte_carlo = 'American_Chevy_Monte_Carlo'
 
 vehicle_output = (muscle_cars, japenese_fuel,
                   heavy_cars, chevy_monte_carlo)
