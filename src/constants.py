@@ -118,22 +118,43 @@ def pred_carroll_all_depts(data_row):
 # ------------------------------------------------------------------------------
 def pred_nyc_bmw_school_zone(data_row):
     if (data_row.violation_description == "PHTO SCHOOL ZN SPEED VIOLATION"
-       and data_row.vehicle_make == "BMW"):
+            and data_row.vehicle_make == "BMW"):
         return data_row
 
 
 def pred_honda_no_parking(data_row):
     if (data_row.violation_description == "21-No Parking (street clean)"
-       and data_row.vehicle_make == "HONDA"):
+            and data_row.vehicle_make == "HONDA"):
         return data_row
 
 
 # Filter Predicate for Personal_Info:
 # ------------------------------------------------------------------------------
+def pred_icelandic_women(data_row):
+    if (data_row.language == 'Icelandic'
+            and data_row.gender == 'Female'):
+        return data_row
+
+
+def pred_telugu_speakers(data_row):
+    if data_row.language == 'Telugu':
+        return data_row
+
+
+def pred_korean_men(data_row):
+    if (data_row.language == 'Korean'
+            and data_row.gener == 'Male'):
+        return data_row
+
 
 # Filter Predicate for Update_Status:
 # ------------------------------------------------------------------------------
+def pred_new_updates_march18(data_row):
+    if data_row.something == 'Newest_Updates' # March 2018
 
+
+def pred_old_updates_april17(data_row):
+    if data_row.something == 'Oldest_Updates' # April 2017
 
 # Output File name = File Name + Filter Name?
 
