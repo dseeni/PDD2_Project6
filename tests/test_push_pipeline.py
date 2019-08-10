@@ -33,13 +33,13 @@ def test_pipeline_handler(dummy_target):
 
 
 def test_parse_date():
-    test_date = parse_date('2017-10-07T00:14:42Z', date_keys)
+    test_date = next(parse_date('2017-10-07T00:14:42Z', date_keys))
     assert test_date.year == 2017
     assert test_date.month == 10
     assert test_date.day == int('07')
-    assert parse_date('12/x2/2012', date_keys) is None
-    assert type(parse_date('12/12/2012', date_keys)) == datetime
-    assert type(parse_date('2017-10-07T00:14:42Z', date_keys)) == datetime
+    assert next(parse_date('12/x2/2012', date_keys)) is None
+    assert type(next(parse_date('12/12/2012', date_keys))) == datetime
+    assert type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime
 
 
 def test_infer_data_type(dummy_target):  # from --> sample_data

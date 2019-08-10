@@ -30,10 +30,8 @@ filter_data () and save_data()
 zip up inputfile, classname, outputfile, and predicates
 
 zip up file/predicate tuples into one big tuple, pass that to pipeline_coro()
-
-
-# files and named tuples can be zipped
-# predicates and output files can be zipped
+    # files and named tuples can be zipped
+    # predicates and output files can be zipped
 
 
     pipeline_handler --> opens all the files and closes them:

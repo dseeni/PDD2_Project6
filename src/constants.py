@@ -1,4 +1,4 @@
-from src.push_pipeline import parse_date
+import src.push_pipeline
 from itertools import chain
 
 # cars.csv = 407 rows
@@ -178,13 +178,13 @@ personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
     if (data_row.something >
-            parse_date('2018-03-01T00:00:00ZZ', date_keys)):
+            src.push_pipeline.parse_date('2018-03-01T00:00:00ZZ', date_keys)):
         return data_row
 
 
 def pred_old_updates_april17(data_row):
     if (data_row.last_updated <
-            parse_date('2017-04-01T00:00:00Z', date_keys)):
+            src.push_pipeline.parse_date('2017-04-01T00:00:00Z', date_keys)):
         return data_row
 
 
@@ -194,9 +194,9 @@ update_status_predicates = (pred_new_updates_march18,
 input_package = (infile for infile in (zip(fnames, class_names)))
 
 output_files = (outfile for outfile in (chain(vehicle_output, emp_output,
-                                        ticket_output,
-                                  personal_output,
-                                  update_status_output)))
+                                              ticket_output,
+                                              personal_output,
+                                              update_status_output)))
 
 predicates = (_ for _ in
               (chain(vehicle_predicates, emp_predicates, ticket_predicates,

@@ -49,6 +49,8 @@ def file_handler(file_name):
         except StopIteration:
             pass
         file_obj.close()
+
+
 #    def get_dialect(file_obj):
 #    sample = file_obj.read(2000)
 #    dialect = csv.Sniffer().sniff(sample)
@@ -62,7 +64,10 @@ def coroutine(fn):
         g = fn(*args, **kwargs)
         next(g)
         return g
+
     return inner
+
+
 # input_data parser needs headers and data_key sent to it
 @coroutine
 def header_extract(target):  # --> send to row_parse_key_gen
@@ -91,6 +96,7 @@ def pipeline_coro(input_package, output_package):
     # filter instances with predicates
     filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
                                    out_pink_cars)
+
     # predicates can be defined as filters..
     def pred_ford_green(data_row):
         return (data_row[idx_make].lower() == 'ford'
@@ -117,7 +123,7 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
         row_copy = deepcopy(data_row)
         for value in row_copy:
             # try:
-            if parse_date(value, date_keys) is None:
+            if next(parse_date(value, date_keys)) is None:
 
                 if value is None:
                     row_copy[row_copy.index(value)] = None
@@ -177,24 +183,24 @@ def data_reader(file_name, header_targert, row_sample_target):
             yield parsed_row
 
 
-# @coroutine
+@coroutine
 def parse_date(value, date_keys_tuple):
     valid_date = None
     while True:
         for _ in range(len(date_keys_tuple)):
             # while valid_date is None:
             # while True:
-                try:
-                    # print('try:', _)
-                    valid_date = datetime.strptime(value, date_keys_tuple[_])
-                except ValueError:
-                    _ += 1
-                    continue
-                except IndexError:
-                    print('Unrecognizable Date Format: cast as str')
-                    valid_date = None
-                    break
-        return valid_date
+            try:
+                # print('try:', _)
+                valid_date = datetime.strptime(value, date_keys_tuple[_])
+            except ValueError:
+                _ += 1
+                continue
+            except IndexError:
+                print('Unrecognizable Date Format: cast as str')
+                valid_date = None
+                break
+        yield valid_date
 
 
 @coroutine
