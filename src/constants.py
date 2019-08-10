@@ -1,4 +1,5 @@
 from src.push_pipeline import parse_date
+from itertools import chain
 
 # cars.csv = 407 rows
 # employment.csv = 1001 rows
@@ -33,7 +34,7 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
-# Output File Name for Vehicle_Info
+# Output File Names for Vehicle_Info
 # ------------------------------------------------------------------------------
 muscle_cars = 'American_Muscle_Cars'
 japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
@@ -43,7 +44,7 @@ chevy_monte_carlo = 'American_Chevy_Monte_Carlo'
 vehicle_output = (muscle_cars, japenese_fuel,
                   heavy_cars, chevy_monte_carlo)
 
-# Output File Name for Employment_Info
+# Output File Names for Employment_Info
 # ------------------------------------------------------------------------------
 kohler_engineers = 'Kohler_Engineering_Dept_Employees'
 sales_employees = 'All_Sales_Depts_Employees'
@@ -53,14 +54,14 @@ carroll_employees = 'All_Employees_at_Carroll_Company'
 emp_output = (kohler_engineers, sales_employees,
               rd_employees, carroll_employees)
 
-# Output File Name for Ticket_Info
+# Output File Names for Ticket_Info
 # ------------------------------------------------------------------------------
 nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
 honda_no_parking = 'Honda_No_Parking_Tickets'
 
 ticket_output = (nyc_bmw_school_zone, honda_no_parking)
 
-# Output File Name for Personal_Info
+# Output File Names for Personal_Info
 # ------------------------------------------------------------------------------
 icelandic_female_speakers = 'Iceland_Speaking_Woman'
 telugu_speakers = 'All_Telugu_Speakers'
@@ -69,7 +70,7 @@ korean_male_speakers = 'Korean_Speaking_Men'
 personal_output = (icelandic_female_speakers, telugu_speakers,
                    korean_male_speakers)
 
-# Output File Name for Update_Status
+# Output File Names for Update_Status
 # ------------------------------------------------------------------------------
 new_updates_march18 = 'Newest_Updates'
 old_updates_april17 = 'Oldest_Updates'
@@ -77,7 +78,7 @@ old_updates_april17 = 'Oldest_Updates'
 update_status_output = (new_updates_march18, old_updates_april17)
 
 
-# Filter Predicate for Vehicle_Info
+# Filter Predicates for Vehicle_Info
 # ------------------------------------------------------------------------------
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
@@ -133,7 +134,7 @@ emp_predicates = (pred_kohler_engineering_dept, pred_sales_employees,
                   pred_rd_employees, pred_carroll_all_depts)
 
 
-# Filter Predicate for Ticket_Info
+# Filter Predicates for Ticket_Info
 # ------------------------------------------------------------------------------
 def pred_nyc_bmw_school_zone(data_row):
     if (data_row.violation_description == "PHTO SCHOOL ZN SPEED VIOLATION"
@@ -150,7 +151,7 @@ def pred_honda_no_parking(data_row):
 ticket_predicates = (pred_nyc_bmw_school_zone, pred_honda_no_parking)
 
 
-# Filter Predicate for Personal_Info
+# Filter Predicates for Personal_Info
 # ------------------------------------------------------------------------------
 def pred_icelandic_women(data_row):
     if (data_row.language == 'Icelandic'
@@ -173,7 +174,7 @@ personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
                        pred_kohler_engineering_dept)
 
 
-# Filter Predicate for Update_Status
+# Filter Predicates for Update_Status
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
     if (data_row.something >
@@ -189,3 +190,16 @@ def pred_old_updates_april17(data_row):
 
 update_status_predicates = (pred_new_updates_march18,
                             pred_old_updates_april17)
+
+input_package = (infile for infile in (zip(fnames, class_names)))
+
+output_files = (outfile for outfile in (chain(vehicle_output, emp_output,
+                                        ticket_output,
+                                  personal_output,
+                                  update_status_output)))
+
+predicates = (_ for _ in
+              (chain(vehicle_predicates, emp_predicates, ticket_predicates,
+                     personal_predicates, update_status_predicates)))
+
+output_package = (_ for _ in (zip(output_files, predicates)))

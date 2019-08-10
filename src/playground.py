@@ -9,7 +9,7 @@ import os
 from inspect import getgeneratorstate, getgeneratorlocals
 from collections import namedtuple
 from src.constants import *
-from itertools import zip_longest
+from itertools import chain
 
 
 # cars_header = header_extract(fcars)
@@ -222,14 +222,10 @@ from itertools import zip_longest
 # 'ssn,last_updated,created'
 # '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
 
-ml1 = [i for i in range(10)]
-
-ml2 = [i for i in range(15)]
-
-print(list(zip_longest(ml1, ml2, fillvalue=None)))
-
-print(list(zip_longest(fnames, class_names, vehicle_output, emp_output,
-                       fillvalue=None)))
-
 # files and named tuples can be zipped
 # predicates and output files can be zipped
+
+# print(*input_package, sep='\n')
+# print(list(output_package))
+# print('230:', *output_package, sep='\n')
+

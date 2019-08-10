@@ -75,7 +75,7 @@ def header_extract(target):  # --> send to row_parse_key_gen
 
 
 @coroutine
-def pipeline_coro(**data_packages):
+def pipeline_coro(input_package, output_package):
     # for data_package in data_packages:
     #    for inputfile, classname, outputfile, predicate in datapackage:
     #    do stuff:
