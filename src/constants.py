@@ -6,6 +6,7 @@
 
 
 # Files
+# ------------------------------------------------------------------------------
 fcars = 'input_data/cars.csv'
 femployment = 'input_data/employment.csv'
 fticket = 'input_data/nyc_parking_tickets_extract.csv'
@@ -16,6 +17,7 @@ fnames = fcars, femployment, fticket, fpersonal, fupdate
 
 
 # Named Tuple Class Names
+# ------------------------------------------------------------------------------
 cars_class_name = 'Vehicle_Info'
 employment_class_name = 'Employment_Info'
 ticket_class_name = 'Ticket_Info'
@@ -26,11 +28,13 @@ class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
 # Date format keys
+# ------------------------------------------------------------------------------
 date_key1 = '%d/%m/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 date_keys = (date_key1, date_key2)
 
 # Filter Names for Vehicle_Info:
+# ------------------------------------------------------------------------------
 muscle_cars = 'American_Muscle_Cars'
 japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
 heavy_cars = 'Heavy_Cars'
@@ -38,6 +42,7 @@ chevy_monte_carlo = 'American_Chevy_Monte_Carlo_Cars'
 
 
 # Filter Names for Employment_Info:
+# ------------------------------------------------------------------------------
 kohler_engineering_dept = 'Kohler_Engineering_Dept_Employees'
 all_sales_depts = 'All_Sales_Depts_Employees'
 all_r_and_d_employees = 'All_Research_and_Development_Employees'
@@ -45,66 +50,68 @@ carroll_all_depts = 'All_Employees_at_Carroll_Company'
 
 
 # Filter Names for Ticket_Info:
+# ------------------------------------------------------------------------------
 nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
 honda_no_parking = 'Honda_No_Parking_Tickets'
 
 # Filter Names for Personal_Info:
+# ------------------------------------------------------------------------------
 icelandic_women = 'Iceland_Speaking_Woman'
 telugu_speakers = 'All_Telugu_Speakers'
 korean_men = 'Korean_Speaking_Men'
 
 # Filter Names for Update_Status:
+# ------------------------------------------------------------------------------
 new_updates_march18 = 'Newest_Updates' # March 2018
 old_updates_april17 = 'Oldest_Updates' # April 2017
 
 
-# Filter Predicates for Vehicle_Info:
+# Filter Predicate for Vehicle_Info:
+# ------------------------------------------------------------------------------
 # American Muscle Cars:
 def pred_muscle_cars(data_row):
-    if all(v is True for v in
-               (getattr(data_row, 'cylinders') > 4,
-                getattr(data_row, 'horsepower') > 200,
-                getattr(data_row, 'origin') == 'US',
-                getattr(data_row, 'acceleration') > 20)):
+    if all(v is True for v in (getattr(data_row, 'cylinders') > 4,
+                               getattr(data_row, 'horsepower') > 200,
+                               getattr(data_row, 'origin') == 'US',
+                               getattr(data_row, 'acceleration') > 15)):
         return data_row
 
 
-# Japanese Fuel Efficent Cars:
+# Japanese Fuel Efficient Cars:
 def pred_japanese_fuel(data_row):
-    if all(v is True for v in
-              (getattr(data_row, 'mpg') > 35,
-               getattr(data_row, 'origin') == 'Japan')):
+    if all(v is True for v in (getattr(data_row, 'mpg') > 35,
+                               getattr(data_row, 'origin') == 'Japan')):
         return data_row
-
 
 
 # Heavy Cars:
-
+def pred_heavy_cars(data_row):
+    if getattr(data_row, 'mpg') > 3500:
+        return data_row
 
 
 # Chevy Monte Carlos:
+# chevy_monte_carlo
 
 
 
 
-
-# Filters for 'Employment_Info'
-
-'Nameoffilter', (lambda d: all(v is True for v in
-                                        (getattr(d, 'cylinders') > 4,
-                                         getattr(d, 'horsepower') > 200,
-                                         getattr(d, 'origin') == 'US',
-                                         getattr(d, 'acceleration') > 20))),
-
- ('Fuel_Efficent_Japanese_Cars', (lambda d: all(v is True for v in
-                                                (getattr(d, 'mpg') > 35,
-                                                 getattr(d, 'origin') == 'Japan'))))
+# Filter Predicate for'Employment_Info'
+# kohler_engineering_dept
+# all_sales_depts
+# all_r_and_d_employees
+# carroll_all_depts
 
 
 
+# Filter Predicate for Ticket_Info:
+# nyc_bmw_school_zone
+# honda_no_parking
 
 
-
+# Filter Names for Ticket_Info:
+# nyc_bmw_school_zone
+# honda_no_parking
 
 
 # predicate = lambda d: getattr(d, 'What') > 100
