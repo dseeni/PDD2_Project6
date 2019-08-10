@@ -25,11 +25,91 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
-# (Filter predicate name, filer predicate) --> (Name, Func)
-# Write filters by order of file names sda      :o you can zip them together
+# Date format keys
+date_key1 = '%d/%m/%Y'
+date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+date_keys = (date_key1, date_key2)
 
-# power_cars_filter:
-# cylinder > 4,  Horsepower > 200,  and Origin:USA
+# Filter Names for Vehicle_Info:
+muscle_cars = 'American_Muscle_Cars'
+japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
+heavy_cars = 'Heavy_Cars'
+chevy_monte_carlo = 'American_Chevy_Monte_Carlo_Cars'
+
+
+# Filter Names for Employment_Info:
+kohler_engineering_dept = 'Kohler_Engineering_Dept_Employees'
+all_sales_depts = 'All_Sales_Depts_Employees'
+all_r_and_d_employees = 'All_Research_and_Development_Employees'
+carroll_all_depts = 'All_Employees_at_Carroll_Company'
+
+
+# Filter Names for Ticket_Info:
+nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
+honda_no_parking = 'Honda_No_Parking_Tickets'
+
+# Filter Names for Personal_Info:
+icelandic_women = 'Iceland_Speaking_Woman'
+telugu_speakers = 'All_Telugu_Speakers'
+korean_men = 'Korean_Speaking_Men'
+
+# Filter Names for Update_Status:
+new_updates_march18 = 'Newest_Updates' # March 2018
+old_updates_april17 = 'Oldest_Updates' # April 2017
+
+
+# Filter Predicates for Vehicle_Info:
+# American Muscle Cars:
+def pred_muscle_cars(data_row):
+    if all(v is True for v in
+               (getattr(data_row, 'cylinders') > 4,
+                getattr(data_row, 'horsepower') > 200,
+                getattr(data_row, 'origin') == 'US',
+                getattr(data_row, 'acceleration') > 20)):
+        return data_row
+
+
+# Japanese Fuel Efficent Cars:
+def pred_japanese_fuel(data_row):
+    if all(v is True for v in
+              (getattr(data_row, 'mpg') > 35,
+               getattr(data_row, 'origin') == 'Japan')):
+        return data_row
+
+
+
+# Heavy Cars:
+
+
+
+# Chevy Monte Carlos:
+
+
+
+
+
+# Filters for 'Employment_Info'
+
+'Nameoffilter', (lambda d: all(v is True for v in
+                                        (getattr(d, 'cylinders') > 4,
+                                         getattr(d, 'horsepower') > 200,
+                                         getattr(d, 'origin') == 'US',
+                                         getattr(d, 'acceleration') > 20))),
+
+ ('Fuel_Efficent_Japanese_Cars', (lambda d: all(v is True for v in
+                                                (getattr(d, 'mpg') > 35,
+                                                 getattr(d, 'origin') == 'Japan'))))
+
+
+
+
+
+
+
+
+# predicate = lambda d: getattr(d, 'What') > 100
+# all(v is True for v in (x<10, x>100, x==100))
+
 # cylinder > 4,  horsepower > 200,  and Origin:Europe
 # cylinder > 4,  Horsepower > 200,  and Origin:Japan
 
@@ -37,10 +117,11 @@ class_names = (cars_class_name, employment_class_name,
 # muscle_cars
 
 
+# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
 
 
 
-# Filer Predicate
+# Filter Predicate
 
 
 
@@ -50,16 +131,13 @@ class_names = (cars_class_name, employment_class_name,
 # Output File name = File Name + Filter Name?
 
 
-# Date format keys
-date_key1 = '%d/%m/%Y'
-date_key2 = '%Y-%m-%dT%H:%M:%SZ'
-date_keys = (date_key1, date_key2)
-
-# get rid of these you don't need them probably...
-idx_make = 0
-idx_model = 1
-idx_year = 2
-idx_vin = 3
-idx_color = 4
 
 
+# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+# (filter_name, F(n))                     \s
+# power_cars_filter:
+# cylinder > 4,  Horsepower > 200,  and Origin:USA
+
+# def pred_ford_green(data_row):
+#     return (data_row[idx_make].lower() == 'ford'
+#             and data_row[idx_color].lower() == 'green')

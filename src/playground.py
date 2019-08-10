@@ -1,5 +1,5 @@
 # from src.constants import *
-from src.push_pipeline import *
+# from src.push_pipeline import *
 # from collections import namedtuple
 # from contextlib import contextmanager
 # import csv
@@ -7,6 +7,7 @@ from src.push_pipeline import *
 # from datetime import datetime
 import os
 from inspect import getgeneratorstate, getgeneratorlocals
+from collections import namedtuple
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -176,8 +177,8 @@ from inspect import getgeneratorstate, getgeneratorlocals
 # tuple(file_name_2, data row name): 'function_name': lambda_func
 # tuple(file_name_3, data row name): 'function_name': lambda_func}
 
-file_and_row_tup = tuple(zip(fnames, class_names))
-print(*file_and_row_tup, sep='\n')
+# file_and_row_tup = tuple(zip(fnames, class_names))
+# print(*file_and_row_tup, sep='\n')
 
 
 # example:...                               |output_file
@@ -217,3 +218,16 @@ print(*file_and_row_tup, sep='\n')
 # update_status.csv
 # 'ssn,last_updated,created'
 # '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
+
+# NamedTuple testing:
+cars = namedtuple('cars', 'What, Can, I, Do')
+mc = cars(1, 2, 3, 4)
+# print(getattr(eval('mc'), 'Do'))
+# predicate = lambda d: getattr(d, 'What') > 100
+
+
+# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+
+x = 100
+all(v is True for v in (x<10, x>100, x==100))
+# if all(v is not None for v in (self._n, self._r))
