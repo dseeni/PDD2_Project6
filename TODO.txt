@@ -131,8 +131,9 @@ def pipeline_coro():
 #     return dialect
 
 
-Vehicle_Info
-Employment_Info
-Ticket_Info
-Personal_Info
-Update_Status
+# Vehicle_Info
+# Employment_Info
+# Ticket_Info
+# Personal_Info
+# Update_Status
+
