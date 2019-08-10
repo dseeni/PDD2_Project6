@@ -12,7 +12,7 @@ date_key1 = '%d/%m/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 date_keys = (date_key1, date_key2)
 
-# Files
+# Input Files
 # ------------------------------------------------------------------------------
 fcars = 'input_data/cars.csv'
 femployment = 'input_data/employment.csv'
@@ -21,7 +21,6 @@ fpersonal = 'input_data/personal_info.csv'
 fupdate = 'input_data/update_status.csv'
 
 fnames = fcars, femployment, fticket, fpersonal, fupdate
-
 
 # Named Tuple Class Names
 # ------------------------------------------------------------------------------
@@ -34,41 +33,51 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
-
-# Filter Names for Vehicle_Info:
+# Output File Name for Vehicle_Info
 # ------------------------------------------------------------------------------
 muscle_cars = 'American_Muscle_Cars'
 japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
 heavy_cars = 'Heavy_Cars'
 chevy_monte_carlo = 'American_Chevy_Monte_Carlo_Cars'
 
+vehicle_output = (muscle_cars, japenese_fuel,
+                  heavy_cars, chevy_monte_carlo)
 
-# Filter Names for Employment_Info:
+# Ouput File Name for Employment_Info
 # ------------------------------------------------------------------------------
-kohler_engineering_dept = 'Kohler_Engineering_Dept_Employees'
-all_sales_depts = 'All_Sales_Depts_Employees'
+kohler_engineers = 'Kohler_Engineering_Dept_Employees'
+sales_employees = 'All_Sales_Depts_Employees'
 rd_employees = 'All_Research_and_Development_Employees'
-carroll_all_depts = 'All_Employees_at_Carroll_Company'
+carroll_employees = 'All_Employees_at_Carroll_Company'
 
+emp_output = (kohler_engineers, sales_employees,
+              rd_employees, carroll_employees)
 
-# Filter Names for Ticket_Info:
+# Ouput File Name for Ticket_Info
 # ------------------------------------------------------------------------------
 nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
 honda_no_parking = 'Honda_No_Parking_Tickets'
 
-# Filter Names for Personal_Info:
-# ------------------------------------------------------------------------------
-icelandic_women = 'Iceland_Speaking_Woman'
-telugu_speakers = 'All_Telugu_Speakers'
-korean_men = 'Korean_Speaking_Men'
+ticket_output = (nyc_bmw_school_zone, honda_no_parking)
 
-# Filter Names for Update_Status:
+# Ouput File Name for Personal_Info
+# ------------------------------------------------------------------------------
+icelandic_female_speakers = 'Iceland_Speaking_Woman'
+telugu_speakers = 'All_Telugu_Speakers'
+korean_male_speakers = 'Korean_Speaking_Men'
+
+personal_output = (icelandic_female_speakers, telugu_speakers,
+                   korean_male_speakers)
+
+# Ouput File Name for Update_Status
 # ------------------------------------------------------------------------------
 new_updates_march18 = 'Newest_Updates'
 old_updates_april17 = 'Oldest_Updates'
 
+update_status_output = (new_updates_march18, old_updates_april17)
 
-# Filter Predicate for Vehicle_Info:
+
+# Filter Predicate for Vehicle_Info
 # ------------------------------------------------------------------------------
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
@@ -94,6 +103,10 @@ def pred_chevy_monte_carlo(data_row):
         return data_row
 
 
+vehicle_predicates = (pred_muscle_cars, pred_japanese_fuel,
+                      pred_heavy_cars, pred_chevy_monte_carlo)
+
+
 # Filter Predicates for'Employment_Info':
 # ------------------------------------------------------------------------------
 def pred_kohler_engineering_dept(data_row):
@@ -101,7 +114,7 @@ def pred_kohler_engineering_dept(data_row):
         return data_row
 
 
-def pred_all_sales_depts(data_row):
+def pred_sales_employees(data_row):
     if data_row.department == 'Sales':
         return data_row
 
@@ -116,6 +129,10 @@ def pred_carroll_all_depts(data_row):
         return data_row
 
 
+emp_predicates = (pred_kohler_engineering_dept, pred_sales_employees,
+                         pred_rd_employees, pred_carroll_all_depts)
+
+
 # Filter Predicate for Ticket_Info:
 # ------------------------------------------------------------------------------
 def pred_nyc_bmw_school_zone(data_row):
@@ -128,6 +145,9 @@ def pred_honda_no_parking(data_row):
     if (data_row.violation_description == "21-No Parking (street clean)"
             and data_row.vehicle_make == "HONDA"):
         return data_row
+
+
+ticket_predicates = (pred_nyc_bmw_school_zone, pred_honda_no_parking)
 
 
 # Filter Predicate for Personal_Info:
@@ -149,6 +169,10 @@ def pred_korean_men(data_row):
         return data_row
 
 
+personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
+                       pred_kohler_engineering_dept)
+
+
 # Filter Predicate for Update_Status:
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
@@ -162,3 +186,5 @@ def pred_old_updates_april17(data_row):
             parse_date('2017-04-01T00:00:00Z', date_keys)):
         return data_row
 
+
+update_status_predicates
