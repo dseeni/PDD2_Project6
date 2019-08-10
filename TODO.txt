@@ -11,23 +11,20 @@ a files nested dictionary:
                      outputfile_2: lambda filter
                      outputfile_3: lambda filter}}
 --------------------------------------------------------------------------------
-# TODO: Checklist
+# TODO: CHECKLIST:
 --------------------------------------------------------------------------------
 # TODO: make your test objects send to targets based on
 # TODO: arguments, easy to test then
 
-# TODO: overwrite file
-# TODO: if file exists delete
 # TODO: concatenate file name
 # TODO: join os path
-# TODO: read and overwrite a file in Python
 
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
+# TODO: Pair together output_files, predicates, and class_names
 --------------------------------------------------------------------------------
-user_input:
-# todo: create a funciton that orgaizes the files as ordereddict/subdict maybe?
-format:
+USER_INPUT:
+FORMAT:
 a dictionary of filters:
     {tuple(file_name_1, data row name): 'function_name': lambda_func
     tuple(file_name_2, data row name): 'function_name': lambda_func
