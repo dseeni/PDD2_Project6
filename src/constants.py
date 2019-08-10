@@ -96,12 +96,11 @@ def pred_chevy_monte_carlo(data_row):
         return data_row
 
 
-
 # Filter Predicates for'Employment_Info':
 # ------------------------------------------------------------------------------
 def pred_kohler_engineering_dept(data_row):
-    pass
-
+    if 'Kohler' in data_row.department():
+        return data_row
 
 
 def pred_all_sales_depts(data_row):
@@ -113,10 +112,8 @@ def pred_all_r_and_d_employees(data_row):
     pass
 
 
-
 def pred_carroll_all_depts(data_row):
     pass
-
 
 
 # Filter Predicate for Ticket_Info:
@@ -130,7 +127,6 @@ def pred_carroll_all_depts(data_row):
 # honda_no_parking
 
 
-
 # Filter Predicate for Personal_Info:
 # ------------------------------------------------------------------------------
 
@@ -138,12 +134,7 @@ def pred_carroll_all_depts(data_row):
 # ------------------------------------------------------------------------------
 
 
-
-
-
 # Output File name = File Name + Filter Name?
-
-
 
 
 # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)

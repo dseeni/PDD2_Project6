@@ -26,6 +26,7 @@ from copy import deepcopy
 # headers = ('make', 'model', 'year', 'vin', 'color')
 
 # TODO: Make to lower case headers as well as replace whitespace with _
+# TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
 def file_handler(file_name):

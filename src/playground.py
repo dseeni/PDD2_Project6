@@ -219,15 +219,8 @@ from collections import namedtuple
 # 'ssn,last_updated,created'
 # '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
 
-# NamedTuple testing:
-cars = namedtuple('cars', 'What, Can, I, Do')
-mc = cars(1, 2, 3, 4)
-# print(getattr(eval('mc'), 'Do'))
-# predicate = lambda d: getattr(d, 'What') > 100
+string = 'hello world'
 
 
-# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-
-x = 100
-all(v is True for v in (x<10, x>100, x==100))
-# if all(v is not None for v in (self._n, self._r))
+if 'hello' in string:
+    print(True)

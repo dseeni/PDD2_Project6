@@ -2,6 +2,7 @@ import pytest
 from src.push_pipeline import *
 
 
+# TODO: Setup independent test_cars.csv folder/file and filters to test
 def test_func():
     pass
 
