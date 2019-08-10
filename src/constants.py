@@ -70,33 +70,35 @@ old_updates_april17 = 'Oldest_Updates' # April 2017
 # ------------------------------------------------------------------------------
 # American Muscle Cars:
 def pred_muscle_cars(data_row):
-    if all(v is True for v in (getattr(data_row, 'cylinders') > 4,
-                               getattr(data_row, 'horsepower') > 200,
-                               getattr(data_row, 'origin') == 'US',
-                               getattr(data_row, 'acceleration') > 15)):
+    if all(v is True for v in (data_row.cylinders > 4,
+                               data_row.horsepower > 200,
+                               data_row.origin == 'US',
+                               data_row.acceleration > 15)):
         return data_row
 
 
 # Japanese Fuel Efficient Cars:
 def pred_japanese_fuel(data_row):
-    if all(v is True for v in (getattr(data_row, 'mpg') > 35,
-                               getattr(data_row, 'origin') == 'Japan')):
+    if all(v is True for v in (data_row.mpg > 35,
+                               data_row.origin == 'Japan')):
         return data_row
 
 
 # Heavy Cars:
 def pred_heavy_cars(data_row):
-    if getattr(data_row, 'mpg') > 3500:
+    if data_row.mpg > 3500:
         return data_row
 
 
 # Chevy Monte Carlos:
-# chevy_monte_carlo
+def pred_chevy_monte_carlo(data_row):
+    if data_row.car == 'Chevrolet Monte Carlo':
+        return data_row
 
 
 
-
-# Filter Predicate for'Employment_Info'
+# Filter Predicates for'Employment_Info':
+# ------------------------------------------------------------------------------
 # kohler_engineering_dept
 # all_sales_depts
 # all_r_and_d_employees
