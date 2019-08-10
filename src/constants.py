@@ -64,8 +64,8 @@ korean_men = 'Korean_Speaking_Men'
 
 # Filter Names for Update_Status:
 # ------------------------------------------------------------------------------
-new_updates_march18 = 'Newest_Updates' # March 2018
-old_updates_april17 = 'Oldest_Updates' # April 2017
+new_updates_march18 = 'Newest_Updates'
+old_updates_april17 = 'Oldest_Updates'
 
 
 # Filter Predicate for Vehicle_Info:
@@ -153,7 +153,7 @@ def pred_korean_men(data_row):
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
     if (data_row.something >
-            parse_date ('2018-03-01T00:00:00ZZ', date_keys)):
+            parse_date('2018-03-01T00:00:00ZZ', date_keys)):
         return data_row
 
 
@@ -161,29 +161,4 @@ def pred_old_updates_april17(data_row):
     if (data_row.last_updated <
             parse_date('2017-04-01T00:00:00Z', date_keys)):
         return data_row
-
-
-# Output File name = File Name + Filter Name?
-
-
-# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-# (filter_name, F(n))                     \s
-# power_cars_filter:
-# cylinder > 4,  Horsepower > 200,  and Origin:USA
-
-# def pred_ford_green(data_row):
-#     return (data_row[idx_make].lower() == 'ford'
-#             and data_row[idx_color].lower() == 'green')
-
-# predicate = lambda d: getattr(d, 'What') > 100
-# all(v is True for v in (x<10, x>100, x==100))
-
-# cylinder > 4,  horsepower > 200,  and Origin:Europe
-# cylinder > 4,  Horsepower > 200,  and Origin:Japan
-
-# filter names
-# muscle_cars
-
-
-# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
 
