@@ -45,7 +45,7 @@ chevy_monte_carlo = 'American_Chevy_Monte_Carlo_Cars'
 # ------------------------------------------------------------------------------
 kohler_engineering_dept = 'Kohler_Engineering_Dept_Employees'
 all_sales_depts = 'All_Sales_Depts_Employees'
-all_r_and_d_employees = 'All_Research_and_Development_Employees'
+rd_employees = 'All_Research_and_Development_Employees'
 carroll_all_depts = 'All_Employees_at_Carroll_Company'
 
 
@@ -68,7 +68,6 @@ old_updates_april17 = 'Oldest_Updates' # April 2017
 
 # Filter Predicate for Vehicle_Info:
 # ------------------------------------------------------------------------------
-# American Muscle Cars:
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
                                data_row.horsepower > 200,
@@ -77,20 +76,17 @@ def pred_muscle_cars(data_row):
         return data_row
 
 
-# Japanese Fuel Efficient Cars:
 def pred_japanese_fuel(data_row):
     if all(v is True for v in (data_row.mpg > 35,
                                data_row.origin == 'Japan')):
         return data_row
 
 
-# Heavy Cars:
 def pred_heavy_cars(data_row):
-    if data_row.mpg > 3500:
+    if data_row.weight > 3500:
         return data_row
 
 
-# Chevy Monte Carlos:
 def pred_chevy_monte_carlo(data_row):
     if data_row.car == 'Chevrolet Monte Carlo':
         return data_row
@@ -99,32 +95,37 @@ def pred_chevy_monte_carlo(data_row):
 # Filter Predicates for'Employment_Info':
 # ------------------------------------------------------------------------------
 def pred_kohler_engineering_dept(data_row):
-    if 'Kohler' in data_row.department():
+    if 'Kohler' in data_row.employer():
         return data_row
 
 
 def pred_all_sales_depts(data_row):
-    pass
+    if data_row.department == 'Sales':
+        return data_row
 
 
-
-def pred_all_r_and_d_employees(data_row):
-    pass
+def pred_rd_employees(data_row):
+    if data_row.department == 'Research and Development':
+        return data_row
 
 
 def pred_carroll_all_depts(data_row):
-    pass
+    if 'Carroll' in data_row.employer():
+        return data_row
 
 
 # Filter Predicate for Ticket_Info:
 # ------------------------------------------------------------------------------
-# nyc_bmw_school_zone
-# honda_no_parking
+def pred_nyc_bmw_school_zone(data_row):
+    if (data_row.violation_description == "PHTO SCHOOL ZN SPEED VIOLATION"
+       and data_row.vehicle_make == "BMW"):
+        return data_row
 
 
-# Filter Names for Ticket_Info:
-# nyc_bmw_school_zone
-# honda_no_parking
+def pred_honda_no_parking(data_row):
+    if (data_row.violation_description == "21-No Parking (street clean)"
+       and data_row.vehicle_make == "HONDA"):
+        return data_row
 
 
 # Filter Predicate for Personal_Info:
