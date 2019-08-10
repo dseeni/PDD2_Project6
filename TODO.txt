@@ -129,3 +129,10 @@ def pipeline_coro():
 #     dialect = csv.Sniffer().sniff(sample)
 #     file_obj.seek(0)
 #     return dialect
+
+
+Vehicle_Info
+Employment_Info
+Ticket_Info
+Personal_Info
+Update_Status

@@ -99,14 +99,28 @@ def pred_chevy_monte_carlo(data_row):
 
 # Filter Predicates for'Employment_Info':
 # ------------------------------------------------------------------------------
-# kohler_engineering_dept
-# all_sales_depts
-# all_r_and_d_employees
-# carroll_all_depts
+def pred_kohler_engineering_dept(data_row):
+    pass
+
+
+
+def pred_all_sales_depts(data_row):
+    pass
+
+
+
+def pred_all_r_and_d_employees(data_row):
+    pass
+
+
+
+def pred_carroll_all_depts(data_row):
+    pass
 
 
 
 # Filter Predicate for Ticket_Info:
+# ------------------------------------------------------------------------------
 # nyc_bmw_school_zone
 # honda_no_parking
 
@@ -116,22 +130,12 @@ def pred_chevy_monte_carlo(data_row):
 # honda_no_parking
 
 
-# predicate = lambda d: getattr(d, 'What') > 100
-# all(v is True for v in (x<10, x>100, x==100))
 
-# cylinder > 4,  horsepower > 200,  and Origin:Europe
-# cylinder > 4,  Horsepower > 200,  and Origin:Japan
+# Filter Predicate for Personal_Info:
+# ------------------------------------------------------------------------------
 
-# filter names
-# muscle_cars
-
-
-# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-
-
-
-# Filter Predicate
-
+# Filter Predicate for Update_Status:
+# ------------------------------------------------------------------------------
 
 
 
@@ -150,3 +154,16 @@ def pred_chevy_monte_carlo(data_row):
 # def pred_ford_green(data_row):
 #     return (data_row[idx_make].lower() == 'ford'
 #             and data_row[idx_color].lower() == 'green')
+
+# predicate = lambda d: getattr(d, 'What') > 100
+# all(v is True for v in (x<10, x>100, x==100))
+
+# cylinder > 4,  horsepower > 200,  and Origin:Europe
+# cylinder > 4,  Horsepower > 200,  and Origin:Japan
+
+# filter names
+# muscle_cars
+
+
+# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+
