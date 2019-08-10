@@ -1,3 +1,5 @@
+from src.push_pipeline import parse_date
+
 # cars.csv = 407 rows
 # employment.csv = 1001 rows
 # nyc_parking_ticket_extract.csv = 1001 rows
@@ -150,11 +152,16 @@ def pred_korean_men(data_row):
 # Filter Predicate for Update_Status:
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
-    if data_row.something == 'Newest_Updates' # March 2018
+    if (data_row.something >
+            parse_date ('2018-03-01T00:00:00ZZ', date_keys)):
+        return data_row
 
 
 def pred_old_updates_april17(data_row):
-    if data_row.something == 'Oldest_Updates' # April 2017
+    if (data_row.last_updated <
+            parse_date('2017-04-01T00:00:00Z', date_keys)):
+        return data_row
+
 
 # Output File name = File Name + Filter Name?
 
