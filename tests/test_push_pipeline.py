@@ -29,7 +29,6 @@ def test_pipeline_handler(dummy_target):
     dummy = dummy_target()
     with file_handler(fnames[0]) as ph:
         assert(next(ph)[0]) == 'Car'
-            # print(dd)
 
 
 def test_parse_date():
