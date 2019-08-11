@@ -28,8 +28,7 @@ def test_gen_field_names(dummy_target):
 
     with file_handler(fnames[0]) as f:
         header_row = next(f)
-        x = field_names.send(header_row)
-        print(x)
+        field_names.send(header_row)
     dummy_nt = getgeneratorlocals(dummy_target)['ml']
     # nt = next(dummy_target)
     # print(nt)
