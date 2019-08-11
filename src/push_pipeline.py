@@ -62,22 +62,39 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-    header_extracter = header_extract(target= data_fields)
 
     for file_name, class_name in input_package:
         with file_handler(file_name) as f:
             # read header and send to data_fields gen
             header_row = header_extract(target=field_name_gen)
-            # send class_names right away to named_tuple generator
+            header_extract.send(next(f))
+
+            # send class_names and header_row
+            # right away to field_name_generator
             field_name_gen = gen_field_names(data_caster)
-            # named_tuple_gen sends to data_caster for parsing
             field_name_gen.send(class_name)
             field_name_gen.send(header_row)
+            # send the first data row twice
+            # once for parse_key generation and once for processing
+            first_raw_data_row = next(f)
+            row_key_gen = gen_row_parse_key(data_caster)
+            row_key_gen.send(first_raw_data_row)
+
+            # TODO: working on date_parser as a sub-pipe off shoot from
+            #   gen_row_parse_key, it sends to it and it sends back
+
+
+
+
+
+            # send next row to gen_row_parse_key
+
+
+            # named_tuple_gen sends to data_caster for parsing
+            # parser needs named tupel and data type key
 
             # send the first row of the file to the header function
             # send first row to gen_field_names
-            header_extract.send(next(f))
-            data_fields.send(target)
 
             # header function sends to gen_field_name
 
@@ -168,8 +185,10 @@ def gen_row_parse_key(target):  # from --> sample_data to:--> parse_data
 
 # TODO: refactor as couritne reciever and target
 @coroutine
-def gen_date_parser(value, date_keys_tuple):
-    valid_date = None
+def gen_date_parser(target):
+    date_keys_tuple = yield # <-- sent by pipeline_coro
+    value = yield  # <-- sent by gen_row_parse_key
+    # valid_date = None
     while True:
         for _ in range(len(date_keys_tuple)):
             try:
@@ -182,9 +201,9 @@ def gen_date_parser(value, date_keys_tuple):
                 continue
             except IndexError:
                 print('Unrecognizable Date Format: cast as str')
-                valid_date = None
+                target.send(None)
                 break
-        yield valid_date
+        target.send(valid_date)
 
 
 @coroutine
@@ -200,7 +219,12 @@ def gen_field_names(target): # sends to data_caster
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
 @coroutine
 def data_caster(file_name, single_parser, headers, single_class_name):
+    # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
+    # single_class_name = yield  # <-- from pipe_line_coro
+    single_parser = yield  # <-- from gen_row_parse_key
+    fields = yield  # <-- from gen_field_names
     file_obj = open(file_name)
+
     try:
         dialect = csv.Sniffer().sniff(file_obj.read(2000))
         file_obj.seek(0)
