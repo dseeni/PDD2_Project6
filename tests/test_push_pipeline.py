@@ -1,12 +1,9 @@
 import pytest
 from src.push_pipeline import *
+from inspect import getgeneratorlocals
 
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
-def test_func():
-    pass
-
-
 @pytest.mark.skip
 def test_save_data():
     data_writer = save_data('test_file.csv', ['test_headers'], 'output_data')
@@ -25,8 +22,22 @@ def test_header_extract():
     pass
 
 
+def test_gen_field_names(dummy_target):
+    field_names = gen_field_names(dummy_target)
+    field_names.send(class_names[0])
+    print(class_names[0])
+
+    with file_handler(fnames[0]) as f:
+        header_row = next(f)
+        field_names.send(header_row)
+
+    print(getgeneratorlocals(dummy_target))
+
+
+
+
 def test_pipeline_handler(dummy_target):
-    dummy = dummy_target()
+    dummy = dummy_target
     with file_handler(fnames[0]) as ph:
         assert(next(ph)[0]) == 'Car'
 
@@ -48,11 +59,21 @@ def test_parse_date():
 
 
 def test_infer_data_type(dummy_target):  # from --> sample_data
-    file_str = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
-    data_row = file_str.split(';')
-    infer_func = row_parse_key_gen(dummy_target)
-    parsed_data = infer_func.send(data_row)
-    assert parsed_data[0] == data_row[0]
-    parsed_data = infer_func.send(data_row)
-    assert parsed_data[0] == data_row[0]
+    file_str1 = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+    file_str2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
+
+    data_row_2 = file_str1.split(';')
+    data_row_1 = file_str2.split(';')
+
+    infer_func = gen_row_parse_key(dummy_target)
+    parsed_data = infer_func.send(data_row_1)
+    assert parsed_data[0] == data_row_1[0]
+    parsed_data = infer_func.send(data_row_1)
+    assert parsed_data[0] == data_row_1[0]
+
+    parsed_data = infer_func.send(data_row_2)
+    assert parsed_data[0] == data_row_2[0]
+    # print('87:', 'getgeneratorlocals(dummy) ''='' ', getgeneratorlocals(dummy_target))
+    parsed_data = infer_func.send(data_row_2)
+    assert parsed_data[0] == data_row_2[0]
 

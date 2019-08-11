@@ -41,7 +41,6 @@ def file_handler(file_name):
         file_obj.seek(0)
         reader = csv.reader(file_obj, dialect)
         # both header extractor and type_genertor need row
-
         yield reader
     finally:
         try:
@@ -49,13 +48,6 @@ def file_handler(file_name):
         except StopIteration:
             pass
         file_obj.close()
-
-
-#    def get_dialect(file_obj):
-#    sample = file_obj.read(2000)
-#    dialect = csv.Sniffer().sniff(sample)
-#    file_obj.seek(0)
-#    return dialect
 
 
 # this coroutine decorator will prime your sub generators
@@ -68,32 +60,39 @@ def coroutine(fn):
     return inner
 
 
-# input_data parser needs headers and data_key sent to it
-@coroutine
-def header_extract(target):  # --> send to row_parse_key_gen
-    while True:
-        reader = yield
-        class_name = yield
-        # file_obj = open(file_name)
-        headers = tuple(map(lambda l: l.lower(), next(reader)))
-        target.send(headers)
-
-
 @coroutine
 def pipeline_coro():
-
-    header_extracter = header_extract(row_parse_key_gen)
-
+    header_extracter = header_extract(target= data_fields)
 
     for file_name, class_name in input_package:
         with file_handler(file_name) as f:
-            pass
+            # read header and send to data_fields gen
+            header_row = header_extract(target=field_name_gen)
+            # send class_names right away to named_tuple generator
+            field_name_gen = gen_field_names(data_caster)
+            # named_tuple_gen sends to data_caster for parsing
+            field_name_gen.send(class_name)
+            field_name_gen.send(header_row)
+
+            # send the first row of the file to the header function
+            # send first row to gen_field_names
+            header_extract.send(next(f))
+            data_fields.send(target)
+
+            # header function sends to gen_field_name
+
+            # gen_parse key sends key to caster
+            sample_row = gen_row_parse_key(data_caster)
             # header_extract.send(next(f))  # --> send row for header extract
+
             # row_parse_key_gen.send(next(f))
 
+            # date_parse gen
 
     # for data_package in data_packages:
+
     #    for inputfile, classname, outputfile, predicate in datapackage:
+
     #    do stuff:
 
     # instantiate functions parameters..
@@ -126,9 +125,20 @@ def pipeline_coro():
         broadcaster.send(data_row)
 
 
+# input_data parser needs headers and data_key sent to it
+@coroutine
+def header_extract(target):  # --> send to row_parse_key_gen
+    while True:
+        reader = yield
+        class_name = yield
+        # file_obj = open(file_name)
+        headers = tuple(map(lambda l: l.lower(), next(reader)))
+        target.send(headers)
+
+
 # TODO: Refactor to output a data_type-key
 @coroutine
-def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
+def gen_row_parse_key(target):  # from --> sample_data to:--> parse_data
     row_copy = None
     while True:
         data_row = yield row_copy
@@ -150,9 +160,40 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
                     row_copy[row_copy.index(value)] = str(value)
 
             else:
-                row_copy[row_copy.index(value)] = gen_date_parser(value, date_keys)
+                row_copy[row_copy.index(value)] = (gen_date_parser(value,
+                                                                   date_keys))
             # finally:
         # else:
+
+
+# TODO: refactor as couritne reciever and target
+@coroutine
+def gen_date_parser(value, date_keys_tuple):
+    valid_date = None
+    while True:
+        for _ in range(len(date_keys_tuple)):
+            try:
+                if datetime.strptime(value, date_keys_tuple[_]):
+                    valid_date = (lambda v:
+                                  datetime.strptime(v, date_keys_tuple[_]))
+                    break
+            except ValueError:
+                _ += 1
+                continue
+            except IndexError:
+                print('Unrecognizable Date Format: cast as str')
+                valid_date = None
+                break
+        yield valid_date
+
+
+@coroutine
+def gen_field_names(target): # sends to data_caster
+    while True:
+        class_name = yield  # from pipeline_coro
+        header_row = yield  # from header_extract
+        data_field = namedtuple(class_name, header_row)
+        target.send(data_field)
 
 
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
@@ -193,26 +234,6 @@ def data_reader(file_name, header_targert, row_sample_target):
             parsed_row = [converter(item)
                           for converter, item in zip(converters, row)]
             yield parsed_row
-
-
-@coroutine
-def gen_date_parser(value, date_keys_tuple):
-    valid_date = None
-    while True:
-        for _ in range(len(date_keys_tuple)):
-            try:
-                if datetime.strptime(value, date_keys_tuple[_]):
-                    valid_date = (lambda v:
-                                  datetime.strptime(v, date_keys_tuple[_]))
-                    break
-            except ValueError:
-                _ += 1
-                continue
-            except IndexError:
-                print('Unrecognizable Date Format: cast as str')
-                valid_date = None
-                break
-        yield valid_date
 
 
 @coroutine

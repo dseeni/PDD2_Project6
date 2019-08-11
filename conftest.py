@@ -1,13 +1,15 @@
-from pytest import fixture
+from pytest import fixture, yield_fixture
 from src.push_pipeline import *
-
+from inspect import getgeneratorstate, getgeneratorlocals
 
 @fixture('session', autouse=True)
 def set_test_directory():
     os.chdir('src/')
 
 
-@fixture('function')
+# ('function')
+# @fixture('function')
+@yield_fixture
 def dummy_target():
     @coroutine
     def test_sink():
@@ -18,11 +20,19 @@ def dummy_target():
             if row is not None:
                 print('sink got data')
                 print('row I recieved', row)
-                for element in row:
-                    ml.append(element)
-                print('sink yielding list')
+                if type(row) == list:
+                    for element in row:
+                        ml.append(element)
+                        print('sink yielding list')
+                        ml.append(row)
+                print('28:', 'ml ''='' ', ml)
+            ml = row
             yield ml
-    return test_sink
+    sink = test_sink()
+    return sink
+# sink = test_sink()
+
+# return sink
 
 
 # @fixture('function', autouse=True)

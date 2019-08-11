@@ -12,6 +12,9 @@ from collections import namedtuple
 from itertools import chain
 from src.constants import *
 from datetime import datetime
+from src.push_pipeline import *
+from pytest import yield_fixture
+from pytest import fixture
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -230,5 +233,78 @@ from datetime import datetime
 # print(list(output_package))
 # print('230:', *output_package, sep='\n')
 
+# with file_handler(fnames[0]) as f:
+#     for row in f:
+#         print(next(f))
 
+# @coroutine
+# def dummy_test():
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#             ml = row
+#             yield ml
+#     return test_sink()
+#
+#
 
+# @yield_fixture
+# @coroutine
+# def dummy_target():
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#                 ml.append(row)
+#             else:
+#                 ml.append(row)
+#             print('28:', 'ml ''='' ', ml)
+#             yield ml
+#     return test_sink()
+# dummy = dummy_target()
+#
+# print(dummy.send('hello'))
+# print(getgeneratorlocals(dummy))
+#
+#
+# print(class_names[0])
+# @fixture
+@coroutine
+def dummy_target():
+    # @coroutine
+    def test_sink():
+        ml = []
+        while True:
+            # try:
+            row = yield
+            if row is not None:
+                print('sink got data')
+                print('row I recieved', row)
+                if type(row) == list:
+                    for element in row:
+                        ml.append(element)
+                        print('sink yielding list')
+                ml.append(row)
+                print('28:', 'ml ''='' ', ml)
+                yield row
+    return test_sink()
+dummy = dummy_target()
+dummy.send('hello')
+print(getgeneratorlocals(dummy))

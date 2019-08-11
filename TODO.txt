@@ -1,6 +1,6 @@
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 SAMPLE DATA: "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 User Provides:
 a files nested dictionary:
         {filename_1: {outputfile_1: lambda filter
@@ -52,6 +52,8 @@ row_parse_key_gen--> returns the parsing key for parse_data_row
 
 
         -extract headers --> create named tuple named tuple send next(line) to
+
+        dd=
         infer
 
         -infer data type--> sample the line and return a string
@@ -73,7 +75,7 @@ row_parse_key_gen--> returns the parsing key for parse_data_row
 
     broadcaster -->
     broadcaster = broadcast(filters) # filters = targets
-    
+
     def pred_ford_green(data_row):
         return (data_row[idx_make].lower() == 'ford'
                 and data_row[idx_color].lower() == 'green')
