@@ -28,10 +28,11 @@ def test_gen_field_names(dummy_target):
 
     with file_handler(fnames[0]) as f:
         header_row = next(f)
-        field_names.send(header_row)
+        x = field_names.send(header_row)
+        print(x)
     dummy_nt = getgeneratorlocals(dummy_target)['ml']
-    nt = next(dummy_target)
-    print(nt)
+    # nt = next(dummy_target)
+    # print(nt)
     assert 'Acceleration' in dir(dummy_nt)
     assert 'Car' in dir(dummy_nt)
     assert 'Cylinders' in dir(dummy_nt)
@@ -39,8 +40,7 @@ def test_gen_field_names(dummy_target):
     assert 'Horsepower' in dir(dummy_nt)
     assert 'MPG' in dir(dummy_nt)
     assert 'Model' in dir(dummy_nt)
-    assert 'origin' in dir(dummy_nt)
-# <class 'src.push_pipeline.Vehicle_Info'>
+    assert 'Origin' in dir(dummy_nt)
 
 
 
