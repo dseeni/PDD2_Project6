@@ -27,14 +27,23 @@ FORMAT:
 zip up output files and filter predicates, broadcaster sends them to
 filter_data () and save_data()
 
+you need a date_parser and a valid_date_detector
+
+date_detector returns a lambda function with the date_format
+
+detector detects a date_column and parses it and returns date function
+
+data_function does what parse_date is currently doing
+
 zip up inputfile, classname, outputfile, and predicates
 
 zip up file/predicate tuples into one big tuple, pass that to pipeline_coro()
     # files and named tuples can be zipped
     # predicates and output files can be zipped
 
+row_parse_key_gen--> returns the parsing key for parse_data_row
 
-    pipeline_handler --> opens all the files and closes them:
+    file_handler --> opens all the files and closes them:
     (the only context manager in the program)
         for file in files_dictionary:
         with file open:

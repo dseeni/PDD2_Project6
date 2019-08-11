@@ -80,7 +80,18 @@ def header_extract(target):  # --> send to row_parse_key_gen
 
 
 @coroutine
-def pipeline_coro(input_package, output_package):
+def pipeline_coro():
+
+    header_extracter = header_extract(row_parse_key_gen)
+
+
+    for file_name, class_name in input_package:
+        with file_handler(file_name) as f:
+            pass
+            # header_extract.send(next(f))  # --> send row for header extract
+            # row_parse_key_gen.send(next(f))
+
+
     # for data_package in data_packages:
     #    for inputfile, classname, outputfile, predicate in datapackage:
     #    do stuff:
@@ -115,6 +126,7 @@ def pipeline_coro(input_package, output_package):
         broadcaster.send(data_row)
 
 
+# TODO: Refactor to output a data_type-key
 @coroutine
 def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
     row_copy = None
@@ -123,7 +135,7 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
         row_copy = deepcopy(data_row)
         for value in row_copy:
             # try:
-            if next(parse_date(value, date_keys)) is None:
+            if next(gen_date_parser(value, date_keys)) is None:
 
                 if value is None:
                     row_copy[row_copy.index(value)] = None
@@ -138,7 +150,7 @@ def row_parse_key_gen(target):  # from --> sample_data to:--> parse_data
                     row_copy[row_copy.index(value)] = str(value)
 
             else:
-                row_copy[row_copy.index(value)] = parse_date(value, date_keys)
+                row_copy[row_copy.index(value)] = gen_date_parser(value, date_keys)
             # finally:
         # else:
 
@@ -184,15 +196,15 @@ def data_reader(file_name, header_targert, row_sample_target):
 
 
 @coroutine
-def parse_date(value, date_keys_tuple):
+def gen_date_parser(value, date_keys_tuple):
     valid_date = None
     while True:
         for _ in range(len(date_keys_tuple)):
-            # while valid_date is None:
-            # while True:
             try:
-                # print('try:', _)
-                valid_date = datetime.strptime(value, date_keys_tuple[_])
+                if datetime.strptime(value, date_keys_tuple[_]):
+                    valid_date = (lambda v:
+                                  datetime.strptime(v, date_keys_tuple[_]))
+                    break
             except ValueError:
                 _ += 1
                 continue
