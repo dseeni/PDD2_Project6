@@ -189,6 +189,7 @@ def gen_date_parser(value, date_keys_tuple):
 
 @coroutine
 def gen_field_names(target): # sends to data_caster
+    header_row = None
     while True:
         class_name = yield  # from pipeline_coro
         header_row = yield  # from header_extract

@@ -7,9 +7,8 @@ def set_test_directory():
     os.chdir('src/')
 
 
-# ('function')
-# @fixture('function')
-@yield_fixture
+# remember that yield is trigger immediately upon sending!!!!!!
+@fixture('function')
 def dummy_target():
     @coroutine
     def test_sink():
@@ -25,9 +24,10 @@ def dummy_target():
                         ml.append(element)
                         print('sink yielding list')
                         ml.append(row)
-                print('28:', 'ml ''='' ', ml)
-            ml = row
-            yield ml
+                        print('28:', 'ml ''='' ', ml)
+                        yield ml
+                ml = row
+                yield ml
     sink = test_sink()
     return sink
 # sink = test_sink()

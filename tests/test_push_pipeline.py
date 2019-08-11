@@ -25,14 +25,22 @@ def test_header_extract():
 def test_gen_field_names(dummy_target):
     field_names = gen_field_names(dummy_target)
     field_names.send(class_names[0])
-    print(class_names[0])
 
     with file_handler(fnames[0]) as f:
         header_row = next(f)
         field_names.send(header_row)
-
-    print(getgeneratorlocals(dummy_target))
-
+    dummy_nt = getgeneratorlocals(dummy_target)['ml']
+    nt = next(dummy_target)
+    print(nt)
+    assert 'Acceleration' in dir(dummy_nt)
+    assert 'Car' in dir(dummy_nt)
+    assert 'Cylinders' in dir(dummy_nt)
+    assert 'Displacement' in dir(dummy_nt)
+    assert 'Horsepower' in dir(dummy_nt)
+    assert 'MPG' in dir(dummy_nt)
+    assert 'Model' in dir(dummy_nt)
+    assert 'origin' in dir(dummy_nt)
+# <class 'src.push_pipeline.Vehicle_Info'>
 
 
 
