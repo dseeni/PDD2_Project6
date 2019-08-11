@@ -186,10 +186,10 @@ def gen_row_parse_key(target):  # from --> sample_data to:--> parse_data
 # TODO: refactor as couritne reciever and target
 @coroutine
 def gen_date_parser(target):
-    date_keys_tuple = yield # <-- sent by pipeline_coro
-    value = yield  # <-- sent by gen_row_parse_key
-    # valid_date = None
     while True:
+        date_keys_tuple = yield  # <-- sent by pipeline_coro
+        value = yield  # <-- sent by gen_row_parse_key
+        valid_date = None
         for _ in range(len(date_keys_tuple)):
             try:
                 if datetime.strptime(value, date_keys_tuple[_]):
