@@ -48,50 +48,65 @@ def test_pipeline_handler(dummy_target):
         assert(next(ph)[0]) == 'Car'
 
 
-def test_data_key_gen(dummy_target):
-
-    with file_handler(fnames[0])
-    raw_data_row1 = ["Chevrolet Chevelle Malibu", '18.0', '8', '307.0',
-                     '130.0', '3504.', '12.0', '70', 'US']
-    raw_data_row2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
-
-    pkey2 = [100-53-9824, '2017-10-07T00:14:42Z', '2016-01-24T21:19:30Z']
-
-    date_parser = date_key_gen(dummy_target)
-
-    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-    date_parser.send(raw_data_row1)  # <- normally sent by pipeline_coro()
-    date_parser.send(pkey1)
-
-    parsed_row = getgeneratorlocals(dummy_target)
-    row = parsed_row['ml']
-    assert type(row[0]) == str
-    assert type(row[3]) == int
-    assert type(row[8]) == str
-
-    # date = datefunc('2017-10-07T00:14:42Z')
-    # assert date.year == 2017
-    # assert date.day == 7
-    # assert date.month == 10
-
-    # '2017-10-07T00:14:42Z'
-    # '2017-10-07T00:14:42Z'
-    # '12/12/2012'
-    # '12/x2/2012'
-    # '12/12/2012'
-
-    # test_date1 = date_parser1('2017-10-07T00:14:42Z')
-    # test_date_2 = date_parser2('12/12/2012')
-    # test_date1 = date_parser1('2017-10-07T00:14:42Z')
-
-    # assert next(gen_date_parser('12/x2/2012', date_keys)) is None
-    #
-    # assert type(test_date_2) == datetime
-    # assert type(test_date1) == datetime
-    #
-    # assert test_date1.year == 2017
-    # assert test_date1.month == 10
-    # assert test_date1.day == int('07')
+# def test_data_key_gen(dummy_target):
+#     # fnames[0]
+#     # lastupdate = '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z
+#     # fnames[2]
+#     # 4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION
+#     # fnames[4]
+#     # 100-53-9824,Sebastiano,Tester,Male,Icelandic
+#
+#     with file_handler(fnames[0]) as f:
+#         next(f)
+#         raw_datarow = next(f)
+#         raw_datarow1 = next(f)
+#
+#     with file_handler(fnames[2]) as f:
+#         next(f)
+#         raw_datarow2 = next(f)
+#
+#     with file_handler(fnames[4]) as f:
+#         next(f)
+#         raw_datarow3 = next(f)
+#     raw_data_row2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
+#
+#     pkey2 = [100-53-9824, '2017-10-07T00:14:42Z', '2016-01-24T21:19:30Z']
+#
+#     date_parser = date_key_gen(dummy_target)
+#
+#     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
+#     date_parser.send(raw_data_row1)  # <- normally sent by pipeline_coro()
+#     date_parser.send(pkey1)
+#
+#     parsed_row = getgeneratorlocals(dummy_target)
+#     row = parsed_row['ml']
+#     assert type(row[0]) == str
+#     assert type(row[3]) == int
+#     assert type(row[8]) == str
+#
+#     # date = datefunc('2017-10-07T00:14:42Z')
+#     # assert date.year == 2017
+#     # assert date.day == 7
+#     # assert date.month == 10
+#
+#     # '2017-10-07T00:14:42Z'
+#     # '2017-10-07T00:14:42Z'
+#     # '12/12/2012'
+#     # '12/x2/2012'
+#     # '12/12/2012'
+#
+#     # test_date1 = date_parser1('2017-10-07T00:14:42Z')
+#     # test_date_2 = date_parser2('12/12/2012')
+#     # test_date1 = date_parser1('2017-10-07T00:14:42Z')
+#
+#     # assert next(gen_date_parser('12/x2/2012', date_keys)) is None
+#     #
+#     # assert type(test_date_2) == datetime
+#     # assert type(test_date1) == datetime
+#     #
+#     # assert test_date1.year == 2017
+#     # assert test_date1.month == 10
+#     # assert test_date1.day == int('07')
 
 
 # @pytest.mark.skip
@@ -112,6 +127,7 @@ def test_row_key_gen(dummy_target):  # from --> sample_data
         # attempt to use date checker first, then proceed to gen_date_parser
 
     print(getgeneratorlocals(dummy_target))
+    assert False
 
     # assert parsed_data[0] == data_row_1[0]
     # parsed_data = infer_func.send(data_row_1)
