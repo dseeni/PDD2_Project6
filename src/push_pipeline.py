@@ -183,10 +183,13 @@ def row_key_gen(target):  # from coro to date parser:-->
 def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per run
     raw_data_row = yield  # <-sent by pipeline coro ONCE per run
+    print(raw_data_row)
     while True:
         partial_key = yield  # <-sent by gen_row_parse_key
-        key_idx = [i for i in range(partial_key)]
+        print(partial_key)
+        key_idx = [i for i in range(len(partial_key))]
         parse_guide = list(zip(partial_key, raw_data_row, key_idx))
+        print(parse_guide)
         date_func = None
         for data_type, raw_data, idx in parse_guide:
             # try to cast any str as date

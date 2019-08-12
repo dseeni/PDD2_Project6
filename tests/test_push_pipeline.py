@@ -48,19 +48,31 @@ def test_pipeline_handler(dummy_target):
         assert(next(ph)[0]) == 'Car'
 
 
-# @pytest.mark.skip
 def test_data_key_gen(dummy_target):
-    date_parser1 = date_key_gen(dummy_target)
-    date_parser2 = date_key_gen(dummy_target)
 
-    date_parser1.send(date_keys)
-    date_parser1.send('2017-10-07T00:14:42Z')
+    with file_handler(fnames[0])
+    raw_data_row1 = ["Chevrolet Chevelle Malibu", '18.0', '8', '307.0',
+                     '130.0', '3504.', '12.0', '70', 'US']
+    raw_data_row2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
 
-    datefunc = getgeneratorlocals(dummy_target)['ml']
-    date = datefunc('2017-10-07T00:14:42Z')
-    assert date.year == 2017
-    assert date.day == 7
-    assert date.month == 10
+    pkey2 = [100-53-9824, '2017-10-07T00:14:42Z', '2016-01-24T21:19:30Z']
+
+    date_parser = date_key_gen(dummy_target)
+
+    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
+    date_parser.send(raw_data_row1)  # <- normally sent by pipeline_coro()
+    date_parser.send(pkey1)
+
+    parsed_row = getgeneratorlocals(dummy_target)
+    row = parsed_row['ml']
+    assert type(row[0]) == str
+    assert type(row[3]) == int
+    assert type(row[8]) == str
+
+    # date = datefunc('2017-10-07T00:14:42Z')
+    # assert date.year == 2017
+    # assert date.day == 7
+    # assert date.month == 10
 
     # '2017-10-07T00:14:42Z'
     # '2017-10-07T00:14:42Z'

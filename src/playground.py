@@ -348,4 +348,6 @@ parse_guide = list(zip(ml, al, gl))
 for j, k, l in parse_guide:
     print(j, k, l)
 
+ids = [i for i in range(len(parse_guide))]
+print(ids)
 
