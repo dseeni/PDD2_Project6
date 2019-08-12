@@ -16,6 +16,7 @@
 # from pytest import yield_fixture
 # from pytest import fixture
 from itertools import compress
+from src.constants import fnames
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -349,10 +350,7 @@ from itertools import compress
 # ids = [i for i in range(len(parse_guide))]
 # print(ids)
 
-from src.constants import fnames
-
-f_idxs = 0, 2, 4
-
 f_idxs = [0, 2, 4]
 partial_files = list(fnames[i] for i in f_idxs)
 print(partial_files)
+

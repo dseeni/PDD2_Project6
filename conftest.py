@@ -34,7 +34,7 @@ def dummy_target():
 
 
 @fixture('function')
-def dummy_headers():
+def dummy_reader():
     raw_data_list = []
     f_idxs = [0, 2, 4]
     partial_files = list(fnames[i] for i in f_idxs)
