@@ -1,7 +1,7 @@
 import pytest
 from src.push_pipeline import *
 from inspect import getgeneratorlocals
-
+from unittest.mock import patch
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
 @pytest.mark.skip
@@ -88,15 +88,13 @@ def test_infer_data_type(dummy_target):  # from --> sample_data
 
     data_row_2 = f_str1.split(';')
     data_row_1 = f_str2.split(';')
-    infer_func = None
+    infer_func = 'infer_func'
     
-
+    date_parser = gen_date_parser()
     infer_func = gen_row_parse_key(dummy_target)
     infer_func.send(data_row_1)
     # cyclical referencing if you want decouples subcoroutine date_checker
     # attempt to use date checker first, then proceed to gen_date_parser
-    
-
 
     print(getgeneratorlocals(dummy_target))
 
