@@ -32,8 +32,14 @@ def dummy_target():
     sink = test_sink()
     return sink
 
+
 @fixture('function')
 def dummy_headers():
+    raw_data_list = []
+    f_idxs = [0, 2, 4]
+    partial_files = list(fnames[i] for i in f_idxs)
+
+    # for file in partial_fils
     # pass delimited row from file 0, 2, 4
     # this means it needs to pass through file_hander
     # return a list of header lists (delimited rows)

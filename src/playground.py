@@ -326,12 +326,12 @@ from itertools import compress
 #
 # mgen(agen()).send('hi from agen')
 
-g = 'hi'
-d = 'bye'
-
-ml = [None, None, None, g]
-al = [d, d, d, d]
-gl = [i for i in range(len(al))]
+# g = 'hi'
+# d = 'bye'
+#
+# ml = [None, None, None, g]
+# al = [d, d, d, d]
+# gl = [i for i in range(len(al))]
 
 # print(list(compress(al, ml)))
 
@@ -341,13 +341,18 @@ gl = [i for i in range(len(al))]
 # because right now you're checking dates len(row) * 3 or more keys--> 24 calls
 # you can automatically reduce the work if you just use date parser last,
 # only on those entries that are of type(str)
+# parse_guide = list(zip(ml, al, gl))
+#
+# for j, k, l in parse_guide:
+#     print(j, k, l)
+#
+# ids = [i for i in range(len(parse_guide))]
+# print(ids)
 
+from src.constants import fnames
 
-parse_guide = list(zip(ml, al, gl))
+f_idxs = 0, 2, 4
 
-for j, k, l in parse_guide:
-    print(j, k, l)
-
-ids = [i for i in range(len(parse_guide))]
-print(ids)
-
+f_idxs = [0, 2, 4]
+partial_files = list(fnames[i] for i in f_idxs)
+print(partial_files)
