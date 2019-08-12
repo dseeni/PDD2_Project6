@@ -1,6 +1,7 @@
-from pytest import fixture, yield_fixture
+from pytest import fixture
 from src.push_pipeline import *
-from inspect import getgeneratorstate, getgeneratorlocals
+# from inspect import getgeneratorstate, getgeneratorlocals
+
 
 @fixture('session', autouse=True)
 def set_test_directory():
@@ -50,4 +51,3 @@ def dummy_target():
 #     while True:
 #         var = yield
 #         print(var)
-

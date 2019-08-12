@@ -178,13 +178,13 @@ personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
 # ------------------------------------------------------------------------------
 def pred_new_updates_march18(data_row):
     if (data_row.something >
-            src.push_pipeline.gen_date_parser('2018-03-01T00:00:00ZZ', date_keys)):
+            src.push_pipeline.gen_date_parser('2018-03-01T00:00:00ZZ')):
         return data_row
 
 
 def pred_old_updates_april17(data_row):
     if (data_row.last_updated <
-            src.push_pipeline.gen_date_parser('2017-04-01T00:00:00Z', date_keys)):
+            src.push_pipeline.gen_date_parser('2017-04-01T00:00:00Z')):
         return data_row
 
 

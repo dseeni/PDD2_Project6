@@ -286,25 +286,44 @@ from pytest import fixture
 #
 # print(class_names[0])
 # @fixture
-@coroutine
-def dummy_target():
-    # @coroutine
-    def test_sink():
-        ml = []
-        while True:
-            # try:
-            row = yield
-            if row is not None:
-                print('sink got data')
-                print('row I recieved', row)
-                if type(row) == list:
-                    for element in row:
-                        ml.append(element)
-                        print('sink yielding list')
-                ml.append(row)
-                print('28:', 'ml ''='' ', ml)
-                yield row
-    return test_sink()
-dummy = dummy_target()
-dummy.send('hello')
-print(getgeneratorlocals(dummy))
+
+# @coroutine
+# def dummy_target():
+#     # @coroutine
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#                 ml.append(row)
+#                 print('28:', 'ml ''='' ', ml)
+#                 yield row
+#     return test_sink()
+# dummy = dummy_target()
+# dummy.send('hello')
+# print(getgeneratorlocals(dummy))
+
+# you can use functions without instancing them
+# @coroutine
+# def mgen(target):
+#     while True:
+#         value = yield
+#         target.send(value)
+#
+# @coroutine
+# def agen():
+#     while True:
+#         value = yield
+#         print(value)
+#
+# mgen(agen()).send('hi from agen')
+
+
+

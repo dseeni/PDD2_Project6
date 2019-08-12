@@ -40,7 +40,7 @@ def file_handler(file_name):
         dialect = csv.Sniffer().sniff(file_obj.read(2000))
         file_obj.seek(0)
         reader = csv.reader(file_obj, dialect)
-        # both header extractor and type_genertor need row
+        # both header extractor and type_generator need row
         yield reader
     finally:
         try:
@@ -62,33 +62,34 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-
     for file_name, class_name in input_package:
         with file_handler(file_name) as f:
-            # read header and send to data_fields gen
-            header_row = header_extract(target=field_name_gen)
-            header_extract.send(next(f))
 
-            # send class_names and header_row
+            # DECLARE
+            header_row = header_extract(target=field_name_gen)
+            field_name_gen = gen_field_names(data_caster)  # send class_names
+            row_key_gen = gen_row_parse_key(data_caster)
+            data_caster = None
+
+            # pipeline sends gen_date_key the date_key
+            # SEND DATA
+            # once for parse_key generation and once for processing
+            # send the first data row twice
+            # read header and send to data_fields gen
             # right away to field_name_generator
-            field_name_gen = gen_field_names(data_caster)
+            # send class_names and header_row
+            header_extract.send(next(f))
+            header_extract.send(next(f))
             field_name_gen.send(class_name)
             field_name_gen.send(header_row)
-            # send the first data row twice
-            # once for parse_key generation and once for processing
-            first_raw_data_row = next(f)
-            row_key_gen = gen_row_parse_key(data_caster)
-            row_key_gen.send(first_raw_data_row)
 
+            # sample row for row_key_gen:
+            first_raw_data_row = next(f)
+            row_key_gen.send(first_raw_data_row)
             # TODO: working on date_parser as a sub-pipe off shoot from
             #   gen_row_parse_key, it sends to it and it sends back
 
-
-
-
-
             # send next row to gen_row_parse_key
-
 
             # named_tuple_gen sends to data_caster for parsing
             # parser needs named tupel and data type key
@@ -121,25 +122,25 @@ def pipeline_coro():
     out_older = save_data('older.csv', header_extract(fcars))
 
     # filter instances with predicates
-    filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
-                                   out_pink_cars)
+    # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
+    #                                out_pink_cars)
 
     # predicates can be defined as filters..
-    def pred_ford_green(data_row):
-        return (data_row[idx_make].lower() == 'ford'
-                and data_row[idx_color].lower() == 'green')
+    # def pred_ford_green(data_row):
+    #     return (data_row[idx_make].lower() == 'ford'
+    #             and data_row[idx_color].lower() == 'green')
 
-    filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-    filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+    # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+    # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
 
-    filters = (filter_pink_cars, filter_ford_green, filter_older)
+    # filters = (filter_pink_cars, filter_ford_green, filter_older)
 
     # your brodcaster must send data from row
-    broadcaster = broadcast(filters)
+    # broadcaster = broadcast(filters)
 
-    while True:
-        data_row = yield
-        broadcaster.send(data_row)
+    # while True:
+    #     data_row = yield
+    #     broadcaster.send(data_row)
 
 
 # input_data parser needs headers and data_key sent to it
@@ -155,30 +156,37 @@ def header_extract(target):  # --> send to row_parse_key_gen
 
 # TODO: Refactor to output a data_type-key
 @coroutine
-def gen_row_parse_key(target):  # from --> sample_data to:--> parse_data
-    row_copy = None
+def gen_row_parse_key(target):  # from --> sample_data to:-->
+    # parse_data
+    # row_parse_key = None
+    # send date_keys ONCE
+    date_checker = gen_date_parser()
+    date_checker.send(date_keys)
     while True:
-        data_row = yield row_copy
-        row_copy = deepcopy(data_row)
-        for value in row_copy:
+        data_row = yield
+        row_parse_key = deepcopy(data_row)
+        for value in row_parse_key:
             # try:
-            if next(gen_date_parser(value, date_keys)) is None:
+            date_checker.send(value) # await return from date_checker
+            date_func = yield  # from date_checker
+            if date_func is None:
 
                 if value is None:
-                    row_copy[row_copy.index(value)] = None
+                    row_parse_key[row_parse_key.index(value)] = None
                 elif all(c.isdigit() for c in value):
-                    row_copy[row_copy.index(value)] = int(value)
+                    row_parse_key[row_parse_key.index(value)] = int
                 elif value.count('.') == 1:
                     try:
-                        row_copy[row_copy.index(value)] = float(value)
+                        float(value)
+                        row_parse_key[row_parse_key.index(value)] = float
                     except ValueError:
-                        row_copy[row_copy.index(value)] = str(value)
+                        row_parse_key[row_parse_key.index(value)] = str
                 else:
-                    row_copy[row_copy.index(value)] = str(value)
+                    row_parse_key[row_parse_key.index(value)] = str
 
             else:
-                row_copy[row_copy.index(value)] = (gen_date_parser(value,
-                                                                   date_keys))
+                row_parse_key[row_parse_key.index(value)] = date_func
+        target.send(row_parse_key)
             # finally:
         # else:
 
@@ -186,8 +194,8 @@ def gen_row_parse_key(target):  # from --> sample_data to:--> parse_data
 # TODO: refactor as couritne reciever and target
 @coroutine
 def gen_date_parser(target):
+    date_keys_tuple = yield  # <-sent by gen_row_parse_key ONCE
     while True:
-        date_keys_tuple = yield  # <-- sent by pipeline_coro
         value = yield  # <-- sent by gen_row_parse_key
         valid_date = None
         for _ in range(len(date_keys_tuple)):
@@ -201,13 +209,13 @@ def gen_date_parser(target):
                 continue
             except IndexError:
                 print('Unrecognizable Date Format: cast as str')
-                target.send(None)
+                gen_row_parse_key.send(None)
                 break
         target.send(valid_date)
 
 
 @coroutine
-def gen_field_names(target): # sends to data_caster
+def gen_field_names(target):  # sends to data_caster
     header_row = None
     while True:
         class_name = yield  # from pipeline_coro
@@ -217,6 +225,7 @@ def gen_field_names(target): # sends to data_caster
 
 
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
+# TODO: make sure data_caster can handle None values
 @coroutine
 def data_caster(file_name, single_parser, headers, single_class_name):
     # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
@@ -255,10 +264,10 @@ def data_reader(file_name, header_targert, row_sample_target):
         #   then keep yielding removing the converter code below
         data = data_caster(file_name)
         next(data)  # skip header row
-        for row in data:
-            parsed_row = [converter(item)
-                          for converter, item in zip(converters, row)]
-            yield parsed_row
+        # for row in data:
+        #     parsed_row = [converter(item)
+        #                   for converter, item in zip(converters, row)]
+        #     yield parsed_row
 
 
 @coroutine
