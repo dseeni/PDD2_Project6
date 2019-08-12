@@ -64,12 +64,13 @@ def coroutine(fn):
 def pipeline_coro():
     for file_name, class_name in input_package:
         with file_handler(file_name) as f:
-
-            # DECLARE
-            header_row = header_extract(target=field_name_gen)
+            # DECLARE --> From the bottom up stack
+            broadcaster = broadcast(filter_names)
+            row_type_caster = data_caster(broadcaster)
+            date_key = date_key_gen(row_type_caster)
+            row_key = row_key_gen(date_key_gen)
             field_name_gen = gen_field_names(data_caster)  # send class_names
-            row_key_gen = gen_row_parse_key(data_caster)
-            data_caster = None
+            header_row = header_extract(field_name_gen)
 
             # pipeline sends gen_date_key the date_key
             # SEND DATA
@@ -82,10 +83,12 @@ def pipeline_coro():
             header_extract.send(next(f))
             field_name_gen.send(class_name)
             field_name_gen.send(header_row)
-
-            # sample row for row_key_gen:
+            # sample row for row_key:
             first_raw_data_row = next(f)
-            row_key_gen.send(first_raw_data_row)
+            row_key.send(first_raw_data_row)
+            date_key.send(date_keys)
+            date_key.send(first_raw_data_row)
+
             # TODO: working on date_parser as a sub-pipe off shoot from
             #   gen_row_parse_key, it sends to it and it sends back
 
@@ -100,7 +103,7 @@ def pipeline_coro():
             # header function sends to gen_field_name
 
             # gen_parse key sends key to caster
-            sample_row = gen_row_parse_key(data_caster)
+            sample_row = row_key_gen(data_caster)
             # header_extract.send(next(f))  # --> send row for header extract
 
             # row_parse_key_gen.send(next(f))
@@ -156,62 +159,53 @@ def header_extract(target):  # --> send to row_parse_key_gen
 
 # TODO: Refactor to output a data_type-key
 @coroutine
-def gen_row_parse_key(target):  # from --> sample_data to:-->
-    # parse_data
-    # row_parse_key = None
-    # send date_keys ONCE
-    date_checker = gen_date_parser()
-    date_checker.send(date_keys)
+def row_key_gen(target):  # from coro to date parser:-->
     while True:
-        data_row = yield
+        data_row = yield  # from pipeline_coro
         row_parse_key = deepcopy(data_row)
         for value in row_parse_key:
-            # try:
-            date_checker.send(value) # await return from date_checker
-            date_func = yield  # from date_checker
-            if date_func is None:
-
-                if value is None:
-                    row_parse_key[row_parse_key.index(value)] = None
-                elif all(c.isdigit() for c in value):
-                    row_parse_key[row_parse_key.index(value)] = int
-                elif value.count('.') == 1:
-                    try:
-                        float(value)
-                        row_parse_key[row_parse_key.index(value)] = float
-                    except ValueError:
-                        row_parse_key[row_parse_key.index(value)] = str
-                else:
+            if value is None:
+                row_parse_key[row_parse_key.index(value)] = None
+            elif all(c.isdigit() for c in value):
+                row_parse_key[row_parse_key.index(value)] = int
+            elif value.count('.') == 1:
+                try:
+                    float(value)
+                    row_parse_key[row_parse_key.index(value)] = float
+                except ValueError:
                     row_parse_key[row_parse_key.index(value)] = str
-
             else:
-                row_parse_key[row_parse_key.index(value)] = date_func
+                row_parse_key[row_parse_key.index(value)] = str
         target.send(row_parse_key)
-            # finally:
-        # else:
 
 
-# TODO: refactor as couritne reciever and target
 @coroutine
-def gen_date_parser(target):
-    date_keys_tuple = yield  # <-sent by gen_row_parse_key ONCE
+def date_key_gen(target):
+    date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per run
+    raw_data_row = yield  # <-sent by pipeline coro ONCE per run
     while True:
-        value = yield  # <-- sent by gen_row_parse_key
-        valid_date = None
-        for _ in range(len(date_keys_tuple)):
-            try:
-                if datetime.strptime(value, date_keys_tuple[_]):
-                    valid_date = (lambda v:
-                                  datetime.strptime(v, date_keys_tuple[_]))
-                    break
-            except ValueError:
-                _ += 1
-                continue
-            except IndexError:
-                print('Unrecognizable Date Format: cast as str')
-                gen_row_parse_key.send(None)
-                break
-        target.send(valid_date)
+        partial_key = yield  # <-sent by gen_row_parse_key
+        key_idx = [i for i in range(partial_key)]
+        parse_guide = list(zip(partial_key, raw_data_row, key_idx))
+        date_func = None
+        for data_type, raw_data, idx in parse_guide:
+            # try to cast any str as date
+            if data_type == str:
+                for _ in range(len(date_keys_tuple)):
+                    try:
+                        if datetime.strptime(raw_data, date_keys_tuple[_]):
+                            date_func = (lambda v: datetime.strptime
+                                         (v, date_keys_tuple[_]))
+                            partial_key[idx] = date_func
+                            continue
+                    except ValueError:
+                        _ += 1
+                        continue
+                    except IndexError:
+                        print('Unrecognizable Date Format: cast as str')
+                        row_key_gen.send(None)
+                        break
+                target.send(partial_key)
 
 
 @coroutine

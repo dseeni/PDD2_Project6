@@ -5,16 +5,17 @@
 # import csv
 # from itertools import islice
 # from datetime import datetime
-import os
-from inspect import getgeneratorstate, getgeneratorlocals
-from collections import namedtuple
+# import os
+# from inspect import getgeneratorstate, getgeneratorlocals
+# from collections import namedtuple
+# # from src.constants import *
+# from itertools import chain
 # from src.constants import *
-from itertools import chain
-from src.constants import *
-from datetime import datetime
-from src.push_pipeline import *
-from pytest import yield_fixture
-from pytest import fixture
+# from datetime import datetime
+# # from src.push_pipeline import *
+# from pytest import yield_fixture
+# from pytest import fixture
+from itertools import compress
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -325,5 +326,26 @@ from pytest import fixture
 #
 # mgen(agen()).send('hi from agen')
 
+g = 'hi'
+d = 'bye'
+
+ml = [None, None, None, g]
+al = [d, d, d, d]
+gl = [i for i in range(len(al))]
+
+# print(list(compress(al, ml)))
+
+# first pass row to data parser, which returns dates as strings, then date
+# parser will go over the row again, only evaluting entires that are
+# strings.. thereby reducing the work that date_parser needs to do.
+# because right now you're checking dates len(row) * 3 or more keys--> 24 calls
+# you can automatically reduce the work if you just use date parser last,
+# only on those entries that are of type(str)
+
+
+parse_guide = list(zip(ml, al, gl))
+
+for j, k, l in parse_guide:
+    print(j, k, l)
 
 

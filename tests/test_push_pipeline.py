@@ -47,10 +47,11 @@ def test_pipeline_handler(dummy_target):
     with file_handler(fnames[0]) as ph:
         assert(next(ph)[0]) == 'Car'
 
-@pytest.mark.skip
-def test_gen_date_parser(dummy_target):
-    date_parser1 = gen_date_parser(dummy_target)
-    date_parser2 = gen_date_parser(dummy_target)
+
+# @pytest.mark.skip
+def test_data_key_gen(dummy_target):
+    date_parser1 = date_key_gen(dummy_target)
+    date_parser2 = date_key_gen(dummy_target)
 
     date_parser1.send(date_keys)
     date_parser1.send('2017-10-07T00:14:42Z')
@@ -82,19 +83,21 @@ def test_gen_date_parser(dummy_target):
 
 
 # @pytest.mark.skip
-def test_infer_data_type(dummy_target):  # from --> sample_data
+def test_row_key_gen(dummy_target):  # from --> sample_data
     f_str1 = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
     f_str2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
 
     data_row_2 = f_str1.split(';')
     data_row_1 = f_str2.split(';')
-    infer_func = 'infer_func'
-    
-    date_parser = gen_date_parser()
-    infer_func = gen_row_parse_key(dummy_target)
+
+    date_parser = date_key_gen(dummy_target)
+    infer_func = row_key_gen(date_parser)
+
+    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
     infer_func.send(data_row_1)
-    # cyclical referencing if you want decouples subcoroutine date_checker
-    # attempt to use date checker first, then proceed to gen_date_parser
+
+        # cyclical referencing if you want decouples subcoroutine date_checker
+        # attempt to use date checker first, then proceed to gen_date_parser
 
     print(getgeneratorlocals(dummy_target))
 

@@ -27,11 +27,14 @@ FORMAT:
 zip up output files and filter predicates, broadcaster sends them to
 filter_data () and save_data()
 
-you need a date_parser and a valid_date_detector
+you need a date_parser and a valid_date_detector - DONE
 
-date_detector returns a lambda function with the date_format
+date_detector returns a lambda function with the date_format - DONE
 
-detector detects a date_column and parses it and returns date function
+go first to date_detector --> mark list as date_func or None
+                          \_> send d(f) and 
+
+detector detects a date_column and parses it and returns date function - WIP
 
 data_function does what parse_date is currently doing
 
