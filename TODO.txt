@@ -32,7 +32,9 @@ you need a date_parser and a valid_date_detector - DONE
 date_detector returns a lambda function with the date_format - DONE
 
 go first to date_detector --> mark list as date_func or None
-                          \_> send d(f) and 
+                          \_> send d(f) and
+maybe we need a fixture for the input of date/data parsers
+    fixture will create file, read line, return headers per row?
 
 detector detects a date_column and parses it and returns date function - WIP
 

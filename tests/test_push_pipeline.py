@@ -114,8 +114,8 @@ def test_row_key_gen(dummy_target):  # from --> sample_data
     f_str1 = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
     f_str2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
 
-    data_row_2 = f_str1.split(';')
-    data_row_1 = f_str2.split(';')
+    data_row_1 = f_str1.split(';')
+    data_row_2 = f_str2.split(';')
 
     date_parser = date_key_gen(dummy_target)
     infer_func = row_key_gen(date_parser)
