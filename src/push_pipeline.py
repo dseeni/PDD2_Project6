@@ -66,10 +66,10 @@ def pipeline_coro():
         with file_handler(file_name) as f:
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)
-            row_type_caster = data_caster(broadcaster)
-            date_key = date_key_gen(row_type_caster)
+            row_parser = data_parser(broadcaster)
+            date_key = date_key_gen(row_parser)
             row_key = row_key_gen(date_key_gen)
-            field_name_gen = gen_field_names(data_caster)  # send class_names
+            field_name_gen = gen_field_names(data_parser)  # send class_names
             header_row = header_extract(field_name_gen)
 
             # pipeline sends gen_date_key the date_keys_tuple
@@ -102,7 +102,7 @@ def pipeline_coro():
             # header function sends to gen_field_name
 
             # gen_parse key sends key to caster
-            sample_row = row_key_gen(data_caster)
+            sample_row = row_key_gen(data_parser)
             # header_extract.send(next(f))  # --> send row for header extract
 
             # row_parse_key_gen.send(next(f))
@@ -215,11 +215,11 @@ def gen_field_names(target):  # sends to data_caster
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
 # TODO: make sure data_caster can handle None values
 @coroutine
-def data_caster(file_name, single_parser, headers, single_class_name):
+def data_parser(file_name, parse_key, headers, single_class_name):
     # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
     # single_class_name = yield  # <-- from pipe_line_coro
-    fields = yield  # <-- from gen_field_names ONCE per file fun
-    single_parser = yield  # <-- from gen_row_parse_key
+    field_names_tuple = yield  # <-- from gen_field_names ONCE per file fun
+    parse_key = yield  # <-- from gen_row_parse_key
     while True:
         raw_data_row = yield
         try:
@@ -232,7 +232,7 @@ def data_caster(file_name, single_parser, headers, single_class_name):
             print(headers)
             DataTuple = namedtuple(single_class_name, headers)
             yield (DataTuple(*(fn(value) for value, fn
-                               in zip(row, single_parser))) for row in reader)
+                               in zip(row, parse_key))) for row in reader)
         finally:
             try:
                 next(file_obj)

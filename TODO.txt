@@ -173,8 +173,15 @@ pipeline coro
                 which sends partial to date_key_gen y3 --> while ON
 
     date_key_gen sends final parse_key to row_parser y2
-    finally: second row to data_parser --> y3 while ON
+    finally: second row to data_parser y3 --> while ON
 
+    data_parser sends parsed data to broadcaster y1
+
+    broadcaster sends to filters y1 y1
+
+    filters send to save data y1
+
+    save data sends to files y1
 
 
 
