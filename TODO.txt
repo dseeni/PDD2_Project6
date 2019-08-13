@@ -156,6 +156,16 @@ def pipeline_coro():
 Execution Order:
 pipeline coro
     for each file-->
+    send date_tuple to date_key_gen
+    send class names to gen_field_names
+    send first row to header_extract
+        which then sends the lower case header to gen_field_names
+    second row..key_generators (data and row)
+        send to:
+
+
     filehandler is a subcontext manager
     open file
+
+
 
