@@ -192,7 +192,7 @@ def date_key_gen(target):
                     try:
                         if datetime.strptime(item, date_keys_tuple[_]):
                             date_func = (lambda v: datetime.strptime
-                                         (v, date_keys_tuple[_]))
+                            (v, date_keys_tuple[_]))
                             key_copy[idx] = date_func
                             continue
                     except ValueError:
@@ -218,8 +218,8 @@ def gen_field_names(target):  # sends to data_caster
 def data_caster(file_name, single_parser, headers, single_class_name):
     # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
     # single_class_name = yield  # <-- from pipe_line_coro
-    single_parser = yield  # <-- from gen_row_parse_key
     fields = yield  # <-- from gen_field_names ONCE per file fun
+    single_parser = yield  # <-- from gen_row_parse_key
     while True:
         raw_data_row = yield
         try:

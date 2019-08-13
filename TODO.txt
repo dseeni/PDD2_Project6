@@ -154,22 +154,27 @@ def pipeline_coro():
 
 
 Execution Order:
+@contextmanager
 pipeline coro
+
+    @sub-contextmanager
+    with filehandler as f:
     for each file-->
     send date_tuple to date_key_gen y1
     send class names to gen_field_names
     send first row to header_extract
         which then sends the lower case header to gen_field_names
+
+    DELIMITED ROW:
     second row..key_generators (data and row)
         send to:
             date_key_gen -->delimited row y2
             row_key_gen
                 which sends partial to date_key_gen y3 --> while ON
-            
 
+    date_key_gen sends final parse_key to row_parser y2
+    finally: second row to data_parser --> y3 while ON
 
-    filehandler is a subcontext manager
-    open file
 
 
 
