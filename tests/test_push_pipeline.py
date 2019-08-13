@@ -49,34 +49,28 @@ def test_pipeline_handler(dummy_target):
 
 
 def test_date_key_gen(dummy_target, dummy_reader):
-    # cars
+
+    # cars.csv
     delimited_row1 = dummy_reader[0]
-    # tickets
+    # nyc_parking_tickets_extract.csv
     delimited_row2 = dummy_reader[1]
-    #  update_status
+    # update_status.csv
     delimited_row3 = dummy_reader[2]
 
-    # data_row_1 = f_str1.split(';')
-    # data_row_2 = f_str2.split(';')
-
     date_parser = date_key_gen(dummy_target)
-    infer_func = row_key_gen(date_parser)
+    gen_row_key = row_key_gen(date_parser)
 
     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
     date_parser.send(delimited_row3)
-    # infer_func.send(delimited_row1)
-
-    # date_parser.send(delimited_row2)
-    # infer_func.send(delimited_row2)
 
     # date_parser.send(delimited_row3)
-    infer_func.send(delimited_row3)
+    gen_row_key.send(delimited_row3)
 
     row_key = getgeneratorlocals(dummy_target)['ml']
     assert row_key[0] == str
+
     datefunc1 = getgeneratorlocals(dummy_target)['ml'][1]
     datefunc2 = getgeneratorlocals(dummy_target)['ml'][2]
-
     date1 = datefunc1('2017-10-07T00:14:42Z')
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
@@ -97,33 +91,47 @@ def test_date_key_gen(dummy_target, dummy_reader):
     assert date2.second == 30
 
 
-
+# noinspection DuplicatedCode
 def test_row_key_gen(dummy_target, dummy_reader):
-    # cars
-    delimited_row1 = dummy_reader[0]
-    # tickets
-    delimited_row2 = dummy_reader[1]
-    #  update_status
-    delimited_row3 = dummy_reader[2]
 
-    # data_row_1 = f_str1.split(';')
-    # data_row_2 = f_str2.split(';')
+    def assert_type(test_key, reference_key):
+        assert test_key == reference_key
 
-    date_parser = date_key_gen(dummy_target)
-    infer_func = row_key_gen(date_parser)
+    # cars.csv
+    delimited_row0 = dummy_reader[0]
+    # nyc_parking_tickets_extract.csv
+    delimited_row1 = dummy_reader[1]
+    # update_status.csv
+    delimited_row2 = dummy_reader[2]
 
-    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-    date_parser.send(delimited_row3)
-    # infer_func.send(delimited_row1)
+    gen_row_key = row_key_gen(dummy_target)
+    # 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
+    gen_row_key.send(delimited_row0)
 
-    # date_parser.send(delimited_row2)
-    # infer_func.send(delimited_row2)
+    parsed_key1 = getgeneratorlocals(dummy_target)['ml']
+    test_key1 = (str, float, int, float, float, float, float, int, str)
+    for test, ref in list(zip(parsed_key1, test_key1)):
+        assert test == ref
+    # print('next', next(dummy_target))
 
-    # date_parser.send(delimited_row3)
-    infer_func.send(delimited_row3)
 
-    row_key = getgeneratorlocals(dummy_target)['ml']
-    assert row_key[0] == str
-    datefunc1 = getgeneratorlocals(dummy_target)['ml'][1]
-    datefunc2 = getgeneratorlocals(dummy_target)['ml'][2]
+    # '4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION'
 
+    gen_row_key.send(delimited_row1)
+    parsed_key2 = getgeneratorlocals(dummy_target)['ml']
+
+    print(getgeneratorlocals(dummy_target))
+    assert parsed_key2[0] == int
+    assert parsed_key2[1] == str
+    assert parsed_key2[2] == str
+    assert parsed_key2[3] == str
+    assert parsed_key2[4] == str
+    assert parsed_key2[5] == int
+    assert parsed_key2[6] == str
+    assert parsed_key2[7] == str
+    assert parsed_key2[8] == str
+
+    # '101-71-4702,2017-01-23T11:23:17Z,2016-01-27T04:32:57Z'
+    gen_row_key.send(delimited_row2)
+    parsed_key3 = getgeneratorlocals(dummy_target)['ml']
+    assert (all(key == str for key in parsed_key3))

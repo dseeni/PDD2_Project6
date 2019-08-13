@@ -16,20 +16,17 @@ def dummy_target():
         ml = []
         while True:
             # try:
-            row = yield
-            if row is not None:
+            ml = yield ml
+            if ml is not None:
                 # print('sink got data')
-                # print('row I recieved', row)
-                if type(row) == list:
-                    ml = [i for i in row]
+                # print('ml I recieved', ml)
+                if type(ml) == list:
+                    ml = [i for i in ml]
                     # for element in row:
                     #     ml.append(element)
                     #     # print('sink yielding list')
                     #     # ml.append(row)
                     #     # print('28:', 'ml ''='' ', ml)
-                    yield ml
-                ml = row
-                yield ml
     sink = test_sink()
     return sink
 
