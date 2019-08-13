@@ -8,25 +8,19 @@ def set_test_directory():
     os.chdir('src/')
 
 
-# remember that yield is trigger immediately upon sending!!!!!!
+# we send to dummy via the coroutines we're testing
+# so we can't view a return value
 @fixture('function')
 def dummy_target():
     @coroutine
     def test_sink():
         ml = []
         while True:
-            # try:
-            ml = yield ml
-            if ml is not None:
-                # print('sink got data')
-                # print('ml I recieved', ml)
-                if type(ml) == list:
-                    ml = [i for i in ml]
-                    # for element in row:
-                    #     ml.append(element)
-                    #     # print('sink yielding list')
-                    #     # ml.append(row)
-                    #     # print('28:', 'ml ''='' ', ml)
+            row = yield ml
+            if type(row) == list:
+                ml = [i for i in row]
+            else:
+                ml = row
     sink = test_sink()
     return sink
 

@@ -93,10 +93,6 @@ def test_date_key_gen(dummy_target, dummy_reader):
 
 # noinspection DuplicatedCode
 def test_row_key_gen(dummy_target, dummy_reader):
-
-    def assert_type(test_key, reference_key):
-        assert test_key == reference_key
-
     # cars.csv
     delimited_row0 = dummy_reader[0]
     # nyc_parking_tickets_extract.csv
@@ -112,24 +108,13 @@ def test_row_key_gen(dummy_target, dummy_reader):
     test_key1 = (str, float, int, float, float, float, float, int, str)
     for test, ref in list(zip(parsed_key1, test_key1)):
         assert test == ref
-    # print('next', next(dummy_target))
-
 
     # '4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION'
-
     gen_row_key.send(delimited_row1)
     parsed_key2 = getgeneratorlocals(dummy_target)['ml']
-
-    print(getgeneratorlocals(dummy_target))
-    assert parsed_key2[0] == int
-    assert parsed_key2[1] == str
-    assert parsed_key2[2] == str
-    assert parsed_key2[3] == str
-    assert parsed_key2[4] == str
-    assert parsed_key2[5] == int
-    assert parsed_key2[6] == str
-    assert parsed_key2[7] == str
-    assert parsed_key2[8] == str
+    test_key2 = (int, str, str, str, str, int, str, str, str)
+    for test, ref in list(zip(parsed_key2, test_key2)):
+        assert test == ref
 
     # '101-71-4702,2017-01-23T11:23:17Z,2016-01-27T04:32:57Z'
     gen_row_key.send(delimited_row2)
