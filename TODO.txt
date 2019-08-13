@@ -159,7 +159,7 @@ pipeline coro
 
     @sub-contextmanager
     with filehandler as f:
-    for each file-->
+    for each file in file_names-->
     send date_tuple to date_key_gen y1
     send class names to gen_field_names
     send first row to header_extract
@@ -182,6 +182,7 @@ pipeline coro
     filters send to save data y1
 
     save data sends to files y1
+    for filter, outfile
 
 
 

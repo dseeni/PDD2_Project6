@@ -193,11 +193,13 @@ update_status_predicates = (pred_new_updates_march18,
 
 input_package = (_ for _ in (zip(fnames, class_names)))
 
-output_files = (_ for _ in (chain(vehicle_output, emp_output, ticket_output,
-                                  personal_output, update_status_output)))
-
 predicates = (_ for _ in
               (chain(vehicle_predicates, emp_predicates, ticket_predicates,
                      personal_predicates, update_status_predicates)))
 
-output_package = (_ for _ in (zip(output_files, predicates)))
+output_files = (_ for _ in (chain(vehicle_output, emp_output, ticket_output,
+                                  personal_output, update_status_output)))
+
+output_package = (_ for _ in (zip(predicates, output_files)))
+
+output_dir = 'output_data'
