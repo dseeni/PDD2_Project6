@@ -18,15 +18,16 @@ def dummy_target():
             # try:
             row = yield
             if row is not None:
-                print('sink got data')
-                print('row I recieved', row)
+                # print('sink got data')
+                # print('row I recieved', row)
                 if type(row) == list:
-                    for element in row:
-                        ml.append(element)
-                        print('sink yielding list')
-                        ml.append(row)
-                        print('28:', 'ml ''='' ', ml)
-                        yield ml
+                    ml = [i for i in row]
+                    # for element in row:
+                    #     ml.append(element)
+                    #     # print('sink yielding list')
+                    #     # ml.append(row)
+                    #     # print('28:', 'ml ''='' ', ml)
+                    yield ml
                 ml = row
                 yield ml
     sink = test_sink()
@@ -38,12 +39,11 @@ def dummy_reader():
     raw_data_list = []
     f_idxs = [0, 2, 4]
     partial_files = list(fnames[i] for i in f_idxs)
-
-    # for file in partial_fils
-    # pass delimited row from file 0, 2, 4
-    # this means it needs to pass through file_hander
-    # return a list of header lists (delimited rows)
-    pass
+    for file in partial_files:
+        with file_handler(file) as f:
+            next(f)
+            raw_data_list.append(next(f))
+    return raw_data_list
 
 # @contextmanager
 # def file_handler(file_name):

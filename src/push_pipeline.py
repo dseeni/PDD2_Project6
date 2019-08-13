@@ -32,7 +32,7 @@ from copy import deepcopy
 def file_handler(file_name):
     # send to: header_creator, type_generator
     # pass in the dictionary of file/filter/name
-    print('pwd', os.getcwd())
+    # print('pwd', os.getcwd())
     # os.chdir('./input_data')
     # open the file, sniff, and send rows
     file_obj = open(file_name)
@@ -183,32 +183,33 @@ def row_key_gen(target):  # from coro to date parser:-->
 def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per run
     delimited_row = yield  # <-sent by pipeline coro ONCE per run
-    print(delimited_row)
+    print('delimited =', delimited_row)
     while True:
         partial_key = yield  # <-sent by gen_row_parse_key
-        print(partial_key)
-        key_idx = [i for i in range(len(partial_key))]
-        parse_guide = list(zip(partial_key, delimited_row, key_idx))
-        print(parse_guide)
+        key_copy = deepcopy(partial_key)
+        print(key_copy)
+        key_idx = [i for i in range(len(key_copy))]
+        parse_guide = list(zip(key_copy, delimited_row, key_idx))
+        print('guide =', parse_guide)
         date_func = None
-        for data_type, raw_data, idx in parse_guide:
-            # try to cast any str as date
+        for data_type, item, idx in parse_guide:
+            # try to cast any str_key as potential date
             if data_type == str:
                 for _ in range(len(date_keys_tuple)):
                     try:
-                        if datetime.strptime(raw_data, date_keys_tuple[_]):
+                        if datetime.strptime(item, date_keys_tuple[_]):
                             date_func = (lambda v: datetime.strptime
                                          (v, date_keys_tuple[_]))
-                            partial_key[idx] = date_func
+                            key_copy[idx] = date_func
                             continue
                     except ValueError:
-                        _ += 1
+                        # _ += 1
                         continue
                     except IndexError:
-                        print('Unrecognizable Date Format: cast as str')
-                        row_key_gen.send(None)
+                        # print('Unrecognizable Date Format: cast as str')
+                        # row_key_gen.send(None)
                         break
-                target.send(partial_key)
+        target.send(key_copy)
 
 
 @coroutine

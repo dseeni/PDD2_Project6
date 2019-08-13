@@ -48,93 +48,82 @@ def test_pipeline_handler(dummy_target):
         assert(next(ph)[0]) == 'Car'
 
 
-# def test_data_key_gen(dummy_target):
-#     # fnames[0]
-#     # lastupdate = '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z
-#     # fnames[2]
-#     # 4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION
-#     # fnames[4]
-#     # 100-53-9824,Sebastiano,Tester,Male,Icelandic
-#
-#     with file_handler(fnames[0]) as f:
-#         next(f)
-#         raw_datarow = next(f)
-#         raw_datarow1 = next(f)
-#
-#     with file_handler(fnames[2]) as f:
-#         next(f)
-#         raw_datarow2 = next(f)
-#
-#     with file_handler(fnames[4]) as f:
-#         next(f)
-#         raw_datarow3 = next(f)
-#     raw_data_row2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
-#
-#     pkey2 = [100-53-9824, '2017-10-07T00:14:42Z', '2016-01-24T21:19:30Z']
-#
-#     date_parser = date_key_gen(dummy_target)
-#
-#     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-#     date_parser.send(raw_data_row1)  # <- normally sent by pipeline_coro()
-#     date_parser.send(pkey1)
-#
-#     parsed_row = getgeneratorlocals(dummy_target)
-#     row = parsed_row['ml']
-#     assert type(row[0]) == str
-#     assert type(row[3]) == int
-#     assert type(row[8]) == str
-#
-#     # date = datefunc('2017-10-07T00:14:42Z')
-#     # assert date.year == 2017
-#     # assert date.day == 7
-#     # assert date.month == 10
-#
-#     # '2017-10-07T00:14:42Z'
-#     # '2017-10-07T00:14:42Z'
-#     # '12/12/2012'
-#     # '12/x2/2012'
-#     # '12/12/2012'
-#
-#     # test_date1 = date_parser1('2017-10-07T00:14:42Z')
-#     # test_date_2 = date_parser2('12/12/2012')
-#     # test_date1 = date_parser1('2017-10-07T00:14:42Z')
-#
-#     # assert next(gen_date_parser('12/x2/2012', date_keys)) is None
-#     #
-#     # assert type(test_date_2) == datetime
-#     # assert type(test_date1) == datetime
-#     #
-#     # assert test_date1.year == 2017
-#     # assert test_date1.month == 10
-#     # assert test_date1.day == int('07')
+def test_date_key_gen(dummy_target, dummy_reader):
+    # cars
+    delimited_row1 = dummy_reader[0]
+    # tickets
+    delimited_row2 = dummy_reader[1]
+    #  update_status
+    delimited_row3 = dummy_reader[2]
 
-
-# @pytest.mark.skip
-def test_row_key_gen(dummy_target):  # from --> sample_data
-    f_str1 = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
-    f_str2 = "100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z"
-
-    data_row_1 = f_str1.split(';')
-    data_row_2 = f_str2.split(';')
+    # data_row_1 = f_str1.split(';')
+    # data_row_2 = f_str2.split(';')
 
     date_parser = date_key_gen(dummy_target)
     infer_func = row_key_gen(date_parser)
 
     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-    infer_func.send(data_row_1)
+    date_parser.send(delimited_row3)
+    # infer_func.send(delimited_row1)
 
-        # cyclical referencing if you want decouples subcoroutine date_checker
-        # attempt to use date checker first, then proceed to gen_date_parser
+    # date_parser.send(delimited_row2)
+    # infer_func.send(delimited_row2)
 
-    print(getgeneratorlocals(dummy_target))
-    assert False
+    # date_parser.send(delimited_row3)
+    infer_func.send(delimited_row3)
 
-    # assert parsed_data[0] == data_row_1[0]
-    # parsed_data = infer_func.send(data_row_1)
-    # assert parsed_data[0] == data_row_1[0]
-    #
-    # parsed_data = infer_func.send(data_row_2)
-    # assert parsed_data[0] == data_row_2[0]
-    # parsed_data = infer_func.send(data_row_2)
-    # assert parsed_data[0] == data_row_2[0]
+    row_key = getgeneratorlocals(dummy_target)['ml']
+    assert row_key[0] == str
+    datefunc1 = getgeneratorlocals(dummy_target)['ml'][1]
+    datefunc2 = getgeneratorlocals(dummy_target)['ml'][2]
+
+    date1 = datefunc1('2017-10-07T00:14:42Z')
+    date2 = datefunc2('2016-01-24T21:19:30Z')
+
+    assert all(isinstance(date, datetime) for date in (date1, date2))
+
+    assert date1.year == 2017
+    assert date1.month == 10
+    assert date1.day == 7
+    assert date1.hour == 0
+    assert date1.minute == 14
+    assert date1.second == 42
+
+    assert date2.year == 2016
+    assert date2.month == 1
+    assert date2.day == 24
+    assert date2.hour == 21
+    assert date2.minute == 19
+    assert date2.second == 30
+
+
+
+def test_row_key_gen(dummy_target, dummy_reader):
+    # cars
+    delimited_row1 = dummy_reader[0]
+    # tickets
+    delimited_row2 = dummy_reader[1]
+    #  update_status
+    delimited_row3 = dummy_reader[2]
+
+    # data_row_1 = f_str1.split(';')
+    # data_row_2 = f_str2.split(';')
+
+    date_parser = date_key_gen(dummy_target)
+    infer_func = row_key_gen(date_parser)
+
+    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
+    date_parser.send(delimited_row3)
+    # infer_func.send(delimited_row1)
+
+    # date_parser.send(delimited_row2)
+    # infer_func.send(delimited_row2)
+
+    # date_parser.send(delimited_row3)
+    infer_func.send(delimited_row3)
+
+    row_key = getgeneratorlocals(dummy_target)['ml']
+    assert row_key[0] == str
+    datefunc1 = getgeneratorlocals(dummy_target)['ml'][1]
+    datefunc2 = getgeneratorlocals(dummy_target)['ml'][2]
 

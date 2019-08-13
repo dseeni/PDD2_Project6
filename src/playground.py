@@ -350,7 +350,51 @@ from src.constants import fnames
 # ids = [i for i in range(len(parse_guide))]
 # print(ids)
 
-f_idxs = [0, 2, 4]
-partial_files = list(fnames[i] for i in f_idxs)
-print(partial_files)
+# f_idxs = [0, 2, 4]
+# partial_files = list(fnames[i] for i in f_idxs)
+# print(partial_files)
+#
+# row_parse_key = [1, 2, 3, 1, 'hi']
+# # value = 1
+# for value in row_parse_key:
+#     if value == 1:
+#         print('found 1')
+#         row_parse_key[row_parse_key.index(value)] = 'hahah'
+# print(row_parse_key)
 
+# from src.constants import *
+# from datetime import datetime
+# date_keys_tuple = date_keys
+# from copy import deepcopy
+#
+#
+# key = [(str, '100-53-9824', 0), (str, '2017-10-07T00:14:42Z', 1),
+#        (str, '2016-01-24T21:19:30; Z', 2)]
+#
+# key_copy = deepcopy(key)
+#
+# for data_type, item, idx in key:
+#     # try to cast any str_key as potential date
+#     if data_type == str:
+#         for _ in range(len(date_keys_tuple)):
+#             try:
+#                 if datetime.strptime(item, date_keys_tuple[_]):
+#                     date_func = (lambda v: datetime.strptime
+#                     (v, date_keys_tuple[_]))
+#                     key_copy[idx] = date_func
+#                     continue
+#             except ValueError:
+#                 # _ += 1
+#                 continue
+#             except IndexError:
+#                 # print('Unrecognizable Date Format: cast as str')
+#                 # row_key_gen.send(None)
+#                 break
+# print(key_copy)
+
+#
+# for data_type, item, idx in key:
+#        print(data_type, item, idx)
+#
+#
+# date_func = (lambda v: datetime.strptime(v, date_keys_tuple[_]))
