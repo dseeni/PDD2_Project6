@@ -152,3 +152,10 @@ def pipeline_coro():
 # Personal_Info
 # Update_Status
 
+
+Execution Order:
+pipeline coro
+    for each file-->
+    filehandler is a subcontext manager
+    open file
+

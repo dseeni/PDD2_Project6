@@ -72,17 +72,16 @@ def pipeline_coro():
             field_name_gen = gen_field_names(data_caster)  # send class_names
             header_row = header_extract(field_name_gen)
 
-            # pipeline sends gen_date_key the date_key
+            # pipeline sends gen_date_key the date_keys_tuple
             # SEND DATA
             # once for parse_key generation and once for processing
             # send the first data row twice
             # read header and send to data_fields gen
             # right away to field_name_generator
+
             # send class_names and header_row
-            header_extract.send(next(f))
-            header_extract.send(next(f))
             field_name_gen.send(class_name)
-            field_name_gen.send(header_row)
+            header_row.send(f)  # --> send to gen_field_names
             # sample row for row_key:
             first_raw_data_row = next(f)
             row_key.send(first_raw_data_row)
@@ -148,10 +147,9 @@ def pipeline_coro():
 
 # input_data parser needs headers and data_key sent to it
 @coroutine
-def header_extract(target):  # --> send to row_parse_key_gen
+def header_extract(target):  # --> send to gen_field_names
     while True:
         reader = yield
-        # file_obj = open(file_name)
         headers = tuple(map(lambda l: l.lower(), next(reader)))
         target.send(headers)
 
@@ -180,19 +178,15 @@ def row_key_gen(target):  # from coro to date parser:-->
 
 @coroutine
 def date_key_gen(target):
-    date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per run
-    delimited_row = yield  # <-sent by pipeline coro ONCE per run
-    # print('delimited =', delimited_row)
+    date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
+    delimited_row = yield  # <-sent by pipeline coro ONCE per file run
     while True:
         partial_key = yield  # <-sent by gen_row_parse_key
         key_copy = deepcopy(partial_key)
-        # print(key_copy)
         key_idx = [i for i in range(len(key_copy))]
         parse_guide = list(zip(key_copy, delimited_row, key_idx))
-        # print('guide =', parse_guide)
         date_func = None
         for data_type, item, idx in parse_guide:
-            # try to cast any str_key as potential date
             if data_type == str:
                 for _ in range(len(date_keys_tuple)):
                     try:
@@ -205,15 +199,12 @@ def date_key_gen(target):
                         # _ += 1
                         continue
                     except IndexError:
-                        # print('Unrecognizable Date Format: cast as str')
-                        # row_key_gen.send(None)
                         break
         target.send(key_copy)
 
 
 @coroutine
 def gen_field_names(target):  # sends to data_caster
-    header_row = None
     while True:
         class_name = yield  # from pipeline_coro
         header_row = yield  # from header_extract
@@ -228,44 +219,44 @@ def data_caster(file_name, single_parser, headers, single_class_name):
     # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
     # single_class_name = yield  # <-- from pipe_line_coro
     single_parser = yield  # <-- from gen_row_parse_key
-    fields = yield  # <-- from gen_field_names
-    file_obj = pen(file_name)
-
-    try:
-        dialect = csv.Sniffer().sniff(file_obj.read(2000))
-        file_obj.seek(0)
-        reader = csv.reader(file_obj, dialect)
-        # skip the header row
-        next(reader)
-        # headers = header_extract(file_name, file_obj)
-        print(headers)
-        DataTuple = namedtuple(single_class_name, headers)
-        yield (DataTuple(*(fn(value) for value, fn
-                           in zip(row, single_parser))) for row in reader)
-    finally:
-        try:
-            next(file_obj)
-        except StopIteration:
-            pass
-        print('closing file')
-        file_obj.close()
-
-
-# data reader --> sends out header, and sends out sample data row
-@coroutine
-def data_reader(file_name, header_targert, row_sample_target):
+    fields = yield  # <-- from gen_field_names ONCE per file fun
     while True:
-        file_obj = open(file_name)
-        # TODO: just yield to header
-        #   yield to sample data
-        #   then keep yielding removing the converter code below
-        data = data_caster(file_name)
-        next(data)  # skip header row
-        # for row in data:
-        #     parsed_row = [converter(item)
-        #                   for converter, item in zip(converters, row)]
-        #     yield parsed_row
+        raw_data_row = yield
+        try:
+            dialect = csv.Sniffer().sniff(file_obj.read(2000))
+            file_obj.seek(0)
+            reader = csv.reader(file_obj, dialect)
+            # skip the header row
+            next(reader)
+            # headers = header_extract(file_name, file_obj)
+            print(headers)
+            DataTuple = namedtuple(single_class_name, headers)
+            yield (DataTuple(*(fn(value) for value, fn
+                               in zip(row, single_parser))) for row in reader)
+        finally:
+            try:
+                next(file_obj)
+            except StopIteration:
+                pass
+            print('closing file')
+            file_obj.close()
 
+
+# # data reader --> sends out header, and sends out sample data row
+# @coroutine
+# def data_reader(file_name, header_targert, row_sample_target):
+#     while True:
+#         file_obj = open(file_name)
+#         # TODO: just yield to header
+#         #   yield to sample data
+#         #   then keep yielding removing the converter code below
+#         data = data_caster(file_name)
+#         next(data)  # skip header row
+#         # for row in data:
+#         #     parsed_row = [converter(item)
+#         #                   for converter, item in zip(converters, row)]
+#         #     yield parsed_row
+#
 
 @coroutine
 def broadcast(targets):
