@@ -9,7 +9,7 @@ def test_save_data():
     data_writer = save_data('test_file.csv', ['test_headers'], 'output_data')
     data_writer.send(['this is a test line'])
     data_writer.close()
-    print('currentdirectory', os.getcwd())
+    # print('currentdirectory', os.getcwd())
     os.chdir('output_data')
     with open('test_file.csv') as tf:
         assert next(tf) == 'test_headers\n'
@@ -74,21 +74,12 @@ def test_date_key_gen(dummy_target, dummy_reader):
     date1 = datefunc1('2017-10-07T00:14:42Z')
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
-    assert all(isinstance(date, datetime) for date in (date1, date2))
-
-    assert date1.year == 2017
-    assert date1.month == 10
-    assert date1.day == 7
-    assert date1.hour == 0
-    assert date1.minute == 14
-    assert date1.second == 42
-
-    assert date2.year == 2016
-    assert date2.month == 1
-    assert date2.day == 24
-    assert date2.hour == 21
-    assert date2.minute == 19
-    assert date2.second == 30
+    # def check_date(date_obj, year, month, day, hour, minute, second):
+    def check_date(date_obj,*args):
+        time = ('year', 'month', 'day', 'hour', 'minute', 'second')
+        return list(getattr(date_obj, value) for value in time) == [*args]
+    assert check_date(date1, 2017, 10, 7, 0, 14, 42)
+    assert check_date(date2, 2016, 1, 24, 21, 19, 30)
 
 
 def test_row_key_gen(dummy_target, dummy_reader):
