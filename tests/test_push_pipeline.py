@@ -16,10 +16,12 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-def test_header_extract():
-    # header_reader = header_extract()
-    # header extract needs key
-    pass
+def test_header_extract(dummy_target):
+    with file_handler(fnames[0]) as f:
+        headers = header_extract(dummy_target)
+        headers.send(f)
+        header_row = getgeneratorlocals(dummy_target)['ml']
+        assert header_row[0] == 'car'
 
 
 def test_gen_field_names(dummy_target):
@@ -27,11 +29,12 @@ def test_gen_field_names(dummy_target):
     field_names.send(class_names[0])
 
     with file_handler(fnames[0]) as f:
-        header_row = next(f)
-        field_names.send(header_row)
+        # header_row = next(f)
+        headers = tuple(map(lambda l: l.lower(), next(f)))
+        field_names.send(headers)
     dummy_nt = getgeneratorlocals(dummy_target)['ml']
-    obj_properties = ['Acceleration', 'Car', 'Cylinders', 'Displacement',
-                      'Horsepower', 'MPG', 'Model', 'Origin']
+    obj_properties = ['acceleration', 'car', 'cylinders', 'displacement',
+                      'horsepower', 'mpg', 'model', 'origin']
     assert all(getattr(dummy_nt, attr) for attr in obj_properties)
 
 

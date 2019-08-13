@@ -151,7 +151,6 @@ def pipeline_coro():
 def header_extract(target):  # --> send to row_parse_key_gen
     while True:
         reader = yield
-        class_name = yield
         # file_obj = open(file_name)
         headers = tuple(map(lambda l: l.lower(), next(reader)))
         target.send(headers)
@@ -230,7 +229,7 @@ def data_caster(file_name, single_parser, headers, single_class_name):
     # single_class_name = yield  # <-- from pipe_line_coro
     single_parser = yield  # <-- from gen_row_parse_key
     fields = yield  # <-- from gen_field_names
-    file_obj = open(file_name)
+    file_obj = pen(file_name)
 
     try:
         dialect = csv.Sniffer().sniff(file_obj.read(2000))
