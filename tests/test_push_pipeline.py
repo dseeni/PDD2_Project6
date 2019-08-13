@@ -1,7 +1,7 @@
 import pytest
 from src.push_pipeline import *
 from inspect import getgeneratorlocals
-from unittest.mock import patch
+
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
 @pytest.mark.skip
@@ -30,16 +30,9 @@ def test_gen_field_names(dummy_target):
         header_row = next(f)
         field_names.send(header_row)
     dummy_nt = getgeneratorlocals(dummy_target)['ml']
-    # nt = next(dummy_target)
-    # print(nt)
-    assert 'Acceleration' in dir(dummy_nt)
-    assert 'Car' in dir(dummy_nt)
-    assert 'Cylinders' in dir(dummy_nt)
-    assert 'Displacement' in dir(dummy_nt)
-    assert 'Horsepower' in dir(dummy_nt)
-    assert 'MPG' in dir(dummy_nt)
-    assert 'Model' in dir(dummy_nt)
-    assert 'Origin' in dir(dummy_nt)
+    obj_properties = ['Acceleration', 'Car', 'Cylinders', 'Displacement',
+                      'Horsepower', 'MPG', 'Model', 'Origin']
+    assert all(getattr(dummy_nt, attr) for attr in obj_properties)
 
 
 def test_pipeline_handler(dummy_target):
