@@ -276,9 +276,13 @@ def filter_data(filter_predicate, target):
 
 
 @coroutine
-def save_data(f_name, headers, dir_name):
+def save_data(targets):
     # 'ff_name, headers, dir_name'
+    dir_name = yield
+    output_name = yield
+    header_row = yield
     try:
+        output = yield
         # Create target Directory
         os.mkdir(dir_name)
         print("Directory ", dir_name, " Created ")
