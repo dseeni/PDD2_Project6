@@ -277,6 +277,7 @@ def filter_data(filter_predicate, target):
 
 @coroutine
 def save_data(f_name, headers, dir_name):
+    str = 'ff_name, headers, dir_name'
     try:
         # Create target Directory
         os.mkdir(dir_name)
