@@ -184,5 +184,19 @@ pipeline coro
     save data sends to files y1
     for filter, outfile
 
+    each files filename, classname, filters, and output files should be packages
+     togehter if you want to process per file
+
+    if you want to process all files at once then each coroutine should be
+    caught in a while loop in total, where each filter recieves
+    for each file, read a row
+       for each row,
+           for each predicate
+               send to savefile directory name
+               send to savefile output name
+                   send to savefile data from filter
+
+
+
 
 
