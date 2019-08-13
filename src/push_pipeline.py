@@ -21,7 +21,7 @@ from copy import deepcopy
 # if you did it all right
 
 # TODO: Implement function to average length of lines in file
-# # TODO: Lookup the print_file_row() function in Fred's notes on GitHub.
+# # TODO: Lookup the print_file_row() function in Freds notes on GitHub.
 
 # headers = ('make', 'model', 'year', 'vin', 'color')
 
@@ -277,7 +277,7 @@ def filter_data(filter_predicate, target):
 
 @coroutine
 def save_data(f_name, headers, dir_name):
-    str = 'ff_name, headers, dir_name'
+    # 'ff_name, headers, dir_name'
     try:
         # Create target Directory
         os.mkdir(dir_name)
