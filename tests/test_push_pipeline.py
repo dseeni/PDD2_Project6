@@ -91,7 +91,6 @@ def test_date_key_gen(dummy_target, dummy_reader):
     assert date2.second == 30
 
 
-# noinspection DuplicatedCode
 def test_row_key_gen(dummy_target, dummy_reader):
     # cars.csv
     delimited_row0 = dummy_reader[0]
@@ -99,24 +98,24 @@ def test_row_key_gen(dummy_target, dummy_reader):
     delimited_row1 = dummy_reader[1]
     # update_status.csv
     delimited_row2 = dummy_reader[2]
+    # reference keys
+    test_key0 = (str, float, int, float, float, float, float, int, str)
+    test_key1 = (int, str, str, str, str, int, str, str, str)
+    test_key2 = (str, str, str)
+
+    def check_key(row_key, test_key):
+        for value, ref in list(zip(row_key, test_key)):
+            return value == ref
 
     gen_row_key = row_key_gen(dummy_target)
-    # 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
     gen_row_key.send(delimited_row0)
+    parsed_key0 = getgeneratorlocals(dummy_target)['ml']
+    assert check_key(parsed_key0, test_key0)
 
-    parsed_key1 = getgeneratorlocals(dummy_target)['ml']
-    test_key1 = (str, float, int, float, float, float, float, int, str)
-    for test, ref in list(zip(parsed_key1, test_key1)):
-        assert test == ref
-
-    # '4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION'
     gen_row_key.send(delimited_row1)
-    parsed_key2 = getgeneratorlocals(dummy_target)['ml']
-    test_key2 = (int, str, str, str, str, int, str, str, str)
-    for test, ref in list(zip(parsed_key2, test_key2)):
-        assert test == ref
+    parsed_key1 = getgeneratorlocals(dummy_target)['ml']
+    assert check_key(parsed_key1, test_key1)
 
-    # '101-71-4702,2017-01-23T11:23:17Z,2016-01-27T04:32:57Z'
     gen_row_key.send(delimited_row2)
-    parsed_key3 = getgeneratorlocals(dummy_target)['ml']
-    assert (all(key == str for key in parsed_key3))
+    parsed_key2 = getgeneratorlocals(dummy_target)['ml']
+    assert check_key(parsed_key2, test_key2)
