@@ -400,43 +400,96 @@ from src.constants import fnames
 # date_func = (lambda v: datetime.strptime(v, date_keys_tuple[_]))
 
 
-from copy import deepcopy
-from src.push_pipeline import coroutine
-from inspect import getgeneratorlocals
+# from copy import deepcopy
+# from src.push_pipeline import coroutine
+# from inspect import getgeneratorlocals
+#
+#
+# delimited_row3 = ['4006478550', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D',
+#                   'BMW', 'BUS LANE VIOLATION']
+#
+# @coroutine
+# def row_key_gen(target):  # from coro to date parser:-->
+#     while True:
+#         data_row = yield  # from pipeline_coro
+#         row_parse_key = deepcopy(data_row)
+#         for value in row_parse_key:
+#             if value is None:
+#                 row_parse_key[row_parse_key.index(value)] = None
+#             elif all(c.isdigit() for c in value):
+#                 row_parse_key[row_parse_key.index(value)] = int
+#             elif value.count('.') == 1:
+#                 try:
+#                     float(value)
+#                     row_parse_key[row_parse_key.index(value)] = float
+#                 except ValueError:
+#                     row_parse_key[row_parse_key.index(value)] = str
+#             else:
+#                 row_parse_key[row_parse_key.index(value)] = str
+#         target.send(row_parse_key)
+#
+#
+#
+# @coroutine
+# def sink():
+#     while True:
+#         incoming = yield
+#         # yield incoming
+#
+# s = sink()
+# row_gen = row_key_gen(s)
+# row_gen.send(delimited_row3)
+# print(getgeneratorlocals(s))
+
+from contextlib import contextmanager, ExitStack
+import csv
 
 
-delimited_row3 = ['4006478550', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D',
-                  'BMW', 'BUS LANE VIOLATION']
+# def file_handler(filenames):
+#     # # send to: header_creator, type_generator
+#     # # pass in the dictionary of file/filter/name
+#     # # print('pwd', os.getcwd())
+#     # # os.chdir('./input_data')
+#     # # open the file, sniff, and send rows
+#     # file_obj = open(file_names)
+#     # try:
+#     #     dialect = csv.Sniffer().sniff(file_obj.read(2000))
+#     #     file_obj.seek(0)
+#     #     reader = csv.reader(file_obj, dialect)
+#     #     # both header extractor and type_generator need row
+#     #     yield reader
+#     # finally:
+#     #     try:
+#     #         next(file_obj)
+#     #     except StopIteration:
+#     #         pass
+#     #     file_obj.close()
+#     with ExitStack() as stack:
+#         try:
+#             files = [stack.enter_context(open(fname)) for fname in
+#                      filenames]
+#             for file in files:
+#                 file_obj = file
+#                 dialect = csv.Sniffer().sniff(file_obj.read(2000))
+#                 file_obj.seek(0)
+#                 readers = [csv.reader(file_obj, dialect) for file_obj in files]
+#                 # both header extractor and type_generator need row
+#                 yield readers
+#         finally:
+#             # try:
+#             #     next(readers)
+#             # except StopIteration:
+#             #     pass
+#             for file in files:
+#                 file.close()
+#
+# with file_handler(fnames) as fh:
+#     headers = (next(reader) for reader in fh)
+#     datarow = (next(reader) for reader in fh)
+#     print(headers)
+#     print(datarow)
+with ExitStack() as stack:
+    files = [stack.enter_context(open(fname)) for fname in fnames]
+    for file in files:
+        print('495:', next(file), sep='\n')
 
-@coroutine
-def row_key_gen(target):  # from coro to date parser:-->
-    while True:
-        data_row = yield  # from pipeline_coro
-        row_parse_key = deepcopy(data_row)
-        for value in row_parse_key:
-            if value is None:
-                row_parse_key[row_parse_key.index(value)] = None
-            elif all(c.isdigit() for c in value):
-                row_parse_key[row_parse_key.index(value)] = int
-            elif value.count('.') == 1:
-                try:
-                    float(value)
-                    row_parse_key[row_parse_key.index(value)] = float
-                except ValueError:
-                    row_parse_key[row_parse_key.index(value)] = str
-            else:
-                row_parse_key[row_parse_key.index(value)] = str
-        target.send(row_parse_key)
-
-
-
-@coroutine
-def sink():
-    while True:
-        incoming = yield
-        # yield incoming
-
-s = sink()
-row_gen = row_key_gen(s)
-row_gen.send(delimited_row3)
-print(getgeneratorlocals(s))
