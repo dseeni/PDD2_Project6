@@ -204,10 +204,18 @@ pipeline coro
                 class_name
                 output_file
                 filters
+
 # ------------------------------------------------------------------------------
 with open('a', 'w') as a, open('b', 'w') as b:
     do_something()
 # ------------------------------------------------------------------------------
+
 with ExitStack() as stack:
     files = [stack.enter_context(open(fname)) for fname in filenames]
     # Do something with "files"
+
+
+    pack = {inputfile1: {filters:outputfile}
+            inputfile2: {filters:outputfile}
+            inputfile3: {filters:outputfile}
+            inputfile4: {filters:outputfile}}
