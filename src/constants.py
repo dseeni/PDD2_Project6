@@ -194,8 +194,6 @@ update_predicates = (pred_new_updates_march18,
 # Data Packing
 # ------------------------------------------------------------------------------
 
-output_dir = 'output_data'
-
 # input_package = input_file name + data row class name for each file
 input_packages = tuple(zip(fnames, class_names))
 
@@ -210,4 +208,5 @@ output_packages = (vehicle_output_package, emp_output_package,
                    ticket_output_package, personal_output_package,
                    update_output_package)
 
-data_package = tuple(zip(input_packages, output_packages))
+data_package = tuple(zip(input_packages, output_packages)
+output_dir = 'output_data'

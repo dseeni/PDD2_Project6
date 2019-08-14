@@ -29,28 +29,24 @@ from copy import deepcopy
 # TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
-def file_handler(file_name):
-    # send to: header_creator, type_generator
-    # pass in the dictionary of file/filter/name
-    # print('pwd', os.getcwd())
-    # os.chdir('./input_data')
-    # open the file, sniff, and send rows
-    file_obj = open(file_name)
+def file_handler(packaged_data):
     try:
-        dialect = csv.Sniffer().sniff(file_obj.read(2000))
-        file_obj.seek(0)
-        reader = csv.reader(file_obj, dialect)
-        # both header extractor and type_generator need row
-        yield reader
+        with ExitStack() as stack:
+            files = [stack.enter_context(open(fname)) for fname in
+                     packaged_data]
+            for file in files:
+                dialect = csv.Sniffer().sniff(file.read(2000))
+                file.seek(0)
+                readers = [csv.reader(file_obj, dialect)
+                           for file_obj in files]
+                # both header extractor and type_generator need row
+            yield readers
+
     finally:
-        try:
-            next(file_obj)
-        except StopIteration:
-            pass
-        file_obj.close()
+        return
 
 
-# this coroutine decorator will prime your sub generators
+# this coroutine decorator will prime your sub-generators
 def coroutine(fn):
     def inner(*args, **kwargs):
         g = fn(*args, **kwargs)
@@ -62,52 +58,51 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-    for file_name, class_name in input_packages:
-        with file_handler(file_name) as f:
-            # DECLARE --> From the bottom up stack
-            broadcaster = broadcast(filter_names)
-            row_parser = data_parser(broadcaster)
-            date_key = date_key_gen(row_parser)
-            row_key = row_key_gen(date_key_gen)
-            field_name_gen = gen_field_names(data_parser)  # send class_names
-            header_row = header_extract(field_name_gen)
+    with file_handler(data_package) as f:
+        # DECLARE --> From the bottom up stack
+        broadcaster = broadcast(filter_names)
+        row_parser = data_parser(broadcaster)
+        date_key = date_key_gen(row_parser)
+        row_key = row_key_gen(date_key_gen)
+        field_name_gen = gen_field_names(data_parser)  # send class_names
+        header_row = header_extract(field_name_gen)
 
-            # pipeline sends gen_date_key the date_keys_tuple
-            # SEND DATA
-            # once for parse_key generation and once for processing
-            # send the first data row twice
-            # read header and send to data_fields gen
-            # right away to field_name_generator
+        # pipeline sends gen_date_key the date_keys_tuple
+        # SEND DATA
+        # once for parse_key generation and once for processing
+        # send the first data row twice
+        # read header and send to data_fields gen
+        # right away to field_name_generator
 
-            # send class_names and header_row
-            field_name_gen.send(class_name)
-            header_row.send(f)  # --> send to gen_field_names
-            # sample row for row_key:
-            first_raw_data_row = next(f)
-            row_key.send(first_raw_data_row)
-            date_key.send(date_keys)
-            date_key.send(first_raw_data_row)
+        # send class_names and header_row
+        field_name_gen.send(class_name)
+        header_row.send(f)  # --> send to gen_field_names
+        # sample row for row_key:
+        first_raw_data_row = next(f)
+        row_key.send(first_raw_data_row)
+        date_key.send(date_keys)
+        date_key.send(first_raw_data_row)
 
-            # TODO: working on date_parser as a sub-pipe off shoot from
-            #   gen_row_parse_key, it sends to it and it sends back
+        # TODO: working on date_parser as a sub-pipe off shoot from
+        #   gen_row_parse_key, it sends to it and it sends back
 
-            # send next row to gen_row_parse_key
+        # send next row to gen_row_parse_key
 
-            # named_tuple_gen sends to data_caster for parsing
-            # parser needs named tupel and data type key
+        # named_tuple_gen sends to data_caster for parsing
+        # parser needs named tupel and data type key
 
-            # send the first row of the file to the header function
-            # send first row to gen_field_names
+        # send the first row of the file to the header function
+        # send first row to gen_field_names
 
-            # header function sends to gen_field_name
+        # header function sends to gen_field_name
 
-            # gen_parse key sends key to caster
-            sample_row = row_key_gen(data_parser)
-            # header_extract.send(next(f))  # --> send row for header extract
+        # gen_parse key sends key to caster
+        sample_row = row_key_gen(data_parser)
+        # header_extract.send(next(f))  # --> send row for header extract
 
-            # row_parse_key_gen.send(next(f))
+        # row_parse_key_gen.send(next(f))
 
-            # date_parse gen
+        # date_parse gen
 
     # for data_package in data_packages:
 
