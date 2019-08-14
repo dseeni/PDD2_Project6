@@ -31,23 +31,22 @@ from copy import deepcopy
 @contextmanager
 def file_reader(packaged_data):
     try:
-        with ExitStack() as stack:
-            readers = []
-            for data_in, data_out in data_package:
-                input_files = [data_in[0]]
-                file_objs = [stack.enter_context(open(fname)) for fname in
-                             input_files]
-                for file in file_objs:
-                    dialect = csv.Sniffer().sniff(file.read(2000))
-                    file.seek(0)
-                    readers.append(csv.reader(file, dialect))
+        readers = []
+        # with ExitStack() as stack:
+        for data_in, data_out in packaged_data:
+            input_files = [data_in[0]]
+            input_file_objs = [open(input_file) for input_file in input_files]
+            for file_obj in input_file_objs:
+                dialect = csv.Sniffer().sniff(file_obj.read(2000))
+                file_obj.seek(0)
+                readers.append(csv.reader(file_obj, dialect))
         yield readers
     finally:
-        try:
-            next(file_obj for file_obj in file_objs)
-        except StopIteration:
-            for file_obj in file_objs:
-                file_obj.close
+        for reader in readers:
+            try:
+                next(reader)
+            except StopIteration:
+                pass
 
 # this coroutine decorator will prime your sub-generators
 def coroutine(fn):
@@ -192,7 +191,7 @@ def date_key_gen(target):
                     try:
                         if datetime.strptime(item, date_keys_tuple[_]):
                             date_func = (lambda v: datetime.strptime
-                            (v, date_keys_tuple[_]))
+                                         (v, date_keys_tuple[_]))
                             key_copy[idx] = date_func
                             continue
                     except ValueError:

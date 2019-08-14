@@ -544,25 +544,29 @@ from src.push_pipeline import *
 #
 from contextlib import ExitStack, contextmanager
 import csv
+from itertools import islice
 
-# with file_reader(data_package) as readers:
-#     for reader in readers:
-#         print(next(reader))
+lines = []
+with file_reader(data_package) as rd:
+    for _ in range(len(rd)):
+        try:
+            while True:
+                lines.append(next(rd[_]))
+        except StopIteration:
+            continue
+        except IndexError:
+            break
+print(lines)
+print(len(lines))
+# for i in range(10000):
+    #     try:
+    #         for r in rd:
+    #             lines.append(next(r))
+    #     except StopIteration:
+    #         continue
+# 4407
 
-
-
-with ExitStack() as stack:
-    readers = []
-    for data_in, data_out in data_package:
-        input_files = [data_in[0]]
-        file_objs = [stack.enter_context(open(fname)) for fname in
-                     input_files]
-        for file in file_objs:
-            dialect = csv.Sniffer().sniff(file.read(2000))
-            file.seek(0)
-            readers.append(csv.reader(file, dialect))
-
-    for reader in readers:
-        print(next(reader))
-
-
+        # try:
+        #     print(list(islice(r,100000)))
+        # except StopIteration:
+        #     print('done')
