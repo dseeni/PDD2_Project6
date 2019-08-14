@@ -29,22 +29,25 @@ from copy import deepcopy
 # TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
-def file_handler(packaged_data):
+def file_reader(packaged_data):
     try:
         with ExitStack() as stack:
-            files = [stack.enter_context(open(fname)) for fname in
-                     packaged_data]
-            for file in files:
-                dialect = csv.Sniffer().sniff(file.read(2000))
-                file.seek(0)
-                readers = [csv.reader(file_obj, dialect)
-                           for file_obj in files]
-                # both header extractor and type_generator need row
-            yield readers
-
+            readers = []
+            for data_in, data_out in data_package:
+                input_files = [data_in[0]]
+                file_objs = [stack.enter_context(open(fname)) for fname in
+                             input_files]
+                for file in file_objs:
+                    dialect = csv.Sniffer().sniff(file.read(2000))
+                    file.seek(0)
+                    readers.append(csv.reader(file, dialect))
+        yield readers
     finally:
-        return
-
+        try:
+            next(file_obj for file_obj in file_objs)
+        except StopIteration:
+            for file_obj in file_objs:
+                file_obj.close
 
 # this coroutine decorator will prime your sub-generators
 def coroutine(fn):
@@ -58,86 +61,88 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-    with file_handler(data_package) as f:
-        # DECLARE --> From the bottom up stack
-        broadcaster = broadcast(filter_names)
-        row_parser = data_parser(broadcaster)
-        date_key = date_key_gen(row_parser)
-        row_key = row_key_gen(date_key_gen)
-        field_name_gen = gen_field_names(data_parser)  # send class_names
-        header_row = header_extract(field_name_gen)
+    with file_reader(data_package) as readers:
+        for reader in readers:
+            # DECLARE --> From the bottom up stack
+            broadcaster = broadcast(filter_names)
+            row_parser = data_parser(broadcaster)
+            date_key = date_key_gen(row_parser)
+            row_key = row_key_gen(date_key_gen)
+            field_name_gen = gen_field_names(data_parser)  # send class_names
+            header_row = header_extract(field_name_gen)
 
-        # pipeline sends gen_date_key the date_keys_tuple
-        # SEND DATA
-        # once for parse_key generation and once for processing
-        # send the first data row twice
-        # read header and send to data_fields gen
-        # right away to field_name_generator
+            # pipeline sends gen_date_key the date_keys_tuple
+            # SEND DATA
+            # once for parse_key generation and once for processing
+            # send the first data row twice
+            # read header and send to data_fields gen
+            # right away to field_name_generator
 
-        # send class_names and header_row
-        field_name_gen.send(class_name)
-        header_row.send(f)  # --> send to gen_field_names
-        # sample row for row_key:
-        first_raw_data_row = next(f)
-        row_key.send(first_raw_data_row)
-        date_key.send(date_keys)
-        date_key.send(first_raw_data_row)
+            # send class_names and header_row
+            field_name_gen.send(class_name)
+            header_row.send(next(reader))  # --> send to gen_field_names
+            # sample row for row_key:
+            first_raw_data_row = next(reader)
+            row_key.send(first_raw_data_row)
+            date_key.send(date_keys)
+            date_key.send(first_raw_data_row)
 
-        # TODO: working on date_parser as a sub-pipe off shoot from
-        #   gen_row_parse_key, it sends to it and it sends back
+            # TODO: working on date_parser as a sub-pipe off shoot from
+            #   gen_row_parse_key, it sends to it and it sends back
 
-        # send next row to gen_row_parse_key
+            # send next row to gen_row_parse_key
 
-        # named_tuple_gen sends to data_caster for parsing
-        # parser needs named tupel and data type key
+            # named_tuple_gen sends to data_caster for parsing
+            # parser needs named tupel and data type key
 
-        # send the first row of the file to the header function
-        # send first row to gen_field_names
+            # send the first row of the file to the header function
+            # send first row to gen_field_names
 
-        # header function sends to gen_field_name
+            # header function sends to gen_field_name
 
-        # gen_parse key sends key to caster
-        sample_row = row_key_gen(data_parser)
-        # header_extract.send(next(f))  # --> send row for header extract
+            # gen_parse key sends key to caster
+            sample_row = row_key_gen(data_parser)
+            # header_extract.send(next(f))  # --> send row for header extract
 
-        # row_parse_key_gen.send(next(f))
+            # row_parse_key_gen.send(next(f))
 
-        # date_parse gen
+            # date_parse gen
 
-    # for data_package in data_packages:
+        # for data_package in data_packages:
 
-    #    for inputfile, classname, outputfile, predicate in datapackage:
+        #    for inputfile, classname, outputfile, predicate in datapackage:
 
-    #    do stuff:
+        #    do stuff:
 
-    # instantiate functions parameters..
-    # can you instantiate without symbol binding?
+        # instantiate functions parameters..
+        # can you instantiate without symbol binding?
 
-    # instance save data writers:
-    out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
-    out_ford_green = save_data('ford_green.csv', header_extract(fcars))
-    out_older = save_data('older.csv', header_extract(fcars))
+        # instance save data writers:
+        out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
+        out_ford_green = save_data('ford_green.csv', header_extract(fcars))
+        out_older = save_data('older.csv', header_extract(fcars))
 
-    # filter instances with predicates
-    # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() == 'pink',
-    #                                out_pink_cars)
+        # filter instances with predicates
+        # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
+        # 'pink',
+        #                                out_pink_cars)
 
-    # predicates can be defined as filters..
-    # def pred_ford_green(data_row):
-    #     return (data_row[idx_make].lower() == 'ford'
-    #             and data_row[idx_color].lower() == 'green')
+        # predicates can be defined as filters..
+        # def pred_ford_green(data_row):
+        #     return (data_row[idx_make].lower() == 'ford'
+        #             and data_row[idx_color].lower() == 'green')
 
-    # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-    # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+        # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+        # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
 
-    # filters = (filter_pink_cars, filter_ford_green, filter_older)
+        # filters = (filter_pink_cars, filter_ford_green, filter_older)
 
-    # your brodcaster must send data from row
-    # broadcaster = broadcast(filters)
+        # your brodcaster must send data from row
+        # broadcaster = broadcast(filters)
 
-    # while True:
-    #     data_row = yield
-    #     broadcaster.send(data_row)
+        # while True:
+        #     data_row = yield
+        #     broadcaster.send(data_row)
 
 
 # input_data parser needs headers and data_key sent to it

@@ -15,8 +15,8 @@
 # # from src.push_pipeline import *
 # from pytest import yield_fixture
 # from pytest import fixture
-from itertools import compress
-from src.constants import fnames
+# from itertools import compress
+# from src.constants import fnames
 
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
@@ -464,7 +464,6 @@ from src.constants import fnames
 #         print('495:', next(file), sep='\n')
 
 # ------------------------------------------------------------------------------
-from src.constants import *
 # print('512:', *input_packages, sep='\n')
 # print('513:', *output_packages, sep='\n')
 # print('513:', data_package_dict, sep='\n')
@@ -487,4 +486,83 @@ from src.constants import *
 # input_dict = {k: v for k,v in input_packages, output_packages}
 #
 # print(*input_dict, sep='\n')
-print(*data_package, sep='\n')
+
+# ------------------------------------------------------------------------------
+# from src.constants import *
+# from contextlib import contextmanager, ExitStack
+# import csv
+#
+#
+# #
+# # def display_data_package():
+# #     for input_data, output_data in data_package:
+# #         print(*input_data, sep='\n')
+# #         print(*output_data, sep='\n')
+# #         print('')
+# #
+# #
+# # print(display_data_package())
+# @contextmanager
+# def file_reader(packaged_data):
+#     for data_in, data_out in packaged_data:
+#         for input_packet in data_in[0]:
+#             try:
+#                 with ExitStack() as stack:
+#                     files = [stack.enter_context(open(fname)) for fname in
+#                              data_in]
+#                     for file in files:
+#                         dialect = csv.Sniffer().sniff(file.read(2000))
+#                         file.seek(0)
+#                         readers = [csv.reader(file_obj, dialect)
+#                                    for file_obj in files]
+#                         # both header extractor and type_generator need row
+#                 yield readers
+#             finally:
+#                     return
+#
+#
+# with file_reader(data_package) as fr:
+#     for reader in fr:
+#         print(next(reader))
+
+
+# from src.constants import *
+# data_dict = {input:output for input, output in data_package}
+#
+# for input, output in data_package:
+#     fnames = [input[0]]
+#     classes = [input[1]]
+#     print(fnames)
+#     print(classes)
+#
+#     # print(input)
+#     # print(' ')
+#     # print(data_dict[input])
+#     # print(' ')
+
+from src.push_pipeline import *
+#
+from contextlib import ExitStack, contextmanager
+import csv
+
+# with file_reader(data_package) as readers:
+#     for reader in readers:
+#         print(next(reader))
+
+
+
+with ExitStack() as stack:
+    readers = []
+    for data_in, data_out in data_package:
+        input_files = [data_in[0]]
+        file_objs = [stack.enter_context(open(fname)) for fname in
+                     input_files]
+        for file in file_objs:
+            dialect = csv.Sniffer().sniff(file.read(2000))
+            file.seek(0)
+            readers.append(csv.reader(file, dialect))
+
+    for reader in readers:
+        print(next(reader))
+
+

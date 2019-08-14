@@ -17,18 +17,19 @@ def test_save_data():
 
 
 def test_header_extract(dummy_target):
-    with file_handler(fnames[0]) as f:
-        headers = header_extract(dummy_target)
-        headers.send(f)
-        header_row = getgeneratorlocals(dummy_target)['ml']
-        assert header_row[0] == 'car'
+    headers = header_extract(dummy_target)
+    with file_reader(data_package) as readers:
+        for reader in readers:
+            headers.send(reader)
+            header_row = getgeneratorlocals(dummy_target)['ml']
+            assert header_row[0] == 'car'
 
 
 def test_gen_field_names(dummy_target):
     field_names = gen_field_names(dummy_target)
     field_names.send(class_names[0])
 
-    with file_handler(fnames[0]) as f:
+    with file_reader(fnames[0]) as f:
         # header_row = next(f)
         headers = tuple(map(lambda l: l.lower(), next(f)))
         field_names.send(headers)
@@ -40,7 +41,7 @@ def test_gen_field_names(dummy_target):
 
 def test_pipeline_handler(dummy_target):
     dummy = dummy_target
-    with file_handler(fnames[0]) as ph:
+    with file_reader(fnames[0]) as ph:
         assert(next(ph)[0]) == 'Car'
 
 
