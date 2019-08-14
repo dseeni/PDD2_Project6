@@ -197,6 +197,17 @@ pipeline coro
                    send to savefile data from filter
 
 
-
-
-
+    to process each file one row at a time:
+        data packet:
+                input_file
+                dir name
+                class_name
+                output_file
+                filters
+# ------------------------------------------------------------------------------
+with open('a', 'w') as a, open('b', 'w') as b:
+    do_something()
+# ------------------------------------------------------------------------------
+with ExitStack() as stack:
+    files = [stack.enter_context(open(fname)) for fname in filenames]
+    # Do something with "files"
