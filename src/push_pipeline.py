@@ -62,7 +62,7 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-    for file_name, class_name in input_package:
+    for file_name, class_name in input_packages:
         with file_handler(file_name) as f:
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)

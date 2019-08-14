@@ -441,10 +441,10 @@ from src.constants import fnames
 # row_gen.send(delimited_row3)
 # print(getgeneratorlocals(s))
 
-from contextlib import contextmanager, ExitStack
-import csv
-
-
+# from contextlib import contextmanager, ExitStack
+# import csv
+#
+# @contextmanager
 # def file_handler(filenames):
 #     # # send to: header_creator, type_generator
 #     # # pass in the dictionary of file/filter/name
@@ -464,32 +464,69 @@ import csv
 #     #     except StopIteration:
 #     #         pass
 #     #     file_obj.close()
-#     with ExitStack() as stack:
-#         try:
+#     try:
+#         with ExitStack() as stack:
 #             files = [stack.enter_context(open(fname)) for fname in
 #                      filenames]
 #             for file in files:
-#                 file_obj = file
-#                 dialect = csv.Sniffer().sniff(file_obj.read(2000))
-#                 file_obj.seek(0)
-#                 readers = [csv.reader(file_obj, dialect) for file_obj in files]
+#                 dialect = csv.Sniffer().sniff(file.read(2000))
+#                 file.seek(0)
+#                 readers = [csv.reader(file_obj, dialect)
+#                            for file_obj in files]
 #                 # both header extractor and type_generator need row
-#                 yield readers
-#         finally:
-#             # try:
-#             #     next(readers)
-#             # except StopIteration:
-#             #     pass
-#             for file in files:
-#                 file.close()
+#             yield readers
+#
+#     finally:
+#         return
+#         # for file in files:
+#         #     # file.close()
+#         #     # print(file.closed)
+#
 #
 # with file_handler(fnames) as fh:
+#     readers = list(reader for reader in fh)
+#     print(readers)
 #     headers = (next(reader) for reader in fh)
-#     datarow = (next(reader) for reader in fh)
-#     print(headers)
-#     print(datarow)
-with ExitStack() as stack:
-    files = [stack.enter_context(open(fname)) for fname in fnames]
-    for file in files:
-        print('495:', next(file), sep='\n')
+#     for header in headers:
+#         print(header)
+#     print(list(next(reader) for reader in fh), sep='\n')
+#
+# # input_pack = {inputfile1: {filters:outputfile}
+# #               inputfile2: {filters:outputfile}
+# #               inputfile3: {filters:outputfile}
+# #               inputfile4: {filters:outputfile}}
+#
+#
+#
+#
+# # print(list(file.closed for file in files))
+#
+# # with ExitStack() as stack:
+# #     files = [stack.enter_context(open(fname)) for fname in fnames]
+# #     for file in files:
+# #         print('495:', next(file), sep='\n')
 
+
+from src.constants import *
+# print('512:', *input_packages, sep='\n')
+# print('513:', *output_packages, sep='\n')
+# print('513:', data_package_dict, sep='\n')
+# print(data_package_dict)
+
+# print(len(list(input_packages)), len(list(output_packages)))
+# for input_data, output_data in data_package:
+#     print(input_data, '===========>', output_data, sep='\n')
+
+for input_data, output_data in data_package:
+    print(*input_data, sep='\n')
+    print(*output_data, sep='\n')
+    print('')
+
+
+# for output_package in output_packages:
+#     print('217:', *output_package, sep='\n')
+
+# # filesnames and classnames
+# input_dict = {k: v for k,v in input_packages, output_packages}
+#
+# print(*input_dict, sep='\n')

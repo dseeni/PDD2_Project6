@@ -41,8 +41,8 @@ japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
 heavy_cars = 'Heavy_Cars'
 chevy_monte_carlo = 'American_Chevy_Monte_Carlo'
 
-vehicle_output = (muscle_cars, japenese_fuel,
-                  heavy_cars, chevy_monte_carlo)
+vehicle_output_files = (muscle_cars, japenese_fuel,
+                        heavy_cars, chevy_monte_carlo)
 
 # Output File Names for Employment_Info
 # ------------------------------------------------------------------------------
@@ -51,15 +51,15 @@ sales_employees = 'All_Sales_Depts_Employees'
 rd_employees = 'All_Research_and_Development_Employees'
 carroll_employees = 'All_Employees_at_Carroll_Company'
 
-emp_output = (kohler_engineers, sales_employees,
-              rd_employees, carroll_employees)
+emp_output_files = (kohler_engineers, sales_employees,
+                    rd_employees, carroll_employees)
 
 # Output File Names for Ticket_Info
 # ------------------------------------------------------------------------------
 nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
 honda_no_parking = 'Honda_No_Parking_Tickets'
 
-ticket_output = (nyc_bmw_school_zone, honda_no_parking)
+ticket_output_files = (nyc_bmw_school_zone, honda_no_parking)
 
 # Output File Names for Personal_Info
 # ------------------------------------------------------------------------------
@@ -67,15 +67,15 @@ icelandic_female_speakers = 'Iceland_Speaking_Woman'
 telugu_speakers = 'All_Telugu_Speakers'
 korean_male_speakers = 'Korean_Speaking_Men'
 
-personal_output = (icelandic_female_speakers, telugu_speakers,
-                   korean_male_speakers)
+personal_ouput_files = (icelandic_female_speakers, telugu_speakers,
+                        korean_male_speakers)
 
 # Output File Names for Update_Status
 # ------------------------------------------------------------------------------
 new_updates_march18 = 'Newest_Updates'
 old_updates_april17 = 'Oldest_Updates'
 
-update_status_output = (new_updates_march18, old_updates_april17)
+update_output_files = (new_updates_march18, old_updates_april17)
 
 
 # Filter Predicates for Vehicle_Info
@@ -188,18 +188,26 @@ def pred_old_updates_april17(data_row):
         return data_row
 
 
-update_status_predicates = (pred_new_updates_march18,
-                            pred_old_updates_april17)
+update_predicates = (pred_new_updates_march18,
+                     pred_old_updates_april17)
 
-input_package = (_ for _ in (zip(fnames, class_names)))
-
-predicates = (_ for _ in
-              (chain(vehicle_predicates, emp_predicates, ticket_predicates,
-                     personal_predicates, update_status_predicates)))
-
-output_files = (_ for _ in (chain(vehicle_output, emp_output, ticket_output,
-                                  personal_output, update_status_output)))
-
-output_package = (_ for _ in (zip(predicates, output_files)))
+# Data Packing
+# ------------------------------------------------------------------------------
 
 output_dir = 'output_data'
+
+# input_package = input_file name + data row class name for each file
+input_packages = tuple(zip(fnames, class_names))
+
+# output_package = output_names + output predicates for each file
+vehicle_output_package = tuple(zip(vehicle_output_files, vehicle_predicates))
+emp_output_package = tuple(zip(emp_output_files, emp_predicates))
+ticket_output_package = tuple(zip(ticket_output_files, ticket_predicates))
+personal_output_package = tuple(zip(personal_ouput_files, personal_predicates))
+update_output_package = tuple(zip(update_output_files, update_predicates))
+
+output_packages = (vehicle_output_package, emp_output_package,
+                   ticket_output_package, personal_output_package,
+                   update_output_package)
+
+data_package = tuple(zip(input_packages, output_packages))

@@ -154,16 +154,18 @@ def pipeline_coro():
 
 
 Execution Order:
-@contextmanager
-pipeline coro
-
-    @sub-contextmanager
-    with filehandler as f:
-    for each file in file_names-->
-    send date_tuple to date_key_gen y1
-    send class names to gen_field_names
-    send first row to header_extract
+# ------------------------------------------------------------------------------
+@coroutine
+pipeline_coro
+    @sub-contextmanager-ExitStack
+    with filehandler as fh:
+    for each file_reader in fh-->
+        send date_tuple to date_key_gen y1
+        get reader send to header extract
+        send class names to gen_field_names
+        send first row to header_extract
         which then sends the lower case header to gen_field_names
+
 
     DELIMITED ROW:
     second row..key_generators (data and row)
