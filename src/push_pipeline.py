@@ -25,14 +25,11 @@ from copy import deepcopy
 
 # headers = ('make', 'model', 'year', 'vin', 'color')
 
-# TODO: Make to lower case headers as well as replace whitespace with _
 # TODO: Output File name = File Name + Filter Name?
-
 @contextmanager
 def file_readers(packaged_data):
     readers = []
     try:
-        # with ExitStack() as stack:
         for data_in, data_out in packaged_data:
             input_files = [data_in[0]]
             input_file_objs = [open(input_file) for input_file in input_files]
@@ -48,13 +45,12 @@ def file_readers(packaged_data):
             except StopIteration:
                 pass
 
-# this coroutine decorator will prime your sub-generators
+
 def coroutine(fn):
     def inner(*args, **kwargs):
         g = fn(*args, **kwargs)
         next(g)
         return g
-
     return inner
 
 

@@ -524,11 +524,10 @@
 # print(*input_dict, sep='\n')
 
 # # ----------------------------------------------------------------------------
-from src.constants import *
-from contextlib import contextmanager, ExitStack
-import csv
-
-
+# from src.constants import *
+# from contextlib import contextmanager, ExitStack
+# import csv
+#
 # def display_data_package():
 #     for input_data, output_data in data_package:
 #         print(*input_data, sep='\n')
@@ -537,7 +536,6 @@ import csv
 #
 #
 # print(display_data_package())
-
 # # ----------------------------------------------------------------------------
 
 # # ----------------------------------------------------------------------------
@@ -595,3 +593,43 @@ import csv
 #         # except StopIteration:
 #         #     print('done')
 # # ----------------------------------------------------------------------------
+
+# pipeline_coro
+# @sub-contextmanager-ExitStack:
+# with file_readers as readers:
+#     for each reader in readers -->
+# cycle through the list of readers
+# exception stop iteration, then skip that file
+# keep going until every file is exhausted.
+
+from itertools import cycle, islice
+from src.push_pipeline import *
+
+def rowcycle(data):
+    with file_readers(data) as readers:
+        cycler = cycle(list(range(len(readers))))
+        reader_idx = next(cycler)
+        while True:
+            try:
+                yield next(readers[reader_idx])
+            except StopIteration:
+                reader_idx = next(cycler)
+                continue
+
+        # while True:
+        #     i = next(cycler)
+        #     try:
+        #         yield next(readers[i])
+        #     except StopIteration:
+        #         break
+
+
+    # print(list(islice(cycle(ml), len(ml) * 5)))
+cl = rowcycle(data_package)
+print(list(cl))
+# print(list(rowcycle(data_package)))
+# print(len(list(rowcycle(data_package))))
+
+# ml = list(range(5))
+# print(ml)
+# cml = cycle(ml)

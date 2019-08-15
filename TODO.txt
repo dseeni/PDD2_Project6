@@ -157,6 +157,11 @@ def pipeline_coro():
 Execution Order:
 # ------------------------------------------------------------------------------
 
+decide:
+    at every stage, each part of the pipe operates on all rows at once
+    header all rows, yield all rows, data flows together through the piple
+    thorugh each stage
+
 @coroutine
 pipeline_coro
     @sub-contextmanager-ExitStack:
