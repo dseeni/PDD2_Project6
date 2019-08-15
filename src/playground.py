@@ -18,6 +18,7 @@
 # from itertools import compress
 # from src.constants import fnames
 
+# # ----------------------------------------------------------------------------
 # cars_header = header_extract(fcars)
 # cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
 #
@@ -26,14 +27,20 @@
 #     #     print(row)
 #     print('20:', *list(islice(c, 100)), sep='\n')
 
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # for row in cars:
 #     print('17:', *list(row), sep='\n')
 
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # file open context manager, coroutine context manager, test within it thats
 # the first thing that you need to right
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # extract headers as variable
 # determine filter names that correspond to these:
 #  Car Cheverlot
@@ -45,7 +52,9 @@
 #  Acceleration
 #  Model Monte Carlo Landau
 #  Origin
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # Constants:
 # Headers --> NamedTuple
 # idx_*headers --> Headers.horsepower etc?
@@ -54,6 +63,7 @@
 # Output files based on filter names {}
 
 
+# # ----------------------------------------------------------------------------
 # def infer_data_type(self):
 #     for value in self.data_key:
 #         if value is None:
@@ -73,8 +83,10 @@
 #         data = data_parser()
 #         for row in data:
 #                 pipe.send(row)
+# # ----------------------------------------------------------------------------
 
 
+# # ----------------------------------------------------------------------------
 # def infer_data_type():
 #     data_key = yield
 #     for value in data_key:
@@ -93,8 +105,10 @@
 #             data_key[data_key.index(value)] = str(value)
 
 # try date first, then literal, then str
+# # ----------------------------------------------------------------------------
 
 
+# # ----------------------------------------------------------------------------
 # print(type(ast.literal_eval('6.2')))
 #
 # print(type(ast.literal_eval('6.')))
@@ -107,12 +121,16 @@
 #     print(type(ast.literal_eval('6A2')))
 # except Exception:
 #     print(str)
+# # ----------------------------------------------------------------------------
 
 
+# # ----------------------------------------------------------------------------
 # def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
 #     return datetime.strptime(value, fmt)
+# # ----------------------------------------------------------------------------
 
 
+# # ----------------------------------------------------------------------------
 # def date_getter():
 #     # for datekey in date_keys:
 #     #     try:
@@ -124,8 +142,10 @@
 #             print(datetime.stiptime('12/12/12', datekey))
 #         except Exception:
 #             print('cant do it')
+# # ----------------------------------------------------------------------------
 
 
+# # ----------------------------------------------------------------------------
 # test_date = next(parse_date('2017-10-07T00:14:42Z', date_keys))
 # print(test_date.year)
 # print(test_date.month)
@@ -137,9 +157,11 @@
 # print(type(next(parse_date('12/12/2012', date_keys))) == datetime)
 # print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime)
 # print(type(next(parse_date('12/x2/2012', date_keys))) == str)
+# # ----------------------------------------------------------------------------
 
 
 # @coroutine
+# # ----------------------------------------------------------------------------
 # def myvar():
 #     container = []
 #     while True:
@@ -152,7 +174,9 @@
 #
 # for i in range(1000):
 #     print(cvars.send('hi'))
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # h = header_extract(cvars)
 # file_obj = open(fnames[0])
 # h.send(file_obj)
@@ -178,7 +202,9 @@
 #
 # sink = test_sink()
 # print(sink.send('hi sink'))
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # working on constants.. shape them into UserDict
 
 # a dictionary of filters:
@@ -238,7 +264,9 @@
 # with file_handler(fnames[0]) as f:
 #     for row in f:
 #         print(next(f))
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # @coroutine
 # def dummy_test():
 #     def test_sink():
@@ -256,9 +284,9 @@
 #             ml = row
 #             yield ml
 #     return test_sink()
-#
-#
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # @yield_fixture
 # @coroutine
 # def dummy_target():
@@ -284,11 +312,15 @@
 #
 # print(dummy.send('hello'))
 # print(getgeneratorlocals(dummy))
-#
-#
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
 # print(class_names[0])
 # @fixture
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # @coroutine
 # def dummy_target():
 #     # @coroutine
@@ -311,7 +343,9 @@
 # dummy = dummy_target()
 # dummy.send('hello')
 # print(getgeneratorlocals(dummy))
+# # ----------------------------------------------------------------------------
 
+# # ----------------------------------------------------------------------------
 # you can use functions without instancing them
 # @coroutine
 # def mgen(target):
@@ -336,6 +370,7 @@
 
 # print(list(compress(al, ml)))
 
+# # ----------------------------------------------------------------------------
 # first pass row to data parser, which returns dates as strings, then date
 # parser will go over the row again, only evaluting entires that are
 # strings.. thereby reducing the work that date_parser needs to do.
@@ -362,6 +397,7 @@
 #         row_parse_key[row_parse_key.index(value)] = 'hahah'
 # print(row_parse_key)
 
+# # ----------------------------------------------------------------------------
 # from src.constants import *
 # from datetime import datetime
 # date_keys_tuple = date_keys
@@ -487,41 +523,25 @@
 #
 # print(*input_dict, sep='\n')
 
-# ------------------------------------------------------------------------------
-# from src.constants import *
-# from contextlib import contextmanager, ExitStack
-# import csv
+# # ----------------------------------------------------------------------------
+from src.constants import *
+from contextlib import contextmanager, ExitStack
+import csv
+
+
+# def display_data_package():
+#     for input_data, output_data in data_package:
+#         print(*input_data, sep='\n')
+#         print(*output_data, sep='\n')
+#         print('')
 #
 #
-# #
-# # def display_data_package():
-# #     for input_data, output_data in data_package:
-# #         print(*input_data, sep='\n')
-# #         print(*output_data, sep='\n')
-# #         print('')
-# #
-# #
-# # print(display_data_package())
-# @contextmanager
-# def file_reader(packaged_data):
-#     for data_in, data_out in packaged_data:
-#         for input_packet in data_in[0]:
-#             try:
-#                 with ExitStack() as stack:
-#                     files = [stack.enter_context(open(fname)) for fname in
-#                              data_in]
-#                     for file in files:
-#                         dialect = csv.Sniffer().sniff(file.read(2000))
-#                         file.seek(0)
-#                         readers = [csv.reader(file_obj, dialect)
-#                                    for file_obj in files]
-#                         # both header extractor and type_generator need row
-#                 yield readers
-#             finally:
-#                     return
-#
-#
-# with file_reader(data_package) as fr:
+# print(display_data_package())
+
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# # with file_reader(data_package) as fr:
 #     for reader in fr:
 #         print(next(reader))
 
@@ -539,10 +559,11 @@
 #     # print(' ')
 #     # print(data_dict[input])
 #     # print(' ')
+# # ----------------------------------------------------------------------------
 
-
-# file_readers unit testing:
-# ------------------------------------------------------------------------------
+# # ----------------------------------------------------------------------------
+# # file_readers unit testing:
+# # ----------------------------------------------------------------------------
 # from src.push_pipeline import *
 # #
 # from contextlib import ExitStack, contextmanager
@@ -573,4 +594,4 @@
 #         #     print(list(islice(r,100000)))
 #         # except StopIteration:
 #         #     print('done')
-# ------------------------------------------------------------------------------
+# # ----------------------------------------------------------------------------
