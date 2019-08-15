@@ -153,18 +153,34 @@ def pipeline_coro():
 # Update_Status
 
 
+# ------------------------------------------------------------------------------
 Execution Order:
 # ------------------------------------------------------------------------------
+
 @coroutine
 pipeline_coro
-    @sub-contextmanager-ExitStack
-    with filehandler as fh:
-    for each file_reader in fh-->
-        send date_tuple to date_key_gen y1
-        get reader send to header extract
-        send class names to gen_field_names
-        send first row to header_extract
-        which then sends the lower case header to gen_field_names
+    @sub-contextmanager-ExitStack:
+        with filehandler as readers:
+        for each reader in readers -->
+        cycle through the list of readers
+        exception stop iteration, then skip that file
+        keep going until every file is exhausted.
+
+    -> every part of the pipe awaits thes first #of incoming data packets
+    (number of files/rows)
+    -> then after getting eveyr row proceeds to the enxt stage
+    -> OR filehandler can cyclically reader every row and send it the
+    through the pipe
+
+
+    -> send len(readers) of each file
+    -> next(reader) = headers
+    extract queues up header rows for len of (readers)
+    - send date_tuple to date_key_gen y1
+    - headerextract.send(next(reader)) then to headers
+    - send class names to gen_field_names
+    - send first row to header_extract
+    - which then sends the lower case header to gen_field_names
 
 
     DELIMITED ROW:
@@ -206,7 +222,6 @@ pipeline_coro
                 class_name
                 output_file
                 filters
-
 # ------------------------------------------------------------------------------
 with open('a', 'w') as a, open('b', 'w') as b:
     do_something()
