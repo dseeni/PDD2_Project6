@@ -172,7 +172,6 @@ pipeline_coro
     -> OR filehandler can cyclically reader every row and send it the
     through the pipe
 
-
     -> send len(readers) of each file
     -> next(reader) = headers
     extract queues up header rows for len of (readers)
