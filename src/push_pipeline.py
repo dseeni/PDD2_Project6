@@ -29,9 +29,9 @@ from copy import deepcopy
 # TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
-def file_reader(packaged_data):
+def file_readers(packaged_data):
+    readers = []
     try:
-        readers = []
         # with ExitStack() as stack:
         for data_in, data_out in packaged_data:
             input_files = [data_in[0]]
@@ -60,7 +60,7 @@ def coroutine(fn):
 
 @coroutine
 def pipeline_coro():
-    with file_reader(data_package) as readers:
+    with file_readers(data_package) as readers:
         for reader in readers:
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)

@@ -31,7 +31,7 @@ def dummy_reader():
     f_idxs = [0, 2, 4]
     partial_files = list(fnames[i] for i in f_idxs)
     for file in partial_files:
-        with file_reader(file) as f:
+        with file_readers(file) as f:
             next(f)
             raw_data_list.append(next(f))
     return raw_data_list

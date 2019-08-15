@@ -160,7 +160,7 @@ Execution Order:
 @coroutine
 pipeline_coro
     @sub-contextmanager-ExitStack:
-        with filehandler as readers:
+        with file_readers as readers:
         for each reader in readers -->
         cycle through the list of readers
         exception stop iteration, then skip that file

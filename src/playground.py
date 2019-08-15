@@ -540,33 +540,37 @@
 #     # print(data_dict[input])
 #     # print(' ')
 
-from src.push_pipeline import *
+
+# file_readers unit testing:
+# ------------------------------------------------------------------------------
+# from src.push_pipeline import *
+# #
+# from contextlib import ExitStack, contextmanager
+# import csv
+# from itertools import islice
 #
-from contextlib import ExitStack, contextmanager
-import csv
-from itertools import islice
-
-lines = []
-with file_reader(data_package) as rd:
-    for _ in range(len(rd)):
-        try:
-            while True:
-                lines.append(next(rd[_]))
-        except StopIteration:
-            continue
-        except IndexError:
-            break
-print(lines)
-print(len(lines))
-# for i in range(10000):
-    #     try:
-    #         for r in rd:
-    #             lines.append(next(r))
-    #     except StopIteration:
-    #         continue
-# 4407
-
-        # try:
-        #     print(list(islice(r,100000)))
-        # except StopIteration:
-        #     print('done')
+# lines = []
+# with file_readers(data_package) as rd:
+#     for _ in range(len(rd)):
+#         try:
+#             while True:
+#                 lines.append(next(rd[_]))
+#         except StopIteration:
+#             continue
+#         except IndexError:
+#             break
+# print(*lines, sep='\n')
+# print(len(lines))
+# # for i in range(10000):
+#     #     try:
+#     #         for r in rd:
+#     #             lines.append(next(r))
+#     #     except StopIteration:
+#     #         continue
+# # 4407
+#
+#         # try:
+#         #     print(list(islice(r,100000)))
+#         # except StopIteration:
+#         #     print('done')
+# ------------------------------------------------------------------------------
