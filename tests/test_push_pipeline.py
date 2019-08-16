@@ -63,15 +63,15 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-@pytest.mark.skip
-def test_date_key_gen(test_sink, test_data_rows):
+# @pytest.mark.skip
+def test_date_key_gen(test_sink, test_file_reader):
 
     # cars.csv
-    delimited_row1 = test_data_rows[0]
+    delimited_row1 = test_file_reader[0]
     # nyc_parking_tickets_extract.csv
-    delimited_row2 = test_data_rows[1]
+    delimited_row2 = test_file_reader[1]
     # update_status.csv
-    delimited_row3 = test_data_rows[2]
+    delimited_row3 = test_file_reader[2]
 
     date_parser = date_key_gen(test_sink)
     gen_row_key = row_key_gen(date_parser)
@@ -99,7 +99,7 @@ def test_date_key_gen(test_sink, test_data_rows):
 
 
 # @pytest.mark.skip
-def test_row_key_gen(test_sink, test_data_rows):
+def test_row_key_gen(test_sink, test_file_reader):
     # # cars.csv
     # delimited_row0 = test_data_rows[0]
     # # nyc_parking_tickets_extract.csv
@@ -122,7 +122,7 @@ def test_row_key_gen(test_sink, test_data_rows):
             return value == ref
 
     gen_row_key = row_key_gen(test_sink)
-    gen_row_key.send(test_data_rows)
+    gen_row_key.send(test_file_reader)
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)

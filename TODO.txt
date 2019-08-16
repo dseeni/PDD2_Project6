@@ -160,17 +160,17 @@ Execution Order:
 REFACTOR:
     at every stage, each part of the pipe operates on all rows of all files
     at once. Header all rows, yield all rows, data flows together through
-    the piple thorugh each stage.
+    the piple thorugh each stage. - DONE
 
 @coroutine
 pipeline_coro
     with file_readers(data_package) as readers:
 
-        with file_readers as readers:
+        (with file_readers as readers:
         for each reader in readers -->
         cycle through the list of readers
         exception stop iteration, then skip that file
-        keep going until every file is exhausted.
+        keep going until every file is exhausted.) - DONE
 
     -> every part of the pipe awaits rows, 1 from each file
     (number of files/rows)

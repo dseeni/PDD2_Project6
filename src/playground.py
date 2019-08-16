@@ -646,4 +646,18 @@
 # # cml = cycle(ml)
 # # ----------------------------------------------------------------------------
 
+ml = [['Chevrolet Chevelle Malibu', '18.0', '8', '307.0', '130.0', '3504.',
+       '12.0', '70', 'US'],
 
+      ['4006478550 ', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D', 'BMW',
+       'BUS LANE VIOLATION'],
+
+      ['100-53-9824', '2017-10-07T00:14:42Z', '201 6-01-24T21:19:30Z']]
+
+# key_idx = [i for i in range(len(sub_key)) for sub_key in key_copy]
+
+nl = tuple(tuple(zip(sublist, sublist)) for sublist in ml)
+print(*nl, sep='\n')
+
+key_idx = [tuple(i for i in range(len(sub_key))) for sub_key in ml]
+print(key_idx)

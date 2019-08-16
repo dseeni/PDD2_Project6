@@ -96,7 +96,7 @@ def pipeline_coro():
             nt_classes = [input_data[1]]
             output_files = [output_data[0]]
             filters = [output_data[1]]
-        for reader in readers:
+        # for reader in readers:
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)
             row_parser = data_parser(broadcaster)
@@ -117,10 +117,10 @@ def pipeline_coro():
             field_name_gen.send(nt_classes)
             header_row.send(next(row_cycler))  # --> send to gen_field_names
             # sample row for row_key:
-            first_raw_data_row = next(row_cycler)
-            row_key.send(first_raw_data_row)
-            date_key.send(date_keys)
-            date_key.send(first_raw_data_row)
+            first_delimited_row = next(row_cycler)
+            row_key.send(first_delimited_row)
+            date_key.send(date_keys)  # <-- y1 only happens ONCE
+            date_key.send(first_delimited_row)  # <-- y2 await row_key_gen
 
             # TODO: working on date_parser as a sub-pipe off shoot from
             #   gen_row_parse_key, it sends to it and it sends back
@@ -227,7 +227,9 @@ def date_key_gen(target):
     while True:
         partial_key = yield  # <-sent by gen_row_parse_key
         key_copy = deepcopy(partial_key)
-        key_idx = [i for i in range(len(key_copy))]
+        key_idx = [tuple(i for i in range(len(sub_key)))
+                   for sub_key in key_copy]
+        print('231:', 'key_idx ''='' ', key_idx)
         parse_guide = list(zip(key_copy, delimited_row, key_idx))
         date_func = None
         for data_type, item, idx in parse_guide:
