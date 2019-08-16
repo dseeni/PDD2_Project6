@@ -40,9 +40,7 @@ def test_data_rows():
     # partial_package = (('file', None), None),
     # (('file', None), None),
     # (('file', None), None),
-    partial_package = (((fnames[0], None), None), ((fnames[0], None), None),
-                       ((fnames[0], None), None))
-    print(partial_package)
+    partial_package = tuple(((i, None), None) for i in partial_files)
 
     with file_readers(partial_package) as readers:
         print('38:', 'readers ''='' ', readers)

@@ -645,11 +645,5 @@
 # # print(ml)
 # # cml = cycle(ml)
 # # ----------------------------------------------------------------------------
-from src.constants import *
-print(*data_package, sep='\n')
-(('input_data/cars.csv', 'Vehicle_Info'), (('American_Muscle_Cars', <function pred_muscle_cars at 0x0000001F3A8AD620>), ('Fuel_Efficent_Japanese_Cars', <function pred_japanese_fuel at 0x0000001F3AA78510>), ('Heavy_Cars', <function pred_heavy_cars at 0x0000001F3AA78598>), ('American_Chevy_Monte_Carlo', <function pred_chevy_monte_carlo at 0x0000001F3AA78620>)))
 
-(('file', None), None),
-(('file', None), None),
-(('file', None), None),
 
