@@ -7,6 +7,7 @@ import os
 from copy import deepcopy
 from itertools import islice, cycle, count
 
+
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
 # We can do this be making the reader yield and row and send it to parser that
 # sends it to broadcaster
@@ -54,11 +55,12 @@ def coroutine(fn):
         g = fn(*args, **kwargs)
         next(g)
         return g
+
     return inner
 
 
 @coroutine
-def row_cycle(target):
+def cycle_rows(target):
     readers = yield
     reader_idx_list = list(range(len(readers)))  # 5 in our case
     idx_tracker = readers_idx_list = list(range(len(readers)))
@@ -102,9 +104,7 @@ def pipeline_coro():
             row_key = row_key_gen(date_key_gen)
             field_name_gen = gen_field_names(data_parser)  # send class_names
             header_row = header_extract(field_name_gen)
-            row_cycler = row_cycle(header_extract)
-
-
+            row_cycler = cycle_rows(header_extract)
 
             # pipeline sends gen_date_key the date_keys_tuple
             # SEND DATA
@@ -195,22 +195,28 @@ def header_extract(target):  # --> send to gen_field_names
 @coroutine
 def row_key_gen(target):  # from coro to date parser:-->
     while True:
-        data_row = yield  # from pipeline_coro
-        row_parse_key = deepcopy(data_row)
-        for value in row_parse_key:
-            if value is None:
-                row_parse_key[row_parse_key.index(value)] = None
-            elif all(c.isdigit() for c in value):
-                row_parse_key[row_parse_key.index(value)] = int
-            elif value.count('.') == 1:
-                try:
-                    float(value)
-                    row_parse_key[row_parse_key.index(value)] = float
-                except ValueError:
-                    row_parse_key[row_parse_key.index(value)] = str
-            else:
-                row_parse_key[row_parse_key.index(value)] = str
-        target.send(row_parse_key)
+        data_rows = yield  # from pipeline_coro
+        row_parse_keys = deepcopy(data_rows)  # list of lists
+        for parse_keys in row_parse_keys:
+            for sub_key in parse_keys:
+                if sub_key is None:
+                    (row_parse_keys[row_parse_keys.index(parse_keys)]
+                     [parse_keys.index(sub_key)]) = None
+                elif all(c.isdigit() for c in sub_key):
+                    (row_parse_keys[row_parse_keys.index(parse_keys)]
+                     [parse_keys.index(sub_key)]) = int
+                elif sub_key.count('.') == 1:
+                    try:
+                        float(sub_key)
+                        (row_parse_keys[row_parse_keys.index(parse_keys)]
+                         [parse_keys.index(sub_key)]) = float
+                    except ValueError:
+                        (row_parse_keys[row_parse_keys.index(parse_keys)]
+                         [parse_keys.index(sub_key)]) = str
+                else:
+                    (row_parse_keys[row_parse_keys.index(parse_keys)][
+                     parse_keys.index(sub_key)]) = str
+        target.send(row_parse_keys)
 
 
 @coroutine
@@ -229,7 +235,7 @@ def date_key_gen(target):
                     try:
                         if datetime.strptime(item, date_keys_tuple[_]):
                             date_func = (lambda v: datetime.strptime
-                                         (v, date_keys_tuple[_]))
+                            (v, date_keys_tuple[_]))
                             key_copy[idx] = date_func
                             continue
                     except ValueError:

@@ -19,7 +19,7 @@ def test_save_data():
 def test_header_extract(dummy_target):
     with file_readers(data_package) as readers:
         headers = header_extract(dummy_target)
-        row_cycler = row_cycle(headers)
+        row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
         header_rows = getgeneratorlocals(dummy_target)['ml']
         print('25:', *header_rows, sep='\n')
