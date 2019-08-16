@@ -60,7 +60,6 @@ def test_file_readers(dummy_target):
             except IndexError:
                 break
         assert len(data_rows) == 4406
-        assert all(file.closed() for file in input_file_objs)
 
 
 @pytest.mark.skip

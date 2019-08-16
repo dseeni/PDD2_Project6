@@ -6,7 +6,6 @@ import csv
 import os
 from copy import deepcopy
 
-
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
 # We can do this be making the reader yield and row and send it to parser that
 # sends it to broadcaster
@@ -23,9 +22,8 @@ from copy import deepcopy
 # TODO: Implement function to average length of lines in file
 # # TODO: Lookup the print_file_row() function in Freds notes on GitHub.
 
-# headers = ('make', 'model', 'year', 'vin', 'color')
-
 # TODO: Output File name = File Name + Filter Name?
+
 @contextmanager
 def file_readers(packaged_data):
     readers = []
@@ -45,10 +43,9 @@ def file_readers(packaged_data):
             try:
                 next(reader)
             except StopIteration:
-                 pass
+                pass
         for file in input_file_objs:
             file.close()
-        assert all(file.closed for file in input_file_objs)
 
 
 def coroutine(fn):
