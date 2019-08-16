@@ -5,6 +5,7 @@ from datetime import datetime
 import csv
 import os
 from copy import deepcopy
+from itertools import islice, cycle, count
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
 # We can do this be making the reader yield and row and send it to parser that
@@ -57,8 +58,42 @@ def coroutine(fn):
 
 
 @coroutine
+def row_cycle(target):
+    readers = yield
+    reader_idx_list = list(range(len(readers)))  # 5 in our case
+    idx_tracker = readers_idx_list = list(range(len(readers)))
+    cycler = cycle(readers_idx_list)
+    counter = count(0)
+    while True:
+        # # yield every 5 rows
+        reader_idx = next(cycler)
+        if next(counter) >= (len(readers) - 1):
+            if reader_idx_list[reader_idx] is not None:
+                if reader_idx % len(readers) == 0:
+                    yield
+        next(counter)
+        try:
+            if all(idx is None for idx in reader_idx_list):
+                break
+            if idx_tracker[reader_idx] is None:
+                next(counter)
+                continue
+            else:
+                target.send(next(readers[reader_idx]))
+                next(counter)
+        except StopIteration:
+            reader_idx_list[reader_idx] = None
+            next(counter)
+            continue
+
+
+@coroutine
 def pipeline_coro():
     with file_readers(data_package) as readers:
+        for input_data, output_data in data_package:
+            nt_classes = [input_data[1]]
+            output_files = [output_data[0]]
+            filters = [output_data[1]]
         for reader in readers:
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)
@@ -67,6 +102,9 @@ def pipeline_coro():
             row_key = row_key_gen(date_key_gen)
             field_name_gen = gen_field_names(data_parser)  # send class_names
             header_row = header_extract(field_name_gen)
+            row_cycler = row_cycle(header_extract)
+
+
 
             # pipeline sends gen_date_key the date_keys_tuple
             # SEND DATA
@@ -74,9 +112,9 @@ def pipeline_coro():
             # send the first data row twice
             # read header and send to data_fields gen
             # right away to field_name_generator
-
+            row_cycler.send(readers)
             # send class_names and header_row
-            field_name_gen.send(class_name)
+            field_name_gen.send(class_names)
             header_row.send(next(reader))  # --> send to gen_field_names
             # sample row for row_key:
             first_raw_data_row = next(reader)
@@ -146,8 +184,10 @@ def pipeline_coro():
 @coroutine
 def header_extract(target):  # --> send to gen_field_names
     while True:
-        reader = yield
-        headers = tuple(map(lambda l: l.lower(), next(reader)))
+        recieved_rows = yield  # --> from row_cycle
+        headers = [tuple(map(lambda l: l.replace(" ", "_"),
+                             (map(lambda l: l.lower(),
+                                  (row for row in recieved_rows)))))]
         target.send(headers)
 
 

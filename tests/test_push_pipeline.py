@@ -16,14 +16,16 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-@pytest.mark.skip
 def test_header_extract(dummy_target):
-    headers = header_extract(dummy_target)
     with file_readers(data_package) as readers:
-        for reader in readers:
-            headers.send(reader)
-            header_row = getgeneratorlocals(dummy_target)['ml']
-            assert header_row[0] == 'car'
+        headers = header_extract(dummy_target)
+        row_cycler = row_cycle(headers)
+        row_cycler.send(readers)
+        header_rows = getgeneratorlocals(dummy_target)['ml']
+        print('25:', *header_rows, sep='\n')
+        assert header_rows[0][0] == 'car'
+        assert header_rows[1][0] == 'employer'
+        assert header_rows[2][0] == 'summons_number'
 
 
 @pytest.mark.skip

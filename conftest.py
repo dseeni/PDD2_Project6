@@ -18,9 +18,10 @@ def dummy_target():
         while True:
             row = yield ml
             if type(row) == list:
-                ml = [i for i in row]
+                for i in row:
+                    ml.append(i)
             else:
-                ml = row
+                ml.append(row)
     sink = test_sink()
     return sink
 

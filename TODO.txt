@@ -164,14 +164,15 @@ REFACTOR:
 
 @coroutine
 pipeline_coro
-    @sub-contextmanager-ExitStack:
+    with file_readers(data_package) as readers:
+
         with file_readers as readers:
         for each reader in readers -->
         cycle through the list of readers
         exception stop iteration, then skip that file
         keep going until every file is exhausted.
 
-    -> every part of the pipe awaits thes first #of incoming data packets
+    -> every part of the pipe awaits rows, 1 from each file
     (number of files/rows)
     -> then after getting eveyr row proceeds to the enxt stage
     -> OR filehandler can cyclically reader every row and send it the
