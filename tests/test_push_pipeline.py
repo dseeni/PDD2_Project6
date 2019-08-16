@@ -124,11 +124,11 @@ def test_row_key_gen(test_sink, test_data_rows):
 
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(test_data_rows)
-    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
+    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0][0]
     assert check_key(parsed_key0, test_key0)
 
-    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
+    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1][0]
     assert check_key(parsed_key1, test_key1)
 
-    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
+    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2][0]
     assert check_key(parsed_key2, test_key2)
