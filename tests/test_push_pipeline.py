@@ -44,11 +44,23 @@ def test_gen_field_names(dummy_target):
 def test_file_readers(dummy_target):
     dummy = dummy_target
     with file_readers(data_package) as readers:
+        # check the first element in each files header row:
         assert(next(readers[0])[0]) == 'Car'
         assert(next(readers[1])[0]) == 'employer'
         assert(next(readers[2])[0]) == 'Summons Number'
         assert(next(readers[3])[0]) == 'ssn'
         assert(next(readers[4])[0]) == 'ssn'
+        data_rows = []
+        for _ in range(len(readers)):
+            try:
+                while True:
+                    data_rows.append(next(readers[_]))
+            except StopIteration:
+                continue
+            except IndexError:
+                break
+        assert len(data_rows) == 4406
+
 
 
 @pytest.mark.skip
