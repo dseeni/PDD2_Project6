@@ -34,24 +34,21 @@ def file_readers(packaged_data):
         for data_in, data_out in packaged_data:
             input_files = [data_in[0]]
             input_file_objs = [open(input_file) for input_file in input_files]
-            print(input_file_objs)
+            # print(input_file_objs)
             for file_obj in input_file_objs:
                 dialect = csv.Sniffer().sniff(file_obj.read(2000))
                 file_obj.seek(0)
                 readers.append(csv.reader(file_obj, dialect))
         yield readers
     finally:
-        # for reader in readers:
-        #     try:
-        #         next(reader)
-        #     except StopIteration:
-        #         print(readers.index(reader))
-        #         input_file_objs[readers.index(reader)].close()
+        for reader in readers:
+            try:
+                next(reader)
+            except StopIteration:
+                 pass
         for file in input_file_objs:
             file.close()
-            f1 = open(input_files[0])
-            f1.read()
-            assert all(file.closed for file in input_file_objs)
+        assert all(file.closed for file in input_file_objs)
 
 
 def coroutine(fn):

@@ -602,45 +602,47 @@
 # exception stop iteration, then skip that file
 # keep going until every file is exhausted.
 
-from itertools import cycle, islice
-from src.push_pipeline import *
+# from itertools import cycle, islice
+# from src.push_pipeline import *
+#
+#
+# # cycle through them yielding a row
+# # except if exhausted, mark as closed and skip it..
+# def rowcycle(data):
+#     with file_readers(data) as readers: # a list of readers
+#         reader_idx_list = list(range(len(readers))) # 5 in our case
+#         idx_tracker = readers_idx_list = list(range(len(readers)))
+#         cycler = cycle(readers_idx_list)
+#         while True:
+#             reader_idx = next(cycler)
+#             try:
+#                 if all(idx is None for idx in reader_idx_list):
+#                     break
+#                 if idx_tracker[reader_idx] is None:
+#                     continue
+#                 else:
+#                     yield next(readers[reader_idx])
+#             except StopIteration:
+#                 reader_idx_list[reader_idx] = None
+#                 continue
+#
+#         # while True:
+#         #     i = next(cycler)
+#         #     try:
+#         #         yield next(readers[i])
+#         #     except StopIteration:
+#         #         break
+#
+#
+#     # print(list(islice(cycle(ml), len(ml) * 5)))
+# cl = rowcycle(data_package)
+# print(list(cl))
+# print(len(list(cl)))
+# # print(list(rowcycle(data_package)))
+# # print(len(list(rowcycle(data_package))))
+#
+# # ml = list(range(5))
+# # print(ml)
+# # cml = cycle(ml)
+# # ----------------------------------------------------------------------------
 
-
-# cycle through them yielding a row
-# except if exhausted, mark as closed and skip it..
-def rowcycle(data):
-    with file_readers(data) as readers: # a list of readers
-        reader_idx_list = list(range(len(readers))) # 5 in our case
-        idx_tracker = readers_idx_list = list(range(len(readers)))
-        cycler = cycle(readers_idx_list)
-        while True:
-            reader_idx = next(cycler)
-            try:
-                if all(idx is None for idx in reader_idx_list):
-                    break
-                if idx_tracker[reader_idx] is None:
-                    continue
-                else:
-                    yield next(readers[reader_idx])
-            except StopIteration:
-                reader_idx_list[reader_idx] = None
-                continue
-
-        # while True:
-        #     i = next(cycler)
-        #     try:
-        #         yield next(readers[i])
-        #     except StopIteration:
-        #         break
-
-
-    # print(list(islice(cycle(ml), len(ml) * 5)))
-cl = rowcycle(data_package)
-print(list(cl))
-print(len(list(cl)))
-# print(list(rowcycle(data_package)))
-# print(len(list(rowcycle(data_package))))
-
-# ml = list(range(5))
-# print(ml)
-# cml = cycle(ml)
