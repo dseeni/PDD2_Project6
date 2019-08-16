@@ -1,6 +1,7 @@
 from pytest import fixture
 from src.push_pipeline import *
 # from inspect import getgeneratorstate, getgeneratorlocals
+from contextlib import ExitStack
 
 
 @fixture('session', autouse=True)
@@ -11,9 +12,9 @@ def set_test_directory():
 # we send to dummy via the coroutines we're testing
 # so we can't view a return value
 @fixture('function')
-def dummy_target():
+def test_sink():
     @coroutine
-    def test_sink():
+    def _test_sink():
         ml = []
         while True:
             row = yield ml
@@ -22,20 +23,43 @@ def dummy_target():
                     ml.append(i)
             else:
                 ml.append(row)
-    sink = test_sink()
+    sink = _test_sink()
     return sink
 
 
 @fixture('function')
-def dummy_reader():
+def test_data_rows():
     raw_data_list = []
     f_idxs = [0, 2, 4]
-    partial_files = list(fnames[i] for i in f_idxs)
-    for file in partial_files:
-        with file_readers(file) as f:
-            next(f)
-            raw_data_list.append(next(f))
+    partial_files = tuple(fnames[i] for i in f_idxs)
+    # _ = []
+    # _.append((tuple((file, None), None)) for file in partial_files)
+    # partial_package = tuple(i for i in _)
+    # print(_)
+    # print(partial_package)
+    # partial_package = (('file', None), None),
+    # (('file', None), None),
+    # (('file', None), None),
+    partial_package = (((fnames[0], None), None), ((fnames[0], None), None),
+                       ((fnames[0], None), None))
+    print(partial_package)
+
+    with file_readers(partial_package) as readers:
+        print('38:', 'readers ''='' ', readers)
+        for reader in readers:
+            next(reader)
+            raw_data_list.append(next(reader))
+        print('40:', 'raw_data_list ''='' ', raw_data_list)
     return raw_data_list
+    # with ExitStack() as stack:
+    #     readers = [stack.enter_context(open(file)) for file in partial_files]
+    #     for reader in readers:
+    #         next(reader)  # skip the header row
+    #         row_line = next(reader).strip('\n')
+    #         split_row = row_line.split(';')
+    #         raw_data_list.append(row_line)
+    # print('41:', *raw_data_list, sep='\n')
+    # return raw_data_list
 
 # @contextmanager
 # def file_handler(file_name):

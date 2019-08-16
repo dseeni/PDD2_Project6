@@ -16,12 +16,12 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-def test_header_extract(dummy_target):
+def test_header_extract(test_sink):
     with file_readers(data_package) as readers:
-        headers = header_extract(dummy_target)
+        headers = header_extract(test_sink)
         row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
-        header_rows = getgeneratorlocals(dummy_target)['ml']
+        header_rows = getgeneratorlocals(test_sink)['ml']
         print('25:', *header_rows, sep='\n')
         assert header_rows[0][0] == 'car'
         assert header_rows[1][0] == 'employer'
@@ -29,22 +29,21 @@ def test_header_extract(dummy_target):
 
 
 @pytest.mark.skip
-def test_gen_field_names(dummy_target):
-    field_names = gen_field_names(dummy_target)
+def test_gen_field_names(test_sink):
+    field_names = gen_field_names(test_sink)
     field_names.send(class_names[0])
 
     with file_readers(fnames[0]) as f:
         # header_row = next(f)
         headers = tuple(map(lambda l: l.lower(), next(f)))
         field_names.send(headers)
-    dummy_nt = getgeneratorlocals(dummy_target)['ml']
+    dummy_nt = getgeneratorlocals(test_sink)['ml']
     obj_properties = ['acceleration', 'car', 'cylinders', 'displacement',
                       'horsepower', 'mpg', 'model', 'origin']
     assert all(getattr(dummy_nt, attr) for attr in obj_properties)
 
 
-def test_file_readers(dummy_target):
-    dummy = dummy_target
+def test_file_readers(test_sink):
     with file_readers(data_package) as readers:
         # check the first element in each files header row:
         assert(next(readers[0])[0]) == 'Car'
@@ -65,16 +64,16 @@ def test_file_readers(dummy_target):
 
 
 @pytest.mark.skip
-def test_date_key_gen(dummy_target, dummy_reader):
+def test_date_key_gen(test_sink, test_data_rows):
 
     # cars.csv
-    delimited_row1 = dummy_reader[0]
+    delimited_row1 = test_data_rows[0]
     # nyc_parking_tickets_extract.csv
-    delimited_row2 = dummy_reader[1]
+    delimited_row2 = test_data_rows[1]
     # update_status.csv
-    delimited_row3 = dummy_reader[2]
+    delimited_row3 = test_data_rows[2]
 
-    date_parser = date_key_gen(dummy_target)
+    date_parser = date_key_gen(test_sink)
     gen_row_key = row_key_gen(date_parser)
 
     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
@@ -83,11 +82,11 @@ def test_date_key_gen(dummy_target, dummy_reader):
     # date_parser.send(delimited_row3)
     gen_row_key.send(delimited_row3)
 
-    row_key = getgeneratorlocals(dummy_target)['ml']
+    row_key = getgeneratorlocals(test_sink)['ml']
     assert row_key[0] == str
 
-    datefunc1 = getgeneratorlocals(dummy_target)['ml'][1]
-    datefunc2 = getgeneratorlocals(dummy_target)['ml'][2]
+    datefunc1 = getgeneratorlocals(test_sink)['ml'][1]
+    datefunc2 = getgeneratorlocals(test_sink)['ml'][2]
     date1 = datefunc1('2017-10-07T00:14:42Z')
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
@@ -99,32 +98,37 @@ def test_date_key_gen(dummy_target, dummy_reader):
     assert check_date(date2, 2016, 1, 24, 21, 19, 30)
 
 
-@pytest.mark.skip
-def test_row_key_gen(dummy_target, dummy_reader):
-    # cars.csv
-    delimited_row0 = dummy_reader[0]
-    # nyc_parking_tickets_extract.csv
-    delimited_row1 = dummy_reader[1]
-    # update_status.csv
-    delimited_row2 = dummy_reader[2]
+# @pytest.mark.skip
+def test_row_key_gen(test_sink, test_data_rows):
+    # # cars.csv
+    # delimited_row0 = test_data_rows[0]
+    # # nyc_parking_tickets_extract.csv
+    # delimited_row1 = test_data_rows[1]
+    # # update_status.csv
+    # delimited_row2 = test_data_rows[2]
+
     # reference keys
+    # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
+    # nyc_parking_tickets_extract.csv
     test_key1 = (int, str, str, str, str, int, str, str, str)
+    # update_status.csv
     test_key2 = (str, str, str)
+    
+    test_keys = zip(test_key0, test_key1, test_key2)
 
-    def check_key(row_key, test_key):
-        for value, ref in list(zip(row_key, test_key)):
-            return value == ref
+    def check_key(row_keys, ref_keys):
+        for values, refs in list(zip(row_keys, ref_keys)):
+            for value, ref in values, refs:
+                return value == ref
 
-    gen_row_key = row_key_gen(dummy_target)
-    gen_row_key.send(delimited_row0)
-    parsed_key0 = getgeneratorlocals(dummy_target)['ml']
+    gen_row_key = row_key_gen(test_sink)
+    gen_row_key.send(test_data_rows)
+    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     assert check_key(parsed_key0, test_key0)
 
-    gen_row_key.send(delimited_row1)
-    parsed_key1 = getgeneratorlocals(dummy_target)['ml']
+    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
     assert check_key(parsed_key1, test_key1)
 
-    gen_row_key.send(delimited_row2)
-    parsed_key2 = getgeneratorlocals(dummy_target)['ml']
+    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
     assert check_key(parsed_key2, test_key2)

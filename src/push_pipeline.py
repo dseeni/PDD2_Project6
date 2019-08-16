@@ -114,10 +114,10 @@ def pipeline_coro():
             # right away to field_name_generator
             row_cycler.send(readers)
             # send class_names and header_row
-            field_name_gen.send(class_names)
-            header_row.send(next(reader))  # --> send to gen_field_names
+            field_name_gen.send(nt_classes)
+            header_row.send(next(row_cycler))  # --> send to gen_field_names
             # sample row for row_key:
-            first_raw_data_row = next(reader)
+            first_raw_data_row = next(row_cycler)
             row_key.send(first_raw_data_row)
             date_key.send(date_keys)
             date_key.send(first_raw_data_row)
@@ -195,8 +195,9 @@ def header_extract(target):  # --> send to gen_field_names
 @coroutine
 def row_key_gen(target):  # from coro to date parser:-->
     while True:
-        data_rows = yield  # from pipeline_coro
+        data_rows = yield  # from cycle_rows
         row_parse_keys = deepcopy(data_rows)  # list of lists
+        print('200:', 'row_parse_keys ''='' ', row_parse_keys)
         for parse_keys in row_parse_keys:
             for sub_key in parse_keys:
                 if sub_key is None:
@@ -214,8 +215,8 @@ def row_key_gen(target):  # from coro to date parser:-->
                         (row_parse_keys[row_parse_keys.index(parse_keys)]
                          [parse_keys.index(sub_key)]) = str
                 else:
-                    (row_parse_keys[row_parse_keys.index(parse_keys)][
-                     parse_keys.index(sub_key)]) = str
+                    (row_parse_keys[row_parse_keys.index(parse_keys)]
+                     [parse_keys.index(sub_key)]) = str
         target.send(row_parse_keys)
 
 
