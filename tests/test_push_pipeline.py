@@ -118,17 +118,19 @@ def test_row_key_gen(test_sink, test_data_rows):
     test_keys = zip(test_key0, test_key1, test_key2)
 
     def check_key(row_keys, ref_keys):
-        for values, refs in list(zip(row_keys, ref_keys)):
-            for value, ref in values, refs:
-                return value == ref
+        for value, ref in list(zip(row_keys, ref_keys)):
+            return value == ref
 
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(test_data_rows)
-    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0][0]
+    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
+    print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)
 
-    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1][0]
+    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
+    print('p1', parsed_key1)
     assert check_key(parsed_key1, test_key1)
 
-    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2][0]
+    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
+    print('p2', parsed_key2)
     assert check_key(parsed_key2, test_key2)
