@@ -20,7 +20,7 @@
 
 # # ----------------------------------------------------------------------------
 # cars_header = header_extract(fcars)
-# cars = data_reader(fcars, cars_parser, cars_header, cars_class_name)
+# cars = data_reader(fcars, cars_parser, cars_header, cars__name)
 #
 # with cars as c:
 #     # for row in c:
@@ -56,9 +56,9 @@
 
 # # ----------------------------------------------------------------------------
 # Constants:
-# Headers --> NamedTuple
-# idx_*headers --> Headers.horsepower etc?
-# Input_file --> cars.csv
+# Headers -- NamedTuple
+# idx_*headers -- Headers.horsepower etc?
+# Input_file -- cars.csv
 # Types str in etc
 # Output files based on filter names {}
 
@@ -212,7 +212,7 @@
 # tuple(file_name_2, data row name): 'function_name': lambda_func
 # tuple(file_name_3, data row name): 'function_name': lambda_func}
 
-# file_and_row_tup = tuple(zip(fnames, class_names))
+# file_and_row_tup = tuple(zip(fnames, _names))
 # print(*file_and_row_tup, sep='\n')
 
 
@@ -230,7 +230,7 @@
 # example predicate: 'lambda d: d[idx_color].lower()'
 
 # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-# filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+# filter_older = filter_data(lambda d: d[idx_year] = 2010, out_older)
 
 # filters = (filter_pink_cars, filter_ford_green, filter_older)
 
@@ -316,7 +316,7 @@
 
 
 # # ----------------------------------------------------------------------------
-# print(class_names[0])
+# print(_names[0])
 # @fixture
 # # ----------------------------------------------------------------------------
 
@@ -374,7 +374,7 @@
 # first pass row to data parser, which returns dates as strings, then date
 # parser will go over the row again, only evaluting entires that are
 # strings.. thereby reducing the work that date_parser needs to do.
-# because right now you're checking dates len(row) * 3 or more keys--> 24 calls
+# because right now you're checking dates len(row) * 3 or more keys-- 24 calls
 # you can automatically reduce the work if you just use date parser last,
 # only on those entries that are of type(str)
 # parse_guide = list(zip(ml, al, gl))
@@ -446,7 +446,7 @@
 #                   'BMW', 'BUS LANE VIOLATION']
 #
 # @coroutine
-# def row_key_gen(target):  # from coro to date parser:-->
+# def row_key_gen(target):  # from coro to date parser:--
 #     while True:
 #         data_row = yield  # from pipeline_coro
 #         row_parse_key = deepcopy(data_row)
@@ -507,7 +507,7 @@
 
 # print(len(list(input_packages)), len(list(output_packages)))
 # for input_data, output_data in data_package:
-#     print(input_data, '===========>', output_data, sep='\n')
+#     print(input_data, '===========', output_data, sep='\n')
 
 # for input_data, output_data in data_package:
 #     print(*input_data, sep='\n')
@@ -518,7 +518,7 @@
 # for output_package in output_packages:
 #     print('217:', *output_package, sep='\n')
 
-# # filesnames and classnames
+# # filesnames and names
 # input_dict = {k: v for k,v in input_packages, output_packages}
 #
 # print(*input_dict, sep='\n')
@@ -549,9 +549,9 @@
 #
 # for input, output in data_package:
 #     fnames = [input[0]]
-#     classes = [input[1]]
+#     es = [input[1]]
 #     print(fnames)
-#     print(classes)
+#     print(es)
 #
 #     # print(input)
 #     # print(' ')
@@ -597,7 +597,7 @@
 # pipeline_coro
 # @sub-contextmanager-ExitStack:
 # with file_readers as readers:
-#     for each reader in readers -->
+#     for each reader in readers --
 # cycle through the list of readers
 # exception stop iteration, then skip that file
 # keep going until every file is exhausted.
@@ -680,4 +680,12 @@ for parse_key in ml:
             ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
 
 print(ml)
+key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+parse_guide = [
+    [[('str', 'int', 'str'), ('float', 'str', 'str'), ('int', 'str', 'str')],
+     [('Chevrolet Chevelle Malibu', '4006478550', '100-53-9824'),
+      ('18.0', 'VAD7274', '2017 -10-07T00:14:42Z'),
+      ('8', 'VA', '2016-01-24T21:19:30Z')],
+     [(0, 0, 0), (1, 1, 1), (2, 2, 2)]]]
 
+parse_guide = list(zip(data_type, item, idx) for data_type, item, idx in key_copy, delimited_row, key_idx)

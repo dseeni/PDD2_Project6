@@ -225,32 +225,35 @@ def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
     delimited_row = yield  # <-sent by pipeline coro ONCE per file run
     while True:
-        partial_key = yield
-        key_copy = deepcopy(partial_key)  # list of lists
-        key_idx = [tuple(i for i in range(len(sub_key))) for sub_key
-                   in key_copy]
-        print('231:', 'key_idx ''='' ', key_idx)
-        parse_guide = [list(list(list(zip(key_type, value, idx))
-                                 for key_type, value, idx in
-                                 (key_copy, delimited_row, key_idx)))]
+        partial_keys = yield
+        keys_copy = deepcopy(partial_keys)  # list of lists
+        keys_idx = [tuple(i for i in range(len(sub_key))) for sub_key
+                    in keys_copy]
+        print('231:', 'key_idx ''='' ', keys_idx)
+
+        parse_guide = [list(zip(sub_key, item, idx)) for sub_key in
+                       keys_copy for item in delimited_row for idx in keys_idx]
+
+
         print('235:', 'parse_guide ''='' ', parse_guide)
         # parse_guide = list(zip(key_copy, delimited_row, key_idx))
         date_func = None
-        for data_type, item, idx in parse_guide:
-            if data_type == str:
-                for _ in range(len(date_keys_tuple)):
-                    try:
-                        if datetime.strptime(item, date_keys_tuple[_]):
-                            date_func = (lambda v: datetime.strptime
-                            (v, date_keys_tuple[_]))
-                            key_copy[idx] = date_func
+        for rows in parse_guide:
+            for data_type, item, idx in rows:
+                if data_type == str:
+                    for _ in range(len(date_keys_tuple)):
+                        try:
+                            if datetime.strptime(item, date_keys_tuple[_]):
+                                date_func = (lambda v: datetime.strptime
+                                (v, date_keys_tuple[_]))
+                                (keys_copy[item.index(data_type)]) = date_func
+                                continue
+                        except ValueError:
+                            # _ += 1
                             continue
-                    except ValueError:
-                        # _ += 1
-                        continue
-                    except IndexError:
-                        break
-        target.send(key_copy)
+                        except IndexError:
+                            break
+        target.send(keys_copy)
 
 
 @coroutine
