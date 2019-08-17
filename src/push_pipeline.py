@@ -243,13 +243,15 @@ def date_key_gen(target):
                                              (v, date_keys_tuple[_]))
                                 (keys_copy[parse_guide.index(parser)]
                                  [idx]) = date_func
+                                _ += 1
+                                if _ > len(date_keys_tuple):
+                                    break
                                 continue
                         except ValueError:
-                            # _ += 1
+                            _ += 1
                             continue
                         except IndexError:
                             break
-        print(keys_copy)
         target.send(keys_copy)
 
 

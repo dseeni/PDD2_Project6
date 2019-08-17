@@ -84,20 +84,22 @@ def test_date_key_gen(test_sink, test_file_reader):
 
     row_key = getgeneratorlocals(test_sink)['ml']
     assert row_key[0][0] == str
+    print('87:', 'row_key ''='' ', row_key)
+    assert len(row_key) == 3
 
-    datefunc1 = getgeneratorlocals(test_sink)['ml'][1][1]
+    datefunc1 = getgeneratorlocals(test_sink)['ml'][1][4]
+    # print('91:', 'datefunc1 ''='' ', datefunc1)
     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
-    # print(getgeneratorlocals(test_sink))
-    date1 = datefunc1('2017-10-07T00:14:42Z')
+    date1 = datefunc1('10/5/2016')
     # print('d1', datefunc1)
-    # print('d2', datefunc2)
+    print('d2', datefunc2)
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
     def check_date(date_obj, *args):
         time = ('year', 'month', 'day', 'hour', 'minute', 'second')
         return list(getattr(date_obj, value) for value in time) == [*args]
-    assert check_date(date1, 2017, 10, 7, 0, 14, 42)
+    assert check_date(date1, 2016, 10, 5, 0, 0, 0)
     assert check_date(date2, 2016, 1, 24, 21, 19, 30)
 
 
