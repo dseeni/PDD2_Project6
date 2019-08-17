@@ -227,8 +227,8 @@ def date_key_gen(target):
     while True:
         partial_keys = yield
         keys_copy = deepcopy(partial_keys)  # list of lists
-        print('230:', 'type(keys_copy) ''='' ', type(keys_copy))
-        print('230:', 'keys_copy ''='' ', keys_copy)
+        # print('230:', 'type(keys_copy) ''='' ', type(keys_copy))
+        # print('230:', 'keys_copy ''='' ', keys_copy)
         keys_idxs = [tuple(i for i in range(len(sub_key))) for sub_key
                      in keys_copy]
         parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
@@ -242,20 +242,25 @@ def date_key_gen(target):
                         try:
                             # print('inspect:', keys_copy[parse_guide.index(
                             #     parser)])
-                            if datetime.strptime(item, date_keys_tuple[_]):
+                            try:
+                                datetime.strptime(item, date_keys_tuple[_])
                                 date_func = (lambda v: datetime.strptime
                                              (v, date_keys_tuple[_]))
                                 (keys_copy[parse_guide.index(parser)]
                                  [idx]) = date_func
+                                print('dfid', date_keys_tuple[_], id(date_func))
                                 print(parse_guide.index(parser), idx,
                                       date_keys_tuple[_])
                                 print('date found')
+                                print(item, 'item')
                                 continue
-                        except ValueError:
-                            continue
+                            except ValueError:
+                                continue
+                        # except ValueError:
+                        #     continue
                         except IndexError:
                             break
-        print('257:', *keys_copy, sep='\n')
+        # print('257:', *keys_copy, sep='\n')
         target.send(keys_copy)
 
 

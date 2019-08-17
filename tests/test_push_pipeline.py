@@ -63,9 +63,9 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_date_key_gen(test_sink, test_file_reader):
-
+    # 546586285056
     # # cars.csv
     # delimited_row1 = test_file_reader[0]
     # # nyc_parking_tickets_extract.csv
@@ -88,11 +88,13 @@ def test_date_key_gen(test_sink, test_file_reader):
     assert len(row_key) == 3
 
     datefunc1 = getgeneratorlocals(test_sink)['ml'][1][4]
+    print('id of df1', id(datefunc1))
     # print('91:', 'datefunc1 ''='' ', datefunc1)
     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
+    assert datefunc1 != datefunc2
     print('d1', datefunc1, type(datefunc1))
     print('d2', datefunc2, type(datefunc2))
-    date1 = datefunc1("10/5/2016")
+    date1 = datefunc1('10/5/2016')
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
