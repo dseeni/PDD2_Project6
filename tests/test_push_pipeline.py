@@ -142,18 +142,18 @@ def test_row_key_gen(test_sink, test_file_reader):
 
 
 def test_date_parser(test_sink):
-    date_key2 = '%Y-%m-%dT%H:%M:%SZ'
-    date_key1 = '%m/%d/%Y'
-    date_str = '10/5/2016'
-    date_keys = (date_key1, date_key2)
-    date_func1 = (lambda v: datetime.strptime(v, date_keys[0]))
-    date_func2 = (lambda v: datetime.strptime(v, date_keys[1]))
+    dk2 = '%Y-%m-%dT%H:%M:%SZ'
+    dk1 = '%m/%d/%Y'
+    date_str1 = '10/5/2016'
+    date_str2 = '2016-01-24T21:19:30Z'
+    dkeys = (dk1, dk2)
+    date_func1 = (lambda v: datetime.strptime(v, dkeys[0]))
+    date_func2 = (lambda v: datetime.strptime(v, dkeys[1]))
     
-    assert date_func1(date_str).day == 5
-    assert date_func1(date_str).month == 11
-    assert date_func1(date_str).year == 2016
+    assert date_func1(date_str1).day == 5
+    assert date_func1(date_str1).month == 10
+    assert date_func1(date_str1).year == 2016
 
-    assert date_func2(date_str2).day == 5
-    assert date_func2(date_str).month == 11
-    assert date_func2(date_str).year == 2016
-
+    assert date_func2(date_str2).day == 24
+    assert date_func2(date_str2).month == 1
+    assert date_func2(date_str2).year == 2016
