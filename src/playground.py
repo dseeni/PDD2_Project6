@@ -698,4 +698,12 @@ key_idy = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 
 
-print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
+# print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
+from src.constants import date_keys
+from datetime import datetime
+date_func = (lambda v: datetime.strptime(v, date_keys[0]))
+print(type(date_func('10/5/2016')))
+
+print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
+
+

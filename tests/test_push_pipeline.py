@@ -1,6 +1,7 @@
 import pytest
 from src.push_pipeline import *
 from inspect import getgeneratorlocals
+from datetime import datetime
 
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
@@ -81,18 +82,18 @@ def test_date_key_gen(test_sink, test_file_reader):
 
     # date_parser.send(delimited_row3)
     gen_row_key.send(test_file_reader)
+    print(getgeneratorlocals(test_sink))
 
     row_key = getgeneratorlocals(test_sink)['ml']
     assert row_key[0][0] == str
-    print('87:', 'row_key ''='' ', row_key)
     assert len(row_key) == 3
 
-    datefunc1 = getgeneratorlocals(test_sink)['ml'][1][4]
+    datefunc1 = row_key[1][4]
     # print('91:', 'datefunc1 ''='' ', datefunc1)
     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
+    print('d1', datefunc1, type(datefunc1))
+    print('d2', datefunc2, type(datefunc1))
     date1 = datefunc1('10/5/2016')
-    # print('d1', datefunc1)
-    print('d2', datefunc2)
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
