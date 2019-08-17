@@ -233,8 +233,6 @@ def date_key_gen(target):
 
         parse_guide = [list(zip(sub_key, item, idx)) for sub_key in
                        keys_copy for item in delimited_row for idx in keys_idx]
-
-
         print('235:', 'parse_guide ''='' ', parse_guide)
         # parse_guide = list(zip(key_copy, delimited_row, key_idx))
         date_func = None
@@ -245,7 +243,7 @@ def date_key_gen(target):
                         try:
                             if datetime.strptime(item, date_keys_tuple[_]):
                                 date_func = (lambda v: datetime.strptime
-                                (v, date_keys_tuple[_]))
+                                             (v, date_keys_tuple[_]))
                                 (keys_copy[item.index(data_type)]) = date_func
                                 continue
                         except ValueError:

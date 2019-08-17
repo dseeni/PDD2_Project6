@@ -688,4 +688,4 @@ parse_guide = [
       ('8', 'VA', '2016-01-24T21:19:30Z')],
      [(0, 0, 0), (1, 1, 1), (2, 2, 2)]]]
 
-parse_guide = list(zip(data_type, item, idx) for data_type, item, idx in key_copy, delimited_row, key_idx)
+
