@@ -225,13 +225,14 @@ def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
     delimited_row = yield  # <-sent by pipeline coro ONCE per file run
     while True:
-        partial_key = yield  # list of lists
-        key_copy = deepcopy(partial_key)
-        key_idx = [tuple(i for i in range(len(sub_key)))
-                   for sub_key in key_copy]
+        partial_key = yield
+        key_copy = deepcopy(partial_key)  # list of lists
+        key_idx = [tuple(i for i in range(len(sub_key))) for sub_key
+                   in key_copy]
         print('231:', 'key_idx ''='' ', key_idx)
-        parse_guide = [tuple(tuple(zip(x, y, z) for x, y, z in
-                                   (key_copy, delimited_row, key_idx)))]
+        parse_guide = [list(list(list(zip(key_type, value, idx))
+                                 for key_type, value, idx in
+                                 (key_copy, delimited_row, key_idx)))]
         print('235:', 'parse_guide ''='' ', parse_guide)
         # parse_guide = list(zip(key_copy, delimited_row, key_idx))
         date_func = None

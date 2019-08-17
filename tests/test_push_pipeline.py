@@ -87,10 +87,10 @@ def test_date_key_gen(test_sink, test_file_reader):
 
     datefunc1 = getgeneratorlocals(test_sink)['ml'][1][1]
     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
-    print(getgeneratorlocals(test_sink))
+    # print(getgeneratorlocals(test_sink))
     date1 = datefunc1('2017-10-07T00:14:42Z')
-    print('d1', datefunc1)
-    print('d2', datefunc2)
+    # print('d1', datefunc1)
+    # print('d2', datefunc2)
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
