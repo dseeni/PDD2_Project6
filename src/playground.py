@@ -706,4 +706,4 @@ print(type(date_func('10/5/2016')))
 
 print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
 
-
+'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'

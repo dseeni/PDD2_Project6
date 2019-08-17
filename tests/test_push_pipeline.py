@@ -1,7 +1,6 @@
 import pytest
 from src.push_pipeline import *
 from inspect import getgeneratorlocals
-from datetime import datetime
 
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
@@ -64,7 +63,7 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_date_key_gen(test_sink, test_file_reader):
 
     # # cars.csv
@@ -88,12 +87,12 @@ def test_date_key_gen(test_sink, test_file_reader):
     assert row_key[0][0] == str
     assert len(row_key) == 3
 
-    datefunc1 = row_key[1][4]
+    datefunc1 = getgeneratorlocals(test_sink)['ml'][1][4]
     # print('91:', 'datefunc1 ''='' ', datefunc1)
     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
     print('d1', datefunc1, type(datefunc1))
-    print('d2', datefunc2, type(datefunc1))
-    date1 = datefunc1('10/5/2016')
+    print('d2', datefunc2, type(datefunc2))
+    date1 = datefunc1("10/5/2016")
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
@@ -140,3 +139,21 @@ def test_row_key_gen(test_sink, test_file_reader):
     parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
     print('p2', parsed_key2)
     assert check_key(parsed_key2, test_key2)
+
+
+def test_date_parser(test_sink):
+    date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+    date_key1 = '%m/%d/%Y'
+    date_str = '10/5/2016'
+    date_keys = (date_key1, date_key2)
+    date_func1 = (lambda v: datetime.strptime(v, date_keys[0]))
+    date_func2 = (lambda v: datetime.strptime(v, date_keys[1]))
+    
+    assert date_func1(date_str).day == 5
+    assert date_func1(date_str).month == 11
+    assert date_func1(date_str).year == 2016
+
+    assert date_func2(date_str2).day == 5
+    assert date_func2(date_str).month == 11
+    assert date_func2(date_str).year == 2016
+

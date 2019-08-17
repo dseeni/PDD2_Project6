@@ -245,9 +245,10 @@ def date_key_gen(target):
                             if datetime.strptime(item, date_keys_tuple[_]):
                                 date_func = (lambda v: datetime.strptime
                                              (v, date_keys_tuple[_]))
-                                (keys_copy[parse_guide.index(parser)][idx]) = date_func
-                                print(parse_guide.index(parser), idx, \
-                                date_keys_tuple[_])
+                                (keys_copy[parse_guide.index(parser)]
+                                 [idx]) = date_func
+                                print(parse_guide.index(parser), idx,
+                                      date_keys_tuple[_])
                                 print('date found')
                                 continue
                         except ValueError:
