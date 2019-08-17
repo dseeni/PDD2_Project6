@@ -645,47 +645,57 @@
 # # print(ml)
 # # cml = cycle(ml)
 # # ----------------------------------------------------------------------------
+#
+# ml = [['Chevrolet Chevelle Malibu', '18.0', '8', '307.0', '130.0', '3504.',
+#        '12.0', '70', 'US'],
+#
+#       ['4006478550 ', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D', 'BMW',
+#        'BUS LANE VIOLATION'],
+#
+#       ['100-53-9824', '2017-10-07T00:14:42Z', '201 6-01-24T21:19:30Z']]
+#
+# # key_idx = [i for i in range(len(sub_key)) for sub_key in key_copy]
+#
+# nl = tuple(tuple(zip(sublist, sublist)) for sublist in ml)
+# print(*nl, sep='\n')
+#
+# key_idx = [tuple(i for i in range(len(sub_key))) for sub_key in ml]
+# print(key_idx)
+#
+# parse_guide = list(zip(ml, ml, key_idx))
+#
+# pg = []
+# # how to zip up 3 way list of lists
+# for x, y, z in ml, nl, key_idx:
+#     pg.append(list(zip(x, y, z)))
+#
+# # pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row, key_idx))]
+#
+# print(*parse_guide)
+# print(*pg)
+#
+# for parse_key in ml:
+#     for sub_key in parse_key:
+#         if all(c.isdigit() for c in sub_key):
+#             ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
+#
+# print(ml)
+# key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+# parse_guide = [
+#     [[('str', 'int', 'str'), ('float', 'str', 'str'), ('int', 'str', 'str')],
+#      [('Chevrolet Chevelle Malibu', '4006478550', '100-53-9824'),
+#       ('18.0', 'VAD7274', '2017 -10-07T00:14:42Z'),
+#       ('8', 'VA', '2016-01-24T21:19:30Z')],
+#      [(0, 0, 0), (1, 1, 1), (2, 2, 2)]]]
+#
+# answer2 = [[[print(x)  for x in y]
+#             if type(y) == list else print(y) for y in z]for z in nested_lists]
+#
 
-ml = [['Chevrolet Chevelle Malibu', '18.0', '8', '307.0', '130.0', '3504.',
-       '12.0', '70', 'US'],
 
-      ['4006478550 ', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D', 'BMW',
-       'BUS LANE VIOLATION'],
-
-      ['100-53-9824', '2017-10-07T00:14:42Z', '201 6-01-24T21:19:30Z']]
-
-# key_idx = [i for i in range(len(sub_key)) for sub_key in key_copy]
-
-nl = tuple(tuple(zip(sublist, sublist)) for sublist in ml)
-print(*nl, sep='\n')
-
-key_idx = [tuple(i for i in range(len(sub_key))) for sub_key in ml]
-print(key_idx)
-
-parse_guide = list(zip(ml, ml, key_idx))
-
-pg = []
-# how to zip up 3 way list of lists
-for x, y, z in ml, nl, key_idx:
-    pg.append(list(zip(x, y, z)))
-
-# pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row, key_idx))]
-
-print(*parse_guide)
-print(*pg)
-
-for parse_key in ml:
-    for sub_key in parse_key:
-        if all(c.isdigit() for c in sub_key):
-            ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
-
-print(ml)
 key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
-parse_guide = [
-    [[('str', 'int', 'str'), ('float', 'str', 'str'), ('int', 'str', 'str')],
-     [('Chevrolet Chevelle Malibu', '4006478550', '100-53-9824'),
-      ('18.0', 'VAD7274', '2017 -10-07T00:14:42Z'),
-      ('8', 'VA', '2016-01-24T21:19:30Z')],
-     [(0, 0, 0), (1, 1, 1), (2, 2, 2)]]]
+key_idy = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 
 
+print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])

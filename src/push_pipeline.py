@@ -223,34 +223,33 @@ def row_key_gen(target):  # from coro to date parser:-->
 @coroutine
 def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
-    delimited_row = yield  # <-sent by pipeline coro ONCE per file run
+    delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
         partial_keys = yield
         keys_copy = deepcopy(partial_keys)  # list of lists
-        keys_idx = [tuple(i for i in range(len(sub_key))) for sub_key
-                    in keys_copy]
-        print('231:', 'key_idx ''='' ', keys_idx)
-
-        parse_guide = [list(zip(sub_key, item, idx)) for sub_key in
-                       keys_copy for item in delimited_row for idx in keys_idx]
-        print('235:', 'parse_guide ''='' ', parse_guide)
-        # parse_guide = list(zip(key_copy, delimited_row, key_idx))
+        keys_idxs = [tuple(i for i in range(len(sub_key))) for sub_key
+                     in keys_copy]
+        parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
+                       for i in range(len(keys_copy))]
+        # print('243:', *parse_guide, sep='\n')
         date_func = None
-        for rows in parse_guide:
-            for data_type, item, idx in rows:
+        for parser in parse_guide:
+            for data_type, item, idx in parser:
                 if data_type == str:
                     for _ in range(len(date_keys_tuple)):
                         try:
                             if datetime.strptime(item, date_keys_tuple[_]):
                                 date_func = (lambda v: datetime.strptime
                                              (v, date_keys_tuple[_]))
-                                (keys_copy[item.index(data_type)]) = date_func
+                                (keys_copy[parse_guide.index(parser)]
+                                 [idx]) = date_func
                                 continue
                         except ValueError:
                             # _ += 1
                             continue
                         except IndexError:
                             break
+        print(keys_copy)
         target.send(keys_copy)
 
 
