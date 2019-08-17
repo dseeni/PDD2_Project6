@@ -35,10 +35,10 @@ def test_file_reader():
     fnames_only_package = tuple(((i, None), None) for i in partial_files)
 
     with file_readers(fnames_only_package) as readers:
-        print('38:', 'readers ''='' ', readers)
+        # print('38:', 'readers ''='' ', readers)
         for reader in readers:
             next(reader)
             raw_data_list.append(next(reader))
-        print('40:', 'raw_data_list ''='' ', raw_data_list)
+        # print('40:', 'raw_data_list ''='' ', raw_data_list)
     # returns a list of 5 rows
     return raw_data_list

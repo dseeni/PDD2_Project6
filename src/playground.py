@@ -661,3 +661,23 @@ print(*nl, sep='\n')
 
 key_idx = [tuple(i for i in range(len(sub_key))) for sub_key in ml]
 print(key_idx)
+
+parse_guide = list(zip(ml, ml, key_idx))
+
+pg = []
+# how to zip up 3 way list of lists
+for x, y, z in ml, nl, key_idx:
+    pg.append(list(zip(x, y, z)))
+
+# pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row, key_idx))]
+
+print(*parse_guide)
+print(*pg)
+
+for parse_key in ml:
+    for sub_key in parse_key:
+        if all(c.isdigit() for c in sub_key):
+            ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
+
+print(ml)
+

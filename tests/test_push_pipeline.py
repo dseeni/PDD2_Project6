@@ -66,32 +66,35 @@ def test_file_readers(test_sink):
 # @pytest.mark.skip
 def test_date_key_gen(test_sink, test_file_reader):
 
-    # cars.csv
-    delimited_row1 = test_file_reader[0]
-    # nyc_parking_tickets_extract.csv
-    delimited_row2 = test_file_reader[1]
-    # update_status.csv
-    delimited_row3 = test_file_reader[2]
+    # # cars.csv
+    # delimited_row1 = test_file_reader[0]
+    # # nyc_parking_tickets_extract.csv
+    # delimited_row2 = test_file_reader[1]
+    # # update_status.csv
+    # delimited_row3 = test_file_reader[2]
 
     date_parser = date_key_gen(test_sink)
     gen_row_key = row_key_gen(date_parser)
 
     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-    date_parser.send(delimited_row3)
+    date_parser.send(test_file_reader)
 
     # date_parser.send(delimited_row3)
-    gen_row_key.send(delimited_row3)
+    gen_row_key.send(test_file_reader)
 
     row_key = getgeneratorlocals(test_sink)['ml']
-    assert row_key[0] == str
+    assert row_key[0][0] == str
 
-    datefunc1 = getgeneratorlocals(test_sink)['ml'][1]
-    datefunc2 = getgeneratorlocals(test_sink)['ml'][2]
+    datefunc1 = getgeneratorlocals(test_sink)['ml'][1][1]
+    datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
+    print(getgeneratorlocals(test_sink))
     date1 = datefunc1('2017-10-07T00:14:42Z')
+    print('d1', datefunc1)
+    print('d2', datefunc2)
     date2 = datefunc2('2016-01-24T21:19:30Z')
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
-    def check_date(date_obj,*args):
+    def check_date(date_obj, *args):
         time = ('year', 'month', 'day', 'hour', 'minute', 'second')
         return list(getattr(date_obj, value) for value in time) == [*args]
     assert check_date(date1, 2017, 10, 7, 0, 14, 42)

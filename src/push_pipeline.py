@@ -197,26 +197,26 @@ def row_key_gen(target):  # from coro to date parser:-->
     while True:
         data_rows = yield  # from cycle_rows
         row_parse_keys = deepcopy(data_rows)  # list of lists
-        print('200:', 'row_parse_keys ''='' ', row_parse_keys)
-        for parse_keys in row_parse_keys:
-            for sub_key in parse_keys:
-                if sub_key is None:
+        # print('200:', 'row_parse_keys ''='' ', row_parse_keys)
+        for parse_keys in row_parse_keys:  # for each sublists in list
+            for value in parse_keys:  # for values in each sublist
+                if value is None:
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(sub_key)]) = None
-                elif all(c.isdigit() for c in sub_key):
+                     [parse_keys.index(value)]) = None
+                elif all(c.isdigit() for c in value):
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(sub_key)]) = int
-                elif sub_key.count('.') == 1:
+                     [parse_keys.index(value)]) = int
+                elif value.count('.') == 1:
                     try:
-                        float(sub_key)
+                        float(value)
                         (row_parse_keys[row_parse_keys.index(parse_keys)]
-                         [parse_keys.index(sub_key)]) = float
+                         [parse_keys.index(value)]) = float
                     except ValueError:
                         (row_parse_keys[row_parse_keys.index(parse_keys)]
-                         [parse_keys.index(sub_key)]) = str
+                         [parse_keys.index(value)]) = str
                 else:
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(sub_key)]) = str
+                     [parse_keys.index(value)]) = str
         target.send(row_parse_keys)
 
 
@@ -225,12 +225,15 @@ def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
     delimited_row = yield  # <-sent by pipeline coro ONCE per file run
     while True:
-        partial_key = yield  # <-sent by gen_row_parse_key
+        partial_key = yield  # list of lists
         key_copy = deepcopy(partial_key)
         key_idx = [tuple(i for i in range(len(sub_key)))
                    for sub_key in key_copy]
         print('231:', 'key_idx ''='' ', key_idx)
-        parse_guide = list(zip(key_copy, delimited_row, key_idx))
+        parse_guide = [tuple(tuple(zip(x, y, z) for x, y, z in
+                                   (key_copy, delimited_row, key_idx)))]
+        print('235:', 'parse_guide ''='' ', parse_guide)
+        # parse_guide = list(zip(key_copy, delimited_row, key_idx))
         date_func = None
         for data_type, item, idx in parse_guide:
             if data_type == str:
