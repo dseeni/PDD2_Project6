@@ -707,3 +707,10 @@ print(type(date_func('10/5/2016')))
 print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
 
 'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'
+
+
+t = (1, 2, 3)
+
+for i in range(len(t)):
+    if t[i] == 0:
+        print(False)

@@ -239,23 +239,24 @@ def date_key_gen(target):
             for data_type, item, idx in parser:
                 if data_type == str:
                     for _ in range(len(date_keys_tuple)):
+                        # print('inspect:', keys_copy[parse_guide.index(
+                        #     parser)])
                         try:
-                            # print('inspect:', keys_copy[parse_guide.index(
-                            #     parser)])
-                            try:
-                                datetime.strptime(item, date_keys_tuple[_])
-                                date_func = (lambda v: datetime.strptime
-                                             (v, date_keys_tuple[_]))
-                                (keys_copy[parse_guide.index(parser)]
-                                 [idx]) = date_func
-                                print('dfid', date_keys_tuple[_], id(date_func))
-                                print(parse_guide.index(parser), idx,
-                                      date_keys_tuple[_])
-                                print('date found')
-                                print(item, 'item')
-                                continue
-                            except ValueError:
-                                continue
+                            datetime.strptime(item, date_keys_tuple[_])
+                            if date_keys_tuple(_) == "%m/%d/%Y":
+                                key = '%m/%d/%YT%H:%M:%S.%fZ'
+                            else:
+                                key = date_keys_tuple(_)
+                            (keys_copy[parse_guide.index(parser)]
+                             [idx]) = lambda v: datetime.strptime(v, key)
+                            print('dfid', date_keys_tuple[_], id(date_func))
+                            print(parse_guide.index(parser), idx,
+                                  date_keys_tuple[_])
+                            print('date found')
+                            print(item, 'item')
+                            continue
+                        except ValueError:
+                            continue
                         # except ValueError:
                         #     continue
                         except IndexError:
