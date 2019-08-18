@@ -30,10 +30,12 @@ def test_sink():
 
 @fixture('function')
 def test_date():
-    def _test_date(nested_list, *args):
+    def _test_date(gen_name, list_name, *args):
+        nested_list = getgeneratorlocals(gen_name)[list_name]
+        print('35:', 'nested_list ''='' ', nested_list)
         idx = [arg for arg in args]
-        # print('current',  current)
         current = list(nested_list)
+        print('current',  current)
         for i in range(len(idx)):
             try:
                 if iter(current[idx[i]]):
@@ -52,6 +54,7 @@ def test_date():
 def test_file_reader():
     raw_data_list = []
     f_idxs = [0, 2, 4]
+    # f_idxs = [2]
     partial_files = tuple(fnames[i] for i in f_idxs)
     fnames_only_package = tuple(((i, None), None) for i in partial_files)
 

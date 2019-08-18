@@ -69,29 +69,38 @@ def test_date_key_gen(test_sink, test_file_reader, test_date):
     date_parser = date_key_gen(test_sink)
     gen_row_key = row_key_gen(date_parser)
 
-    date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
+    # dk1 = '%m/%d/%Y'
+    # # dk2 = '%Y-%m-%dT%H:%M:%SZ'
+    # date_str1 = '10/5/2016'
+    # date_str2 = '2016-01-24T21:19:30Z'
+    # date_keys = (dk1, dk1)
+    # # date_parser.send(tuple(date_keys[0]))
+    date_parser.send((date_keys[0],))
     date_parser.send(test_file_reader)
 
     # date_parser.send(delimited_row3)
     gen_row_key.send(test_file_reader)
     # print(getgeneratorlocals(test_sink))
 
-    row_key = getgeneratorlocals(test_sink)['ml']
-    print(row_key)
-    print('rowkey', type(row_key))
-    assert row_key[0][0] == str
-    assert len(row_key) == 3
+    # row_key = getgeneratorlocals(test_sink)['ml']
+    # print('row_key', row_key)
+    # print('rowkey', type(row_key))
+    # assert row_key[0][0] == str
+    # assert len(row_key) == 3
 
-    datefunc = test_date(row_key, 1, 4, 4)
-    print('df', datefunc)
+    get_date_func = test_date(test_sink, 'ml', 1, 4, 4)
+    print('df', get_date_func)
+    date1 = get_date_func('10/5/2016')
+    print('date1', date1)
+    print('90:', 'type(date1) ''='' ', type(date1))
 
     # def check_date(date_obj, year, month, day, hour, minute, second):
     def check_date(date_obj, *args):
         time = ('year', 'month', 'day', 'hour', 'minute', 'second')
         return list(getattr(date_obj, value) for value in time) == [*args]
 
-    # assert check_date(date1, 2016, 10, 5, 0, 0, 0)
-    assert check_date(datefunc, 2016, 1, 24, 21, 19, 30)
+    assert check_date(date1, 2016, 10, 5, 0, 0, 0)
+    # assert check_date(datefunc, 2016, 1, 24, 21, 19, 30)
 
 
 # # @pytest.mark.skip
@@ -136,7 +145,7 @@ def test_date_key_gen(test_sink, test_file_reader, test_date):
 #     assert check_date(date2, 2016, 1, 24, 21, 19, 30)
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_row_key_gen(test_sink, test_file_reader):
     # # cars.csv
     # delimited_row0 = test_data_rows[0]
@@ -144,7 +153,6 @@ def test_row_key_gen(test_sink, test_file_reader):
     # delimited_row1 = test_data_rows[1]
     # # update_status.csv
     # delimited_row2 = test_data_rows[2]
-
     # reference keys
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
