@@ -243,12 +243,15 @@ def date_key_gen(target):
                         #     parser)])
                         try:
                             datetime.strptime(item, date_keys_tuple[_])
-                            if date_keys_tuple(_) == "%m/%d/%Y":
-                                key = '%m/%d/%YT%H:%M:%S.%fZ'
+                            if date_keys_tuple[_] == '%m/%d/%Y':
+                                key = '%m/%d/%YT%H:%M:%SZ'
+                                # key = '%m/%d/%YT%H:%M:%SZ'
+                            # "%Y-%m-%dT%H:%M:%S.%fZ"
                             else:
-                                key = date_keys_tuple(_)
+                                key = date_keys_tuple[_]
+                            date_func = lambda v: datetime.strptime(v, key)
                             (keys_copy[parse_guide.index(parser)]
-                             [idx]) = lambda v: datetime.strptime(v, key)
+                             [idx]) = date_func
                             print('dfid', date_keys_tuple[_], id(date_func))
                             print(parse_guide.index(parser), idx,
                                   date_keys_tuple[_])

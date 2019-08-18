@@ -701,16 +701,63 @@ key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 # print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
 from src.constants import date_keys
 from datetime import datetime
-date_func = (lambda v: datetime.strptime(v, date_keys[0]))
-print(type(date_func('10/5/2016')))
+# date_func = (lambda v: datetime.strptime(v, date_keys[0]))
 
-print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
+# print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
 
 'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'
 
+# # ----------------------------------------------------------------------------
 
-t = (1, 2, 3)
+# GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
+# ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
+# def _test_date(date_key, *args):
+#     l = [arg for arg in args]
+#     current = list(ml)
+#     for i in range(len(l)):
+#         try:
+#             if iter(current[l[i]]):
+#                 current = current[l[i]]
+#         except TypeError:
+#             continue
+#     return current
+# print(_test_date(100, 1, 2, 2, 2))
 
-for i in range(len(t)):
-    if t[i] == 0:
-        print(False)
+# # ----------------------------------------------------------------------------
+
+ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
+      ['int', 'str', 'str', 'str', 'datefunc1', 'int', 'str', 'str', 'str'],
+      ['str', 'datefunc2.1', 'datefunc2.2']]
+
+# GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
+
+# ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
+
+
+# def _test_date(list_name, gen_name, *args):
+#     nested_list = getgeneratorlocals(gen_name)[str(list_name)]
+#     idx = [arg for arg in args]
+#     current = list(nested_list)
+#     for i in range(len(idx)):
+#         try:
+#             if iter(current[idx[i]]):
+#                 current = current[idx[i]]
+#         except TypeError:
+#             continue
+
+
+def _test_date(*args):
+    l = [arg for arg in args]
+    current = list(ml)
+    for i in range(len(l)):
+        try:
+            if iter(current[l[i]]):
+                current = current[l[i]]
+        except TypeError:
+            continue
+    return current
+print(_test_date(1,4))
+print(_test_date(2,1))
+print(_test_date(2,2))
+
+

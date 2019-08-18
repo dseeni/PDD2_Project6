@@ -2,6 +2,7 @@ from pytest import fixture
 from src.push_pipeline import *
 # from inspect import getgeneratorstate, getgeneratorlocals
 from contextlib import ExitStack
+from inspect import getgeneratorlocals
 
 
 @fixture('session', autouse=True)
@@ -25,6 +26,26 @@ def test_sink():
                 ml.append(row)
     sink = _test_sink()
     return sink
+
+
+@fixture('function')
+def test_date():
+    def _test_date(nested_list, *args):
+        idx = [arg for arg in args]
+        # print('current',  current)
+        current = list(nested_list)
+        for i in range(len(idx)):
+            try:
+                if iter(current[idx[i]]):
+                    current = current[idx[i]]
+            except TypeError:
+                continue
+            finally:
+                print('current =', current)
+                print('idx -1', idx[-1])
+                current = current[idx[-1]]
+                return current
+    return _test_date
 
 
 @fixture('function')
