@@ -442,7 +442,8 @@
 # from inspect import getgeneratorlocals
 #
 #
-# delimited_row3 = ['4006478550', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D',
+# delimited_row3 = ['4006478550', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5',
+# '4D',
 #                   'BMW', 'BUS LANE VIOLATION']
 #
 # @coroutine
@@ -669,7 +670,8 @@
 # for x, y, z in ml, nl, key_idx:
 #     pg.append(list(zip(x, y, z)))
 #
-# # pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row, key_idx))]
+# # pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row,
+# key_idx))]
 #
 # print(*parse_guide)
 # print(*pg)
@@ -680,7 +682,8 @@
 #             ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
 #
 # print(ml)
-# key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+# key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1,
+# 2)]
 # parse_guide = [
 #     [[('str', 'int', 'str'), ('float', 'str', 'str'), ('int', 'str', 'str')],
 #      [('Chevrolet Chevelle Malibu', '4006478550', '100-53-9824'),
@@ -697,10 +700,10 @@ key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 key_idy = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 
-
 # print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
 from src.constants import date_keys
 from datetime import datetime
+
 # date_func = (lambda v: datetime.strptime(v, date_keys[0]))
 
 # print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
@@ -729,6 +732,7 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
       ['int', 'str', 'str', 'str', 'datefunc1', 'int', 'str', 'str', 'str'],
       ['str', 'datefunc2.1', 'datefunc2.2']]
 
+
 # GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
 
 # ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
@@ -745,19 +749,38 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
 #         except TypeError:
 #             continue
 
+# def _test_date(*args):
+#     l = [arg for arg in args]
+#     current = list(ml)
+#     for i in range(len(l)):
+#         try:
+#             if iter(current[l[i]]):
+#                 current = current[l[i]]
+#         except TypeError:
+#             continue
+#     return current
+# print(_test_date(1,4))
+# print(_test_date(2,1))
+# print(_test_date(2,2))
+#
+# from datetime import datetime
+# date_key1 = '%m/%d/%Y'
+# # date_key2 = '%m/%d/%Y'
+# date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+# # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
+# date_keys = (date_key1, date_key2)
+# date_str1 = '10/5/2016'
+# print(datetime.strptime(date_str1, date_key1))
+#
 
-def _test_date(*args):
-    l = [arg for arg in args]
-    current = list(ml)
-    for i in range(len(l)):
-        try:
-            if iter(current[l[i]]):
-                current = current[l[i]]
-        except TypeError:
-            continue
-    return current
-print(_test_date(1,4))
-print(_test_date(2,1))
-print(_test_date(2,2))
-
-
+# def test_date_key_gen(test_sink, test_file_reader, test_date):
+#     def date_tester(sink, reader, date_getter, date_key_idx, retrieval_idx,
+#                     date_str):
+#         date_parser = date_key_gen(sink)
+#         gen_row_key = row_key_gen(date_parser)
+#         date_parser.send((date_keys[date_key_idx],))
+#         date_parser.send(reader)
+#         gen_row_key.send(reader)
+#         get_date_func = date_getter(sink, 'ml', retrieval_idx)
+#         date1 = get_date_func('10/5/2016')
+#         assert date1 == datetime.strptime(date_str, date_key_idx)

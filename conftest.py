@@ -29,11 +29,11 @@ def test_sink():
 
 
 @fixture('function')
-def test_date():
-    def _test_date(gen_name, list_name, *args):
+def get_test_date():
+    def _test_date(gen_name, list_name, retrival_idx):
         nested_list = getgeneratorlocals(gen_name)[list_name]
         print('35:', 'nested_list ''='' ', nested_list)
-        idx = [arg for arg in args]
+        idx = [arg for arg in retrival_idx]
         current = list(nested_list)
         print('current',  current)
         for i in range(len(idx)):
@@ -48,6 +48,22 @@ def test_date():
                 current = current[idx[-1]]
                 return current
     return _test_date
+
+
+@fixture('function')
+def date_tester():
+    def _date_tester(sink, reader, date_getter, date_key_idx, output_idx,
+                     date_str):
+        date_parser = date_key_gen(sink)
+        gen_row_key = row_key_gen(date_parser)
+        date_parser.send((date_keys[date_key_idx],))
+        date_parser.send(reader)
+        gen_row_key.send(reader)
+        get_date_func = date_getter(sink, 'ml', output_idx)
+        date1 = get_date_func('10/5/2016')
+        if date1 == datetime.strptime(date_str, date_keys[date_key_idx]):
+            return True
+    return _date_tester
 
 
 @fixture('function')
