@@ -7,16 +7,16 @@ from itertools import chain
 # personal_info.csv = 1001 rows
 # update_status.csv = 1001 row
 
-# Date format keys
 # ------------------------------------------------------------------------------
+# Date format keys
 date_key1 = '%m/%d/%Y'
 # date_key2 = '%m/%d/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
 date_keys = (date_key1, date_key2)
 
-# Input Files
 # ------------------------------------------------------------------------------
+# Input Files
 fcars = 'input_data/cars.csv'
 femployment = 'input_data/employment.csv'
 fticket = 'input_data/nyc_parking_tickets_extract.csv'
@@ -25,8 +25,8 @@ fupdate = 'input_data/update_status.csv'
 
 fnames = fcars, femployment, fticket, fpersonal, fupdate
 
-# Named Tuple Class Names
 # ------------------------------------------------------------------------------
+# Named Tuple Class Names
 cars_class_name = 'Vehicle_Info'
 employment_class_name = 'Employment_Info'
 ticket_class_name = 'Ticket_Info'
@@ -36,8 +36,8 @@ update_class_name = 'Update_Status'
 class_names = (cars_class_name, employment_class_name,
                ticket_class_name, personal_class_name, update_class_name)
 
-# Output File Names for Vehicle_Info
 # ------------------------------------------------------------------------------
+# Output File Names for Vehicle_Info
 muscle_cars = 'American_Muscle_Cars'
 japenese_fuel = 'Fuel_Efficent_Japanese_Cars'
 heavy_cars = 'Heavy_Cars'
@@ -56,15 +56,15 @@ carroll_employees = 'All_Employees_at_Carroll_Company'
 emp_output_files = (kohler_engineers, sales_employees,
                     rd_employees, carroll_employees)
 
-# Output File Names for Ticket_Info
 # ------------------------------------------------------------------------------
+# Output File Names for Ticket_Info
 nyc_bmw_school_zone = 'Bmw_Nyc_School_Zone_Tickets'
 honda_no_parking = 'Honda_No_Parking_Tickets'
 
 ticket_output_files = (nyc_bmw_school_zone, honda_no_parking)
 
-# Output File Names for Personal_Info
 # ------------------------------------------------------------------------------
+# Output File Names for Personal_Info
 icelandic_female_speakers = 'Iceland_Speaking_Woman'
 telugu_speakers = 'All_Telugu_Speakers'
 korean_male_speakers = 'Korean_Speaking_Men'
@@ -72,16 +72,16 @@ korean_male_speakers = 'Korean_Speaking_Men'
 personal_ouput_files = (icelandic_female_speakers, telugu_speakers,
                         korean_male_speakers)
 
-# Output File Names for Update_Status
 # ------------------------------------------------------------------------------
+# Output File Names for Update_Status
 new_updates_march18 = 'Newest_Updates'
 old_updates_april17 = 'Oldest_Updates'
 
 update_output_files = (new_updates_march18, old_updates_april17)
 
 
-# Filter Predicates for Vehicle_Info
 # ------------------------------------------------------------------------------
+# Filter Predicates for Vehicle_Info
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
                                data_row.horsepower > 200,
@@ -110,8 +110,8 @@ vehicle_predicates = (pred_muscle_cars, pred_japanese_fuel,
                       pred_heavy_cars, pred_chevy_monte_carlo)
 
 
-# Filter Predicates for'Employment_Info'
 # ------------------------------------------------------------------------------
+# Filter Predicates for'Employment_Info'
 def pred_kohler_engineering_dept(data_row):
     if 'Kohler' in data_row.employer():
         return data_row

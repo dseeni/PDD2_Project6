@@ -93,10 +93,12 @@ def cycle_rows(target):
 def pipeline_coro():
     with file_readers(data_package) as readers:
         for input_data, output_data in data_package:
+
+            # CONSTANTS:
             nt_classes = [input_data[1]]
             output_files = [output_data[0]]
             filters = [output_data[1]]
-        # for reader in readers:
+
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)
             row_parser = data_parser(broadcaster)
