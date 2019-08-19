@@ -77,15 +77,6 @@ def test_date_key(test_sink, test_file_reader, get_test_date, date_tester):
                 key_names=sink_keys, date_format_key_idxs=date_key_idxs,
                 output_idxs=out_idxs, date_strs=raw_date_strs)
 
-    # date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
-    # key_name='ml', date_key_idx=1, output_idx=(2, 2),
-    #             date_str='2016-01-24T21:19:30Z')
-    #
-    # date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
-    # key_name='ml', date_key_idx=1, output_idx=(2, 1),
-    #             date_str='2017-10-07T00:14:42Z')
-
-
 # @pytest.mark.skip
 def test_row_key_gen(test_sink, test_file_reader):
     # # cars.csv
