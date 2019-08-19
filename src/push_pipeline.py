@@ -58,7 +58,9 @@ def coroutine(fn):
 
     return inner
 
-
+# TODO: cycle_rows has to send packets of up to 5 rows at once, as files are
+#  exhausted they will be marked as None, down the pipe if its None skip that
+#  row when parsing, filtering, and writing to disk
 @coroutine
 def cycle_rows(target):
     readers = yield
@@ -109,11 +111,11 @@ def pipeline_coro():
             row_cycler = cycle_rows(header_extract)
 
             # pipeline sends gen_date_key the date_keys_tuple
-            # SEND DATA
             # once for parse_key generation and once for processing
             # send the first data row twice
             # read header and send to data_fields gen
             # right away to field_name_generator
+            # SEND DATA:
             row_cycler.send(readers)
             # send class_names and header_row
             field_name_gen.send(nt_classes)
@@ -187,6 +189,7 @@ def pipeline_coro():
 def header_extract(target):  # --> send to gen_field_names
     while True:
         recieved_rows = yield  # --> from row_cycle
+        print('190:', 'recieved_rows ''='' ', recieved_rows)
         headers = [tuple(map(lambda l: l.replace(" ", "_"),
                              (map(lambda l: l.lower(),
                                   (row for row in recieved_rows)))))]
@@ -273,10 +276,15 @@ def date_key_gen(target):
 @coroutine
 def gen_field_names(target):  # sends to data_caster
     while True:
-        class_name = yield  # from pipeline_coro
-        header_row = yield  # from header_extract
-        data_field = namedtuple(class_name, header_row)
-        target.send(data_field)
+        class_names = yield  # from pipeline_coro a list of lists
+        header_rows = yield  # from header_extract a list of lists
+        assert len(class_names) == len(header_rows)
+        print(class_names)
+        print(header_rows)
+        for i in range(len(class_names)):
+            data_fields = [namedtuple(class_names, header_rows[i])]
+        assert len(data_fields) == len(class_names)*2
+        target.send(data_fields)
 
 
 # TODO: Refactor out Data_Tuple, let header_extract take care of is

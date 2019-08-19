@@ -16,31 +16,36 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-def test_header_extract(test_sink):
+def test_header_extract(test_sink, test_file_reader):
     with file_readers(data_package) as readers:
         headers = header_extract(test_sink)
         row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
         header_rows = getgeneratorlocals(test_sink)['ml']
-        print('25:', *header_rows, sep='\n')
+        # print(header_rows)
+        # print('25:', *header_rows, sep='\n')
         assert header_rows[0][0] == 'car'
         assert header_rows[1][0] == 'employer'
         assert header_rows[2][0] == 'summons_number'
 
 
-@pytest.mark.skip
-def test_gen_field_names(test_sink):
+# @pytest.mark.skip
+def test_gen_field_names(test_sink, test_file_reader):
     field_names = gen_field_names(test_sink)
-    field_names.send(class_names[0])
+    field_names.send(class_names)
+    headers = header_extract(field_names)
+    print(test_file_reader([i for i in range(5)], headers=True))
+    headers.send(test_file_reader([i for i in range(5)], headers=True))
 
-    with file_readers(fnames[0]) as f:
-        # header_row = next(f)
-        headers = tuple(map(lambda l: l.lower(), next(f)))
-        field_names.send(headers)
-    dummy_nt = getgeneratorlocals(test_sink)['ml']
-    obj_properties = ['acceleration', 'car', 'cylinders', 'displacement',
-                      'horsepower', 'mpg', 'model', 'origin']
-    assert all(getattr(dummy_nt, attr) for attr in obj_properties)
+    # with file_readers(data_package) as readers:
+    #     # header_row = next(f)
+    #     headers = tuple(map(lambda l: l.lower(), next(f)))
+    #     field_names.send(headers)
+    # dummy_nt = getgeneratorlocals(test_sink)['ml']
+    # obj_properties = ['acceleration', 'car', 'cylinders', 'displacement',
+    #                   'horsepower', 'mpg', 'model', 'origin']
+    # assert all(getattr(dummy_nt, attr) for attr in obj_properties)
+    #
 
 
 def test_file_readers(test_sink):
@@ -103,15 +108,15 @@ def test_row_key_gen(test_sink, test_file_reader):
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(test_file_reader(f_idxs))
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
-    print('p0', parsed_key0)
+    # print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)
 
     parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
-    print('p1', parsed_key1)
+    # print('p1', parsed_key1)
     assert check_key(parsed_key1, test_key1)
 
     parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
-    print('p2', parsed_key2)
+    # print('p2', parsed_key2)
     assert check_key(parsed_key2, test_key2)
 
 

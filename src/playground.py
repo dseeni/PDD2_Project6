@@ -785,10 +785,5 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
 #         date1 = get_date_func('10/5/2016')
 #         assert date1 == datetime.strptime(date_str, date_key_idx)
 
+from src.push_pipeline import file_readers
 
-i = ['ml' for i in range(3)]
-print(i)
-
-for s in range(len(i)):
-    print(s)
-    print(i[s])
