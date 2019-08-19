@@ -738,40 +738,40 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
 # ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
 
 
-# def _test_date(list_name, gen_name, *args):
-#     nested_list = getgeneratorlocals(gen_name)[str(list_name)]
-#     idx = [arg for arg in args]
-#     current = list(nested_list)
-#     for i in range(len(idx)):
-#         try:
-#             if iter(current[idx[i]]):
-#                 current = current[idx[i]]
-#         except TypeError:
-#             continue
+def _test_date(list_name, gen_name, *args):
+    nested_list = getgeneratorlocals(gen_name)[str(list_name)]
+    idx = [arg for arg in args]
+    current = list(nested_list)
+    for i in range(len(idx)):
+        try:
+            if iter(current[idx[i]]):
+                current = current[idx[i]]
+        except TypeError:
+            continue
 
-# def _test_date(*args):
-#     l = [arg for arg in args]
-#     current = list(ml)
-#     for i in range(len(l)):
-#         try:
-#             if iter(current[l[i]]):
-#                 current = current[l[i]]
-#         except TypeError:
-#             continue
-#     return current
-# print(_test_date(1,4))
-# print(_test_date(2,1))
-# print(_test_date(2,2))
-#
-# from datetime import datetime
-# date_key1 = '%m/%d/%Y'
-# # date_key2 = '%m/%d/%Y'
-# date_key2 = '%Y-%m-%dT%H:%M:%SZ'
-# # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
-# date_keys = (date_key1, date_key2)
-# date_str1 = '10/5/2016'
-# print(datetime.strptime(date_str1, date_key1))
-#
+def _test_date(*args):
+    l = [arg for arg in args]
+    current = list(ml)
+    for i in range(len(l)):
+        try:
+            if iter(current[l[i]]):
+                current = current[l[i]]
+        except TypeError:
+            continue
+    return current
+print(_test_date(1,4))
+print(_test_date(2,1))
+print(_test_date(2,2))
+
+from datetime import datetime
+date_key1 = '%m/%d/%Y'
+# date_key2 = '%m/%d/%Y'
+date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+# date_key1 = '%Y-%m-%dT%H:%M:%SZ'
+date_keys = (date_key1, date_key2)
+date_str1 = '10/5/2016'
+print(datetime.strptime(date_str1, date_key1))
+
 
 # def test_date_key_gen(test_sink, test_file_reader, test_date):
 #     def date_tester(sink, reader, date_getter, date_key_idx, retrieval_idx,

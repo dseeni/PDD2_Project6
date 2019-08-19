@@ -64,16 +64,25 @@ def test_file_readers(test_sink):
 
 
 # @pytest.mark.skip
-def test_date_key_1(test_sink, test_file_reader, get_test_date, date_tester):
-    assert date_tester(test_sink, test_file_reader, get_test_date,
-                       0, (1, 4, 4), '10/5/2016')
+def test_date_key(test_sink, test_file_reader, get_test_date, date_tester):
+    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
+                date_key_idx=0, output_idx=(1, 4),
+                date_str='10/5/2016')
+
+    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
+                date_key_idx=1, output_idx=(2, 2),
+                date_str='2016-01-24T21:19:30Z')
+
+    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
+                date_key_idx=1, output_idx=(2, 1),
+                date_str='2017-10-07T00:14:42Z')
 
 
-# @pytest.mark.skip
-def test_date_key_2(test_sink, test_file_reader, get_test_date, date_tester):
-    assert date_tester(test_sink, test_file_reader, get_test_date,
-                       0, (2, 4, 4), '10/5/2016')
-
+# # @pytest.mark.skip
+# def test_date_key_2(test_sink, test_file_reader, get_test_date, date_tester):
+#     assert date_tester(test_sink, test_file_reader, get_test_date,
+#                        0, (2, 4, 4), '10/5/2016')
+#
     # date_parser = date_key_gen(test_sink)
     # gen_row_key = row_key_gen(date_parser)
     #
