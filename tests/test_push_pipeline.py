@@ -63,110 +63,27 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
+# TODO: Verify that output and parsed_row can handle multi-format date parsing
 # @pytest.mark.skip
 def test_date_key(test_sink, test_file_reader, get_test_date, date_tester):
-    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
-                date_key_idx=0, output_idx=(1, 4),
-                date_str='10/5/2016')
+    f_idxs = (0, 2, 4)
+    sink_keys = tuple('ml' for _ in range(3))
+    date_key_idxs = (0, 1, 1)
+    out_idxs = ((1, 4), (2, 2), (2, 1))
+    raw_date_strs = ('10/5/2016', '2016-01-24T21:19:30Z',
+                     '2017-10-07T00:14:42Z')
 
-    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
-                date_key_idx=1, output_idx=(2, 2),
-                date_str='2016-01-24T21:19:30Z')
+    date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
+                key_names=sink_keys, date_format_key_idxs=date_key_idxs,
+                output_idxs=out_idxs, date_strs=raw_date_strs)
 
-    date_tester(test_sink, test_file_reader, get_test_date, key_name='ml',
-                date_key_idx=1, output_idx=(2, 1),
-                date_str='2017-10-07T00:14:42Z')
-
-
-# # @pytest.mark.skip
-# def test_date_key_2(test_sink, test_file_reader, get_test_date, date_tester):
-#     assert date_tester(test_sink, test_file_reader, get_test_date,
-#                        0, (2, 4, 4), '10/5/2016')
-#
-    # date_parser = date_key_gen(test_sink)
-    # gen_row_key = row_key_gen(date_parser)
+    # date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
+    # key_name='ml', date_key_idx=1, output_idx=(2, 2),
+    #             date_str='2016-01-24T21:19:30Z')
     #
-    # # dk1 = '%m/%d/%Y'
-    # # # dk2 = '%Y-%m-%dT%H:%M:%SZ'
-    # # date_str1 = '10/5/2016'
-    # # date_str2 = '2016-01-24T21:19:30Z'
-    # # date_keys = (dk1, dk1)
-    # # # date_parser.send(tuple(date_keys[0]))
-    # date_parser.send((date_keys[0],))
-    # date_parser.send(test_file_reader)
-    #
-    # # date_parser.send(delimited_row3)
-    # gen_row_key.send(test_file_reader)
-    # # print(getgeneratorlocals(test_sink))
-    #
-    # # row_key = getgeneratorlocals(test_sink)['ml']
-    # # print('row_key', row_key)
-    # # print('rowkey', type(row_key))
-    # # assert row_key[0][0] == str
-    # # assert len(row_key) == 3
-    #
-    # get_date_func = test_date(test_sink, 'ml', (1, 4, 4))
-    # print('df', get_date_func)
-    # date1 = get_date_func('10/5/2016')
-    # print('date1', date1)
-    # print('90:', 'type(date1) ''='' ', type(date1))
-    #
-    # # def check_date(date_obj, year, month, day, hour, minute, second):
-    # def check_date(date_obj, *args):
-    #     time = ('year', 'month', 'day', 'hour', 'minute', 'second')
-    #     return list(getattr(date_obj, value) for value in time) == [*args]
-    #
-    # assert check_date(date1, 2016, 10, 5, 0, 0, 0)
-    # date_key1 = '%m/%d/%Y'
-    # # date_key2 = '%m/%d/%Y'
-    # date_key2 = '%Y-%m-%dT%H:%M:%SZ'
-    # # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
-    # date_str1 = '10/5/2016'
-    # assert date1 == datetime.strptime(date_str1, date_key1)
-    #
-    # # assert check_date(datefunc, 2016, 1, 24, 21, 19, 30)
-
-
-# # @pytest.mark.skip
-# def test_date_key_gen(test_sink, test_file_reader):
-#     # 546586285056
-#     # # cars.csv
-#     # delimited_row1 = test_file_reader[0]
-#     # # nyc_parking_tickets_extract.csv
-#     # delimited_row2 = test_file_reader[1]
-#     # # update_status.csv
-#     # delimited_row3 = test_file_reader[2]
-#
-#     date_parser = date_key_gen(test_sink)
-#     gen_row_key = row_key_gen(date_parser)
-#
-#     date_parser.send(date_keys)  # <- normally sent by pipeline_coro()
-#     date_parser.send(test_file_reader)
-#
-#     # date_parser.send(delimited_row3)
-#     gen_row_key.send(test_file_reader)
-#     print(getgeneratorlocals(test_sink))
-#
-#     row_key = getgeneratorlocals(test_sink)['ml']
-#     assert row_key[0][0] == str
-#     assert len(row_key) == 3
-#
-#     # datefunc1 = getgeneratorlocals(test_sink)['ml'][1][4]
-#     # print('id of df1', id(datefunc1))
-#     # print('91:', 'datefunc1 ''='' ', datefunc1)
-#     datefunc2 = getgeneratorlocals(test_sink)['ml'][2][2]
-#     # assert datefunc1 != datefunc2
-#     # print('d1', datefunc1, type(datefunc1))
-#     # print('d2', datefunc2, type(datefunc2))
-#     # date1 = datefunc1('10/05/2016T00:00:00Z')
-#     date2 = datefunc2('2016-01-24T21:19:30Z')
-#
-#     # def check_date(date_obj, year, month, day, hour, minute, second):
-#     def check_date(date_obj, *args):
-#         time = ('year', 'month', 'day', 'hour', 'minute', 'second')
-#         return list(getattr(date_obj, value) for value in time) == [*args]
-#     # assert check_date(date1, 2016, 10, 5, 0, 0, 0)
-#     assert check_date(date2, 2016, 1, 24, 21, 19, 30)
+    # date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
+    # key_name='ml', date_key_idx=1, output_idx=(2, 1),
+    #             date_str='2017-10-07T00:14:42Z')
 
 
 # @pytest.mark.skip
@@ -184,6 +101,7 @@ def test_row_key_gen(test_sink, test_file_reader):
     test_key1 = (int, str, str, str, str, int, str, str, str)
     # update_status.csv
     test_key2 = (str, str, str)
+    f_idxs = (0, 2, 4)
 
     test_keys = zip(test_key0, test_key1, test_key2)
 
@@ -192,7 +110,7 @@ def test_row_key_gen(test_sink, test_file_reader):
             return value == ref
 
     gen_row_key = row_key_gen(test_sink)
-    gen_row_key.send(test_file_reader)
+    gen_row_key.send(test_file_reader(f_idxs))
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)
