@@ -34,7 +34,7 @@ def test_sink():
 def get_test_date():
     def _get_test_date(gen_name, list_name, output_idx):
         nested_list = getgeneratorlocals(gen_name)[list_name]
-        print('35:', 'nested_list ''='' ', nested_list)
+        print('37:', 'nested_list ''='' ', nested_list)
         idx = [arg for arg in output_idx]
         current = list(nested_list)
         print('current',  current)
