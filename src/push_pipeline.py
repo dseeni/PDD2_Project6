@@ -22,7 +22,7 @@ from itertools import islice, cycle, count
 # if you did it all right
 
 # TODO: Implement function to average length of lines in file
-# # TODO: Lookup the print_file_row() function in Freds notes on GitHub.
+# TODO: Lookup the print_file_row() function in Freds notes on GitHub.
 
 # TODO: Output File name = File Name + Filter Name?
 
@@ -58,53 +58,15 @@ def coroutine(fn):
     return inner
 
 
-# TODO: cycle_rows has to send packets of up to 5 rows at once, as files are
-#  exhausted they will be marked as None, down the pipe if its None skip that
-#  row when parsing, filtering, and writing to disk
-@coroutine
-def cycle_rows(target):
-    readers = yield
-    reader_idx_list = list(range(len(readers)))  # 5 in our case
-    idx_tracker = readers_idx_list = list(range(len(readers)))
-    cycler = cycle(readers_idx_list)
-    counter = count(0)
-    row_package = []
-    while True:
-        # # yield every 5 rows
-        reader_idx = next(cycler)
-        if (next(counter) >= (len(readers) - 1)
-                # and reader_idx_list[reader_idx] is not None
-                and reader_idx % len(readers) == 0): # do you need this?
-            target.send(row_package)
-            row_package.clear()
-            yield
-        next(counter)
-        try:
-            # go until all readers are exhausted
-            if all(idx is None for idx in reader_idx_list):
-                break
-            # skip exhausted file readers
-            if idx_tracker[reader_idx] is None:
-                next(counter)
-                continue
-            else:
-                row_package.append(next(readers[reader_idx]))
-                next(counter)
-        except StopIteration:  # skip over exhausted readers
-            reader_idx_list[reader_idx] = None
-            next(counter)
-            continue
-
-
 @coroutine
 def pipeline_coro():
     with file_readers(data_package) as readers:
         for input_data, output_data in data_package:
 
             # CONSTANTS:
-            nt_classes = [input_data[1]]
-            output_files = [output_data[0]]
-            filters = [output_data[1]]
+            nt_classes = input_data[1]
+            output_files = output_data[0]
+            filters = output_data[1]
 
             # DECLARE --> From the bottom up stack
             broadcaster = broadcast(filter_names)
@@ -184,6 +146,41 @@ def pipeline_coro():
         # while True:
         #     data_row = yield
         #     broadcaster.send(data_row)
+
+
+@coroutine
+def cycle_rows(target):
+    readers = yield
+    reader_idx_list = list(range(len(readers)))  # 5 in our case
+    idx_tracker = readers_idx_list = list(range(len(readers)))
+    cycler = cycle(readers_idx_list)
+    counter = count(0)
+    row_package = []
+    while True:
+        # # yield every 5 rows
+        reader_idx = next(cycler)
+        if (next(counter) >= (len(readers) - 1)
+                # and reader_idx_list[reader_idx] is not None
+                and reader_idx % len(readers) == 0): # do you need this?
+            target.send(row_package)
+            row_package.clear()
+            yield
+        next(counter)
+        try:
+            # go until all readers are exhausted
+            if all(idx is None for idx in reader_idx_list):
+                break
+            # skip exhausted file readers
+            if idx_tracker[reader_idx] is None:
+                next(counter)
+                continue
+            else:
+                row_package.append(next(readers[reader_idx]))
+                next(counter)
+        except StopIteration:  # skip over exhausted readers
+            reader_idx_list[reader_idx] = None
+            next(counter)
+            continue
 
 
 # input_data parser needs headers and data_key sent to it
@@ -278,14 +275,10 @@ def date_key_gen(target):
 @coroutine
 def gen_field_names(target):  # sends to data_caster
     while True:
-        class_names = yield  # from pipeline_coro a list of lists
-        header_rows = yield  # from header_extract a list of lists
-        assert len(class_names) == len(header_rows)
-        print(class_names)
-        print(header_rows)
-        for i in range(len(class_names)):
-            data_fields = [namedtuple(class_names, header_rows[i])]
-        assert len(data_fields) == len(class_names)*2
+        nt_class_names = yield  # from pipeline_coro a list of lists
+        header_row_package = yield  # from header_extract a list of lists
+        data_fields = [namedtuple(nt_class_names[i], header_row_package[i])
+                       for i in range(len(nt_class_names))]
         target.send(data_fields)
 
 

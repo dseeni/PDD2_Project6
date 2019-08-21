@@ -38,23 +38,27 @@ def test_cycle_rows(test_sink, sample_reader_rows):
         assert getgeneratorlocals(test_sink)['ml'][4][0] == 'ssn'
 
 
-@pytest.mark.skip
-def test_gen_field_names(test_sink, sample_reader_rows):
-    field_names = gen_field_names(test_sink)
-    field_names.send(class_names)
-    headers = header_extract(field_names)
-    print(sample_reader_rows([i for i in range(5)], headers=True))
-    headers.send(sample_reader_rows([i for i in range(5)], headers=True))
-
-    # with file_readers(data_package) as readers:
-    #     # header_row = next(f)
-    #     headers = tuple(map(lambda l: l.lower(), next(f)))
-    #     field_names.send(headers)
-    # dummy_nt = getgeneratorlocals(test_sink)['ml']
-    # obj_properties = ['acceleration', 'car', 'cylinders', 'displacement',
-    #                   'horsepower', 'mpg', 'model', 'origin']
-    # assert all(getattr(dummy_nt, attr) for attr in obj_properties)
-    #
+# @pytest.mark.skip
+def test_gen_field_names(test_sink):
+    with file_readers(data_package) as readers:
+        field_names_gen = gen_field_names(test_sink)
+        field_names_gen.send(tuple(input_data[1] for input_data, output_data in
+                             data_package))  # send class_names
+        headers = header_extract(field_names_gen)
+        cycle_rows(headers).send(readers)
+        dummy_nt = getgeneratorlocals(test_sink)['ml']
+        print(dummy_nt)
+        data_fields = getgeneratorlocals(test_sink)['ml']
+        assert len(data_fields) == len(tuple(input_data[1] for input_data, output_data in
+                             data_package))
+        print(data_fields)
+        attrs = ['car', 'employer', 'summons_number', 'ssn', 'ssn']
+        assert len(attrs) == len(data_fields)
+        for i in range(len(data_fields)):
+            assert getattr(data_fields[i], attrs[i])
+            print(' ')
+            print(dir(data_fields[i]))
+            print(' ')
 
 
 def test_file_readers(test_sink):
