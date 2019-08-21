@@ -190,9 +190,9 @@ def pipeline_coro():
 @coroutine
 def header_extract(target):  # --> send to gen_field_names
     while True:
-        recieved_rows = yield  # --> from row_cycle
+        row_package = yield  # --> from row_cycle
         headers = []
-        for row in recieved_rows:
+        for row in row_package:
             headers.append(tuple(map(lambda l: l.replace(" ", "_"),
                                  tuple(map(lambda l: l.lower(),
                                            (item for item in row))))))
