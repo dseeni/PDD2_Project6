@@ -68,28 +68,32 @@ def cycle_rows(target):
     idx_tracker = readers_idx_list = list(range(len(readers)))
     cycler = cycle(readers_idx_list)
     counter = count(0)
+    row_package = []
     while True:
         # # yield every 5 rows
         reader_idx = next(cycler)
-        if next(counter) >= (len(readers) - 1):
-            if reader_idx_list[reader_idx] is not None:
-                if reader_idx % len(readers) == 0:
-                    yield
+        if (next(counter) >= (len(readers) - 1)
+                # and reader_idx_list[reader_idx] is not None
+                and reader_idx % len(readers) == 0): # do you need this?
+            target.send(row_package)
+            row_package.clear()
+            yield
         next(counter)
         try:
+            # go until all readers are exhausted
             if all(idx is None for idx in reader_idx_list):
                 break
+            # skip exhausted file readers
             if idx_tracker[reader_idx] is None:
                 next(counter)
                 continue
             else:
-                target.send(next(readers[reader_idx]))
+                row_package.append(next(readers[reader_idx]))
                 next(counter)
-        except StopIteration:
+        except StopIteration:  # skip over exhausted readers
             reader_idx_list[reader_idx] = None
             next(counter)
             continue
-
 
 @coroutine
 def pipeline_coro():

@@ -784,6 +784,6 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
 #         get_date_func = date_getter(sink, 'ml', retrieval_idx)
 #         date1 = get_date_func('10/5/2016')
 #         assert date1 == datetime.strptime(date_str, date_key_idx)
+# from src.push_pipeline import file_readers
 
-from src.push_pipeline import file_readers
 
