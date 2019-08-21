@@ -29,6 +29,7 @@ def test_header_extract(test_sink):
         assert len(header_rows) == 5
 
 
+# @pytest.mark.skip
 def test_cycle_rows(test_sink, sample_reader_rows):
     row_cycler = cycle_rows(test_sink)
     with file_readers(data_package) as readers:
@@ -63,6 +64,7 @@ def test_gen_field_names(test_sink):
             print(' ')
 
 
+# @pytest.mark.skip
 def test_file_readers(test_sink):
     with file_readers(data_package) as readers:
         # check the first element in each files header row:
@@ -131,6 +133,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     assert check_key(parsed_key2, test_key2)
 
 
+# @pytest.mark.skip
 def test_date_parser(test_sink):
     dk2 = '%Y-%m-%dT%H:%M:%SZ'
     dk1 = '%m/%d/%Y'
