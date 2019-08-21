@@ -131,9 +131,6 @@ def pipeline_coro():
             date_key.send(date_keys)  # <-- y1 only happens ONCE
             date_key.send(first_delimited_row)  # <-- y2 await row_key_gen
 
-            # TODO: working on date_parser as a sub-pipe off shoot from
-            #   gen_row_parse_key, it sends to it and it sends back
-
             # send next row to gen_row_parse_key
 
             # named_tuple_gen sends to data_caster for parsing
@@ -194,14 +191,14 @@ def pipeline_coro():
 def header_extract(target):  # --> send to gen_field_names
     while True:
         recieved_rows = yield  # --> from row_cycle
-        print('190:', 'recieved_rows ''='' ', recieved_rows)
-        headers = [tuple(map(lambda l: l.replace(" ", "_"),
-                             (map(lambda l: l.lower(),
-                                  (row for row in recieved_rows)))))]
+        headers = []
+        for row in recieved_rows:
+            headers.append(tuple(map(lambda l: l.replace(" ", "_"),
+                                 tuple(map(lambda l: l.lower(),
+                                           (item for item in row))))))
         target.send(headers)
 
 
-# TODO: Refactor to output a data_type-key
 @coroutine
 def row_key_gen(target):  # from coro to date parser:-->
     while True:

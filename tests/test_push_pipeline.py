@@ -16,28 +16,26 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-@pytest.mark.skip
-def test_header_extract(test_sink, sample_reader_rows):
+# @pytest.mark.skip
+def test_header_extract(test_sink):
     with file_readers(data_package) as readers:
         headers = header_extract(test_sink)
         row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
         header_rows = getgeneratorlocals(test_sink)['ml']
-        # print(header_rows)
-        # print('25:', *header_rows, sep='\n')
         assert header_rows[0][0] == 'car'
         assert header_rows[1][0] == 'employer'
         assert header_rows[2][0] == 'summons_number'
+        assert len(header_rows) == 5
 
 
 def test_cycle_rows(test_sink, sample_reader_rows):
-    f_idxs = [i for i in range(5)]
     row_cycler = cycle_rows(test_sink)
     with file_readers(data_package) as readers:
         row_cycler.send(readers)
-    print('locals', getgeneratorlocals(test_sink)['ml'])
-    raise
-
+        assert len(getgeneratorlocals(test_sink)['ml']) == 5
+        assert getgeneratorlocals(test_sink)['ml'][0][0] == 'Car'
+        assert getgeneratorlocals(test_sink)['ml'][4][0] == 'ssn'
 
 
 @pytest.mark.skip
@@ -79,7 +77,6 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-# TODO: Verify that output and parsed_row can handle multi-format date parsing
 # @pytest.mark.skip
 def test_date_key(test_sink, sample_reader_rows, get_test_date, date_tester):
     f_idxs = (0, 2, 4)
