@@ -23,7 +23,6 @@ from itertools import islice, cycle, count
 
 # TODO: Implement function to average length of lines in file
 # TODO: Lookup the print_file_row() function in Freds notes on GitHub.
-
 # TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
