@@ -16,7 +16,8 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-def test_header_extract(test_sink, test_file_reader):
+@pytest.mark.skip
+def test_header_extract(test_sink, sample_reader_rows):
     with file_readers(data_package) as readers:
         headers = header_extract(test_sink)
         row_cycler = cycle_rows(headers)
@@ -29,13 +30,23 @@ def test_header_extract(test_sink, test_file_reader):
         assert header_rows[2][0] == 'summons_number'
 
 
-# @pytest.mark.skip
-def test_gen_field_names(test_sink, test_file_reader):
+def test_cycle_rows(test_sink, sample_reader_rows):
+    f_idxs = [i for i in range(5)]
+    row_cycler = cycle_rows(test_sink)
+    with file_readers(data_package) as readers:
+        row_cycler.send(readers)
+    print('locals', getgeneratorlocals(test_sink)['ml'])
+    raise
+
+
+
+@pytest.mark.skip
+def test_gen_field_names(test_sink, sample_reader_rows):
     field_names = gen_field_names(test_sink)
     field_names.send(class_names)
     headers = header_extract(field_names)
-    print(test_file_reader([i for i in range(5)], headers=True))
-    headers.send(test_file_reader([i for i in range(5)], headers=True))
+    print(sample_reader_rows([i for i in range(5)], headers=True))
+    headers.send(sample_reader_rows([i for i in range(5)], headers=True))
 
     # with file_readers(data_package) as readers:
     #     # header_row = next(f)
@@ -70,7 +81,7 @@ def test_file_readers(test_sink):
 
 # TODO: Verify that output and parsed_row can handle multi-format date parsing
 # @pytest.mark.skip
-def test_date_key(test_sink, test_file_reader, get_test_date, date_tester):
+def test_date_key(test_sink, sample_reader_rows, get_test_date, date_tester):
     f_idxs = (0, 2, 4)
     sink_keys = tuple('ml' for _ in range(3))
     date_key_idxs = (0, 1, 1)
@@ -78,12 +89,13 @@ def test_date_key(test_sink, test_file_reader, get_test_date, date_tester):
     raw_date_strs = ('10/5/2016', '2016-01-24T21:19:30Z',
                      '2017-10-07T00:14:42Z')
 
-    date_tester(test_sink, test_file_reader(f_idxs), get_test_date,
+    date_tester(test_sink, sample_reader_rows(f_idxs), get_test_date,
                 key_names=sink_keys, date_format_key_idxs=date_key_idxs,
                 output_idxs=out_idxs, date_strs=raw_date_strs)
 
+
 # @pytest.mark.skip
-def test_row_key_gen(test_sink, test_file_reader):
+def test_row_key_gen(test_sink, sample_reader_rows):
     # # cars.csv
     # delimited_row0 = test_data_rows[0]
     # # nyc_parking_tickets_extract.csv
@@ -99,22 +111,18 @@ def test_row_key_gen(test_sink, test_file_reader):
     test_key2 = (str, str, str)
     f_idxs = (0, 2, 4)
 
-    test_keys = zip(test_key0, test_key1, test_key2)
-
     def check_key(row_keys, ref_keys):
         for value, ref in list(zip(row_keys, ref_keys)):
             return value == ref
 
     gen_row_key = row_key_gen(test_sink)
-    gen_row_key.send(test_file_reader(f_idxs))
+    gen_row_key.send(sample_reader_rows(f_idxs))
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     # print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)
-
     parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
     # print('p1', parsed_key1)
     assert check_key(parsed_key1, test_key1)
-
     parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
     # print('p2', parsed_key2)
     assert check_key(parsed_key2, test_key2)

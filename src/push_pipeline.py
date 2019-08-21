@@ -55,8 +55,8 @@ def coroutine(fn):
         g = fn(*args, **kwargs)
         next(g)
         return g
-
     return inner
+
 
 # TODO: cycle_rows has to send packets of up to 5 rows at once, as files are
 #  exhausted they will be marked as None, down the pipe if its None skip that
@@ -94,6 +94,7 @@ def cycle_rows(target):
             reader_idx_list[reader_idx] = None
             next(counter)
             continue
+
 
 @coroutine
 def pipeline_coro():

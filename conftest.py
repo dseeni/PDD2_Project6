@@ -72,7 +72,7 @@ def date_tester():
 
 
 @fixture('function')
-def test_file_reader():
+def sample_reader_rows():
     def _test_file_reader(file_idxs, headers=False):
         raw_data_list = []
         partial_files = tuple(fnames[i] for i in file_idxs)
