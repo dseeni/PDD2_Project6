@@ -93,36 +93,26 @@ def pipeline_coro():
             date_key.send(first_delimited_row)  # <-- y2 await row_key_gen
 
             # send next row to gen_row_parse_key
-
             # named_tuple_gen sends to data_caster for parsing
             # parser needs named tupel and data type key
-
             # send the first row of the file to the header function
             # send first row to gen_field_names
-
             # header function sends to gen_field_name
-
             # gen_parse key sends key to caster
             sample_row = row_key_gen(data_parser)
             # header_extract.send(next(f))  # --> send row for header extract
-
             # row_parse_key_gen.send(next(f))
-
             # date_parse gen
 
         # for data_package in data_packages:
-
         #    for inputfile, classname, outputfile, predicate in datapackage:
-
         #    do stuff:
-
         # instantiate functions parameters..
         # can you instantiate without symbol binding?
-
-        # instance save data writers:
-        out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
-        out_ford_green = save_data('ford_green.csv', header_extract(fcars))
-        out_older = save_data('older.csv', header_extract(fcars))
+        # # instance save data writers:
+        # out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
+        # out_ford_green = save_data('ford_green.csv', header_extract(fcars))
+        # out_older = save_data('older.csv', header_extract(fcars))
 
         # filter instances with predicates
         # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
@@ -133,15 +123,11 @@ def pipeline_coro():
         # def pred_ford_green(data_row):
         #     return (data_row[idx_make].lower() == 'ford'
         #             and data_row[idx_color].lower() == 'green')
-
         # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
         # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-
         # filters = (filter_pink_cars, filter_ford_green, filter_older)
-
         # your brodcaster must send data from row
         # broadcaster = broadcast(filters)
-
         # while True:
         #     data_row = yield
         #     broadcaster.send(data_row)
