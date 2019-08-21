@@ -10,18 +10,18 @@ a files nested dictionary:
         filename_1: {outputfile_1: lambda filter
                      outputfile_2: lambda filter
                      outputfile_3: lambda filter}}
+
 --------------------------------------------------------------------------------
 # TODO: CHECKLIST:
 --------------------------------------------------------------------------------
 # TODO: functions take in targets as arguments
-
 # TODO: concatenate file name
 # TODO: join os path
-
 # TODO: pytest capturing of the stdout/stderr output
 # TODO: pytest temp directory and testing csv
 # TODO: Pair together output_files, predicates, and class_names
 --------------------------------------------------------------------------------
+
 USER_INPUT:
 FORMAT:
 zip up output files and filter predicates, broadcaster sends them to
@@ -168,25 +168,21 @@ pipeline_coro
 
         (with file_readers as readers:
         for each reader in readers -->
-        cycle through the list of readers
+        cycle through the list of readers and send out 5 rows at once
         exception stop iteration, then skip that file
         keep going until every file is exhausted.) - DONE
 
-    -> every part of the pipe awaits rows, 1 from each file
+    -> every part of the pipe awaits 5 row package, 1 from each file
     (number of files/rows)
     -> then after getting eveyr row proceeds to the enxt stage
-    -> OR filehandler can cyclically reader every row and send it the
-    through the pipe
 
-    -> send len(readers) of each file
-    -> next(reader) = headers
-    extract queues up header rows for len of (readers)
-    - send date_tuple to date_key_gen y1
-    - headerextract.send(next(reader)) then to headers
-    - send class names to gen_field_names
-    - send first row to header_extract
-    - which then sends the lower case header to gen_field_names
-
+    -> next(reader) = headers - DONE
+    extract queues up header rows for len of (readers) - DONE
+    - send date_tuple to date_key_gen y1 - DONE
+    - headerextract.send(next(reader)) then to headers - DONE
+    - send class names to gen_field_names - DONE
+    - send first rows to header_extract - DONE
+    - which then sends the lower case header to gen_field_names - DONE
 
     DELIMITED ROW:
     second row..key_generators (data and row)
@@ -194,7 +190,6 @@ pipeline_coro
             date_key_gen -->delimited row y2
             row_key_gen
                 which sends partial to date_key_gen y3 --> while ON
-
     date_key_gen sends final parse_key to row_parser y2
     finally: second row to data_parser y3 --> while ON
 
