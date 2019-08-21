@@ -31,45 +31,40 @@ you need a date_parser and a valid_date_detector - DONE
 
 date_detector returns a lambda function with the date_format - DONE
 
-go first to date_detector --> mark list as date_func or None
-                          \_> send d(f) and
-maybe we need a fixture for the input of date/data parsers
-    fixture will create file, read line, return headers per row?
+go first to date_detector --> mark list as date_func or None - DONE
+                          \_> send d(f) and - DONE
+maybe we need a fixture for the input of date/data parsers - DONE
+    fixture will create file, read line, return headers per row? - DONE
 
-detector detects a date_column and parses it and returns date function - WIP
+detector detects a date_column and parses it and returns date function - DONE
 
-data_function does what parse_date is currently doing
+data_function does what parse_date is currently doing - DONE
 
-zip up inputfile, classname, outputfile, and predicates
+zip up inputfile, classname, outputfile, and predicates - DONE
 
-zip up file/predicate tuples into one big tuple, pass that to pipeline_coro()
-    # files and named tuples can be zipped
-    # predicates and output files can be zipped
+zip up file/predicate tuples into one big tuple,
+ pass that to pipeline_coro() - DONE
+    # files and named tuples can be zipped - DONE
+    # predicates and output files can be zipped - DONE
 
-row_parse_key_gen--> returns the parsing key for parse_data_row
+row_parse_key_gen--> returns the parsing key for parse_data_row - DONE
 
-    file_handler --> opens all the files and closes them:
-    (the only context manager in the program)
+    file_handler --> opens all the files and closes them: - DONE
+    (the only context manager in the program) - DONE
         for file in files_dictionary:
         with file open:
-            -read the row --> send the row for header extraction
-                         \--> send the row for data type key generation
+            -read the row --> send the row for header extraction - DONE
+                         \--> send the row for data type key generation - DONE
 
 
-        -extract headers --> create named tuple named tuple send next(line) to
+        -extract headers --> create named tuple named tuple send next(line)
+        -infer data type--> sample the line and return a string - DONE
+        -sample data row(take in parse key) - DONE
+            sample data row call next  #now at data lines - DONE
+    data_reader --> cast - WIP
 
-        dd=
-        infer
-
-        -infer data type--> sample the line and return a string
-
-        -sample data row(take in parse key)
-            sample data row call next  #now at data lines
-
-
-    data_reader --> cast
-
-    headers extract gets sent user defined headers, and sends those to filters
+    headers extract gets sent user defined headers,
+    and sends those to filters
 
     filter_predicates --> recieves tracking headers yield 1
 
