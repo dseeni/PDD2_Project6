@@ -49,8 +49,10 @@ def test_gen_field_names(test_sink):
         dummy_nt = getgeneratorlocals(test_sink)['ml']
         print(dummy_nt)
         data_fields = getgeneratorlocals(test_sink)['ml']
-        assert len(data_fields) == len(tuple(input_data[1] for input_data, output_data in
-                             data_package))
+        assert len(data_fields) == len(tuple
+                                       (input_data[1]
+                                        for input_data, output_data
+                                        in data_package))
         print(data_fields)
         attrs = ['car', 'employer', 'summons_number', 'ssn', 'ssn']
         assert len(attrs) == len(data_fields)
