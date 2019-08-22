@@ -69,13 +69,14 @@ def pipeline_coro():
             filters = output_data[1]
 
             # DECLARE --> From the bottom up stack
-            broadcaster = broadcast(filter_names)
-            row_parser = data_parser(broadcaster)
-            date_key = date_key_gen(row_parser)
-            row_key = row_key_gen(date_key_gen)
-            field_name_gen = gen_field_names(data_parser)  # send class_names
-            header_row = header_extract(field_name_gen)
-            row_cycler = cycle_rows(header_extract)
+            filters = None
+            broadcaster = broadcast(filters)
+            parse_data = data_parser(broadcaster)
+            date_key = date_key_gen(parse_data)
+            row_key = row_key_gen(date_key)
+            field_name_gen = gen_field_names(parse_data)
+            headers = header_extract(field_name_gen)
+            row_cycler = cycle_rows(headers)
 
             # pipeline sends gen_date_key the date_keys_tuple
             # once for parse_key generation and once for processing
@@ -85,14 +86,12 @@ def pipeline_coro():
 
             # SEND DATA:
             # send class_names and header_row
+
             date_key.send(date_keys)
             field_name_gen.send(nt_classes)
             row_cycler.send(readers)
-            header_row.send(next(row_cycler))  # --> send to gen_field_names
-            # sample row for row_key:
-            first_delimited_row = next(row_cycler)
-            row_key.send(first_delimited_row)
-            date_key.send(first_delimited_row)  # <-- y2 await row_key_gen
+            row_cycler.send((date_key, row_key, parse_data))
+            row_cycler.send(parse_data)
 
             # send next row to gen_row_parse_key
             # named_tuple_gen sends to data_caster for parsing
@@ -101,7 +100,6 @@ def pipeline_coro():
             # send first row to gen_field_names
             # header function sends to gen_field_name
             # gen_parse key sends key to caster
-            sample_row = row_key_gen(data_parser)
             # header_extract.send(next(f))  # --> send row for header extract
             # row_parse_key_gen.send(next(f))
             # date_parse gen
@@ -151,10 +149,9 @@ def cycle_rows(targets):
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
                     target.send(row_package)
-                row_package.clear()
             else:
                 targets.send(row_package)
-                row_package.clear()
+            row_package.clear()
             targets = yield
         next(counter)
         try:
