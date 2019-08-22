@@ -154,6 +154,7 @@ def test_date_lambda_parser(test_sink):
 
 
 def test_data_parser(test_sink):
+    sink_list = []
     for d_key in date_keys:
         with file_readers(data_package) as readers:
             parse_data = data_parser(test_sink)
@@ -163,13 +164,23 @@ def test_data_parser(test_sink):
             headers = header_extract(field_name_gen)
             row_cycler = cycle_rows(headers)
 
-            date_key.send(d_key)
-            field_name_gen.send(tuple(input_data[1]
-                                      for input_data, output_data in data_package))
+            date_key.send((d_key, d_key))
+            field_name_gen.send(tuple(input_data[1] for input_data, output_data
+                                      in data_package))
             row_cycler.send(readers)
-            row_cycler.send((date_key, row_key))
+            row_cycler.send((date_key, row_key, parse_data))
             row_cycler.send(parse_data)
             # row_cycler.send(row_key)
             # date_key.send(first_delimited_row)
             # row_key.send(first_delimited_row)
-            print(*getgeneratorlocals(test_sink)['ml'], sep='\n')
+        sink_list.append(deepcopy(getgeneratorlocals(test_sink)['ml']))
+        # print(getgeneratorlocals(test_sink)['ml'])
+        test_sink.send('clear')
+    print('179:', *sink_list, sep='\n')
+    assert sink_list[0][0][0] == 'Chevrolet Chevelle Malibu'
+    assert sink_list[0][4][0] == '100-53-9824'
+    assert sink_list[0][5][0] == 'Buick Skylark 320'
+    assert sink_list[0][9][0] == '101-71-4702'
+    date = sink_list[1][9][2]
+    assert date.year == 2016
+

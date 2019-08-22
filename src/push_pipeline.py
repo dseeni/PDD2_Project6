@@ -147,15 +147,14 @@ def cycle_rows(targets):
         # # yield every 5 rows
         reader_idx = next(cycler)
         if (next(counter) >= (len(readers) - 1)
-                # and reader_idx_list[reader_idx] is not None
-                and reader_idx % len(readers) == 0): # do you need this?
+                and reader_idx % len(readers) == 0):
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
-                    print('153:', 'target ''='' ', target)
                     target.send(row_package)
+                row_package.clear()
             else:
                 targets.send(row_package)
-            row_package.clear()
+                row_package.clear()
             targets = yield
         next(counter)
         try:
@@ -283,23 +282,17 @@ def gen_field_names(target):  # sends to data_caster
 def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
     data_row_tuple = yield  # <-- from gen_field_names list of field names
-    # print('286:', 'data_row_tuple ''='' ', data_row_tuple)
+    print('286:', 'data_row_tuple ''='' ', data_row_tuple)
     parse_keys = yield  # <-- from gen_date_parse_key list of lists
-    # print('288:', 'parse_keys ''='' ', parse_keys)
-    print('parse_keys', *parse_keys, sep='\n')
-    print('290:', 'len(parse_keys) ''='' ', len(parse_keys))
+    print('288:', 'parse_keys ''='' ', parse_keys)
     # needs file_name, parse_keys, headers, single_class_name:
     while True:
         raw_data_rows = yield  # list of lists
         parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
                    for i in range(len(parse_keys))]
-        print('301:', *parsers, sep='\n')
-        print(len(parsers))
-
-        parsed = [tuple(fn(item) for fn, item in parsers[i]) for i in range(len(
-            parsers))]
-        print('302:', 'len(parsed) ''='' ', len(parsed))
-        print('302:', 'parsed ''='' ', parsed)
+        parsed = [tuple(fn(item) for fn, item in parsers[i])
+                  for i in range(len(parsers))]
+        target.send(parsed)
 
 
 
@@ -307,7 +300,7 @@ def data_parser(target):
         # print(*parsers, sep='\n')
         # print('300:', 'len(parsers) ''='' ', len(parsers))
 
-        parsed = []
+        # parsed = []
         # for parser_key in parsers:
         #     print('301:', 'parser_key ''='' ', parser_key)
         #     for parser in parser_key:
