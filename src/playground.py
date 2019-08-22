@@ -728,9 +728,9 @@ from datetime import datetime
 
 # # ----------------------------------------------------------------------------
 
-ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
-      ['int', 'str', 'str', 'str', 'datefunc1', 'int', 'str', 'str', 'str'],
-      ['str', 'datefunc2.1', 'datefunc2.2']]
+# ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
+#       ['int', 'str', 'str', 'str', 'datefunc1', 'int', 'str', 'str', 'str'],
+#       ['str', 'datefunc2.1', 'datefunc2.2']]
 
 
 # GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
@@ -787,4 +787,21 @@ ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
 # from src.push_pipeline import file_readers
 
 # from src.push_pipeline import *
+
+
+ml = [1, 2, 3, 4]
+
+if iter(ml):
+    print(True)
+
+def myfunc():
+    return 2
+
+a = myfunc()
+
+if iter(a):
+    print(True)
+else:
+    pass
+
 

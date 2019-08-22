@@ -6,6 +6,7 @@ import csv
 import os
 from copy import deepcopy
 from itertools import islice, cycle, count
+from inspect import getgeneratorlocals, getgeneratorstate
 
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
@@ -81,15 +82,16 @@ def pipeline_coro():
             # send the first data row twice
             # read header and send to data_fields gen
             # right away to field_name_generator
+
             # SEND DATA:
-            row_cycler.send(readers)
             # send class_names and header_row
+            date_key.send(date_keys)
             field_name_gen.send(nt_classes)
+            row_cycler.send(readers)
             header_row.send(next(row_cycler))  # --> send to gen_field_names
             # sample row for row_key:
             first_delimited_row = next(row_cycler)
             row_key.send(first_delimited_row)
-            date_key.send(date_keys)  # <-- y1 only happens ONCE
             date_key.send(first_delimited_row)  # <-- y2 await row_key_gen
 
             # send next row to gen_row_parse_key
@@ -134,7 +136,7 @@ def pipeline_coro():
 
 
 @coroutine
-def cycle_rows(target):
+def cycle_rows(targets):
     readers = yield
     reader_idx_list = list(range(len(readers)))  # 5 in our case
     idx_tracker = readers_idx_list = list(range(len(readers)))
@@ -147,9 +149,14 @@ def cycle_rows(target):
         if (next(counter) >= (len(readers) - 1)
                 # and reader_idx_list[reader_idx] is not None
                 and reader_idx % len(readers) == 0): # do you need this?
-            target.send(row_package)
+            if isinstance(targets, tuple) and len(targets) > 1:
+                for target in targets:
+                    print('153:', 'target ''='' ', target)
+                    target.send(row_package)
+            else:
+                targets.send(row_package)
             row_package.clear()
-            yield
+            targets = yield
         next(counter)
         try:
             # go until all readers are exhausted
@@ -185,6 +192,7 @@ def header_extract(target):  # --> send to gen_field_names
 def row_key_gen(target):  # from coro to date parser:-->
     while True:
         data_rows = yield  # from cycle_rows
+        print('189:', 'data_rows ''='' ', data_rows)
         row_parse_keys = deepcopy(data_rows)  # list of lists
         # print('200:', 'row_parse_keys ''='' ', row_parse_keys)
         for parse_keys in row_parse_keys:  # for each sublists in list
@@ -206,6 +214,7 @@ def row_key_gen(target):  # from coro to date parser:-->
                 else:
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
                      [parse_keys.index(value)]) = str
+        print('target from row =', target)
         target.send(row_parse_keys)
 
 
@@ -222,7 +231,7 @@ def date_key_gen(target):
                      in keys_copy]
         parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
                        for i in range(len(keys_copy))]
-        # print('243:', *parse_guide, sep='\n')
+        print('243:', *parse_guide, sep='\n')
         date_func = None
         for parser in parse_guide:
             for data_type, item, idx in parser:
@@ -262,6 +271,7 @@ def gen_field_names(target):  # sends to data_caster
     while True:
         nt_class_names = yield  # from pipeline_coro a list of lists
         header_row_package = yield  # from header_extract a list of lists
+        print('headers', header_row_package)
         data_fields = [namedtuple(nt_class_names[i], header_row_package[i])
                        for i in range(len(nt_class_names))]
         target.send(data_fields)
@@ -270,31 +280,41 @@ def gen_field_names(target):  # sends to data_caster
 # TODO: Refactor out Data_Tuple, let header_extract take care of is
 # TODO: make sure data_caster can handle None values
 @coroutine
-def data_parser(file_name, parse_key, headers, single_class_name):
-    # handled by gen_field_names # file_name = yield  # <-- from pipeline_coro
+def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
-    field_names_tuple = yield  # <-- from gen_field_names ONCE per file fun
-    parse_key = yield  # <-- from gen_row_parse_key
+    data_row_tuple = yield  # <-- from gen_field_names list of field names
+    print('286:', 'data_row_tuple ''='' ', data_row_tuple)
+    parse_keys = yield  # <-- from gen_date_parse_key list of lists
+    print('288:', 'parse_keys ''='' ', parse_keys)
+    # needs file_name, parse_keys, headers, single_class_name:
     while True:
-        raw_data_row = yield
-        try:
-            dialect = csv.Sniffer().sniff(file_obj.read(2000))
-            file_obj.seek(0)
-            reader = csv.reader(file_obj, dialect)
-            # skip the header row
-            next(reader)
-            # headers = header_extract(file_name, file_obj)
-            print(headers)
-            DataTuple = namedtuple(single_class_name, headers)
-            yield (DataTuple(*(fn(value) for value, fn
-                               in zip(row, parse_key))) for row in reader)
-        finally:
-            try:
-                next(file_obj)
-            except StopIteration:
-                pass
-            print('closing file')
-            file_obj.close()
+        raw_data_rows = yield  # list of lists
+        print('291:', 'raw_data_rows ''='' ', raw_data_rows)
+        result = []
+        # zipped = []
+
+        # for parse_key in parse_keys:
+        zipped = [tuple(tuple(zip(parse_key, raw_data_row))
+                        for raw_data_row in raw_data_rows
+                        for parse_key in parse_keys)]
+        # print('300:', *zipped, sep='\n')
+        # print('297:', 'len(zipped) ''='' ', len(zipped))
+        # result.append([fn(item) for key in zipped for fn, item in key])
+        # print('**********************')
+        # print('295:', 'result ''='' ', result)
+        # print('**********************')
+        target.send(zipped)
+        # try:
+        #     DataTuple = namedtuple(single_class_name, headers)
+        #     yield (DataTuple(*(fn(value) for value, fn
+        #                        in zip(row, parse_keys))) for row in reader)
+        # finally:
+        #     try:
+        #         next(file_obj)
+        #     except StopIteration:
+        #         pass
+        #     print('closing file')
+        #     file_obj.close()
 
 
 # # data reader --> sends out header, and sends out sample data row
