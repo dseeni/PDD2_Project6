@@ -294,7 +294,7 @@ def data_parser(target):
                   for i in range(len(parsers))]
         named_tuple_row = [(data_row_tuples[i](*parsed[i]))
                            for i in range(len(data_row_tuples))]
-        # print('297:', 'named_tuple_row ''='' ', named_tuple_row)
+        print('297:', *named_tuple_row, sep='\n')
         target.send(named_tuple_row)
 
 

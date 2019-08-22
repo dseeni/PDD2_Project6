@@ -176,7 +176,7 @@ def test_data_parser(test_sink):
         sink_list.append(deepcopy(getgeneratorlocals(test_sink)['ml']))
         # print(getgeneratorlocals(test_sink)['ml'])
         test_sink.send('clear')
-    print('179:', *sink_list, sep='\n')
+    # print('179:', *sink_list, sep='\n')
     assert sink_list[0][0][0] == 'Chevrolet Chevelle Malibu'
     assert sink_list[0][4][0] == '100-53-9824'
     assert sink_list[0][5][0] == 'Buick Skylark 320'
