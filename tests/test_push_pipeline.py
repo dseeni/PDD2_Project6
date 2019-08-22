@@ -183,5 +183,5 @@ def test_data_parser(test_sink):
     assert sink_list[0][9][0] == '101-71-4702'
     date = sink_list[1][9][2]
     assert date.year == 2016
-    raise
+    # raise
 

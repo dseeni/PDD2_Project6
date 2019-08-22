@@ -231,7 +231,7 @@ def date_key_gen(target):
         parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
                        for i in range(len(keys_copy))]
         print('243:', *parse_guide, sep='\n')
-        date_func = None
+        # date_func = None
         for parser in parse_guide:
             for data_type, item, idx in parser:
                 if data_type == str:
@@ -246,14 +246,13 @@ def date_key_gen(target):
                             # # "%Y-%m-%dT%H:%M:%S.%fZ"
                             # else:
                             key = date_keys_tuple[_]
-                            date_func = lambda v: datetime.strptime(v, key)
                             (keys_copy[parse_guide.index(parser)]
-                             [idx]) = date_func
-                            print('dfid', date_keys_tuple[_], id(date_func))
-                            print(parse_guide.index(parser), idx,
-                                  date_keys_tuple[_])
-                            print('date found')
-                            print(item, 'item')
+                             [idx]) = lambda v: datetime.strptime(v, key)
+                            # print('dfid', date_keys_tuple[_], id(date_func))
+                            # print(parse_guide.index(parser), idx,
+                            #       date_keys_tuple[_])
+                            # print('date found')
+                            # print(item, 'item')
                             continue
                         except ValueError:
                             continue
