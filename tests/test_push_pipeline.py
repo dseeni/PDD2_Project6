@@ -154,10 +154,7 @@ def test_date_lambda_parser(test_sink):
 
 
 def test_data_parser(test_sink):
-    dk1 = '%m/%d/%Y'
-    dk2 = '%Y-%m-%dT%H:%M:%SZ'
-    dk_tuple = (dk1, dk2)
-    for d_key in dk_tuple:
+    for d_key in date_keys:
         with file_readers(data_package) as readers:
             parse_data = data_parser(test_sink)
             date_key = date_key_gen(parse_data)
