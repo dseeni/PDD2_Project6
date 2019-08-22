@@ -185,14 +185,13 @@ def header_extract(target):  # --> send to gen_field_names
 
 
 @coroutine
-def row_key_gen(target):  # from coro to date parser:-->
+def row_key_gen(target):
     while True:
-        data_rows = yield  # from cycle_rows
-        print('189:', 'data_rows ''='' ', data_rows)
-        row_parse_keys = deepcopy(data_rows)  # list of lists
-        # print('200:', 'row_parse_keys ''='' ', row_parse_keys)
-        for parse_keys in row_parse_keys:  # for each sublists in list
-            for value in parse_keys:  # for values in each sublist
+        data_rows = yield
+        # print('189:', 'data_rows ''='' ', data_rows)
+        row_parse_keys = deepcopy(data_rows)
+        for parse_keys in row_parse_keys:
+            for value in parse_keys:
                 if value is None:
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
                      [parse_keys.index(value)]) = None
@@ -210,7 +209,7 @@ def row_key_gen(target):  # from coro to date parser:-->
                 else:
                     (row_parse_keys[row_parse_keys.index(parse_keys)]
                      [parse_keys.index(value)]) = str
-        print('target from row =', target)
+        # print('target from row =', target)
         target.send(row_parse_keys)
 
 
