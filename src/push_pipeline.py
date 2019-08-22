@@ -281,8 +281,8 @@ def gen_field_names(target):  # sends to data_caster
 @coroutine
 def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
-    data_row_tuple = yield  # <-- from gen_field_names list of field names
-    print('286:', 'data_row_tuple ''='' ', data_row_tuple)
+    data_row_tuples = yield  # <-- from gen_field_names list of field names
+    print('286:', 'data_row_tuples ''='' ', data_row_tuples)
     parse_keys = yield  # <-- from gen_date_parse_key list of lists
     print('288:', 'parse_keys ''='' ', parse_keys)
     # needs file_name, parse_keys, headers, single_class_name:
@@ -292,7 +292,10 @@ def data_parser(target):
                    for i in range(len(parse_keys))]
         parsed = [tuple(fn(item) for fn, item in parsers[i])
                   for i in range(len(parsers))]
-        target.send(parsed)
+        named_tuple_row = [(data_row_tuples[i](*parsed[i]))
+                           for i in range(len(data_row_tuples))]
+        # print('297:', 'named_tuple_row ''='' ', named_tuple_row)
+        target.send(named_tuple_row)
 
 
 
