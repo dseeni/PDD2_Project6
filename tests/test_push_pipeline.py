@@ -154,25 +154,25 @@ def test_date_lambda_parser(test_sink):
 
 
 def test_data_parser(test_sink):
-    date_key1 = '%m/%d/%Y'
-    date_key2 = '%Y-%m-%dT%H:%M:%SZ'
-    date_keys = (date_key1, date_key1)
-    with file_readers(data_package) as readers:
-        parse_data = data_parser(test_sink)
-        date_key = date_key_gen(parse_data)
-        row_key = row_key_gen(date_key)
-        field_name_gen = gen_field_names(parse_data)
-        headers = header_extract(field_name_gen)
-        row_cycler = cycle_rows(headers)
+    dk1 = '%m/%d/%Y'
+    dk2 = '%Y-%m-%dT%H:%M:%SZ'
+    dk_tuple = (dk1, dk2)
+    for d_key in dk_tuple:
+        with file_readers(data_package) as readers:
+            parse_data = data_parser(test_sink)
+            date_key = date_key_gen(parse_data)
+            row_key = row_key_gen(date_key)
+            field_name_gen = gen_field_names(parse_data)
+            headers = header_extract(field_name_gen)
+            row_cycler = cycle_rows(headers)
 
-        date_key.send(date_keys)
-        field_name_gen.send(tuple(input_data[1]
-                                  for input_data, output_data in data_package))
-        row_cycler.send(readers)
-        row_cycler.send((date_key, row_key))
-        row_cycler.send(parse_data)
-        # row_cycler.send(row_key)
-        # date_key.send(first_delimited_row)
-        # row_key.send(first_delimited_row)
-        print(*getgeneratorlocals(test_sink)['ml'], sep='\n')
-        raise
+            date_key.send(d_key)
+            field_name_gen.send(tuple(input_data[1]
+                                      for input_data, output_data in data_package))
+            row_cycler.send(readers)
+            row_cycler.send((date_key, row_key))
+            row_cycler.send(parse_data)
+            # row_cycler.send(row_key)
+            # date_key.send(first_delimited_row)
+            # row_key.send(first_delimited_row)
+            print(*getgeneratorlocals(test_sink)['ml'], sep='\n')
