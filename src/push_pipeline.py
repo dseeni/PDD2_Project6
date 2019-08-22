@@ -192,7 +192,7 @@ def row_key_gen(target):
         row_parse_keys = deepcopy(data_rows)
         sub_key_lens = [len(sub_key) for sub_key in row_parse_keys]
         range_start = 0
-        sub_key_ranges = []
+        sub_key_ranges = [0]
         for i in range(len(sub_key_lens)):
             sub_key_ranges.append(sub_key_lens[i]+range_start)
             range_start += sub_key_lens[i]
@@ -212,13 +212,13 @@ def row_key_gen(target):
                     parse_keys[parse_keys.index(value)] = str
             else:
                 parse_keys[parse_keys.index(value)] = str
-        parsed_package = [parse_keys[sub_key_ranges[i]: (sub_key_ranges[i]
-                                                       + sub_key_ranges[i])]
-                          for i in range(len(sub_key_ranges))]
+        parsed_package = [parse_keys[sub_key_ranges[i]: sub_key_ranges[i+1]]
+                          for i in range(len(sub_key_ranges)-1)]
         # for i in range(len(parse_sub_key_len)):
         #     parsed_package.append(parse_keys[parse_sub_key_len[i]:
         #                            (parse_sub_key_len[i]+parse_sub_key_len[
         #                            i])])
+        print('221:', 'parsed_package ''='' ', parsed_package)
         print('215:', 'len(parsed_package) ''='' ', len(parsed_package))
         print('216:', 'len(row_parse_keys) ''='' ', len(row_parse_keys))
         assert len(parsed_package) == len(row_parse_keys)
