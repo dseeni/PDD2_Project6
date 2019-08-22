@@ -188,15 +188,13 @@ def header_extract(target):  # --> send to gen_field_names
 def row_key_gen(target):
     while True:
         data_rows = yield
-        # print('189:', 'data_rows ''='' ', data_rows)
         row_parse_keys = deepcopy(data_rows)
-        sub_key_lens = [len(sub_key) for sub_key in row_parse_keys]
+        sub_key_lens = [0, *[len(sub_key) for sub_key in row_parse_keys]]
         range_start = 0
-        sub_key_ranges = [0]
+        sub_key_ranges = []
         for i in range(len(sub_key_lens)):
             sub_key_ranges.append(sub_key_lens[i]+range_start)
             range_start += sub_key_lens[i]
-        print('195:', 'sub_key_ranges ''='' ', sub_key_ranges)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
         for value in parse_keys:
@@ -214,25 +212,6 @@ def row_key_gen(target):
                 parse_keys[parse_keys.index(value)] = str
         parsed_package = [parse_keys[sub_key_ranges[i]: sub_key_ranges[i+1]]
                           for i in range(len(sub_key_ranges)-1)]
-        # for i in range(len(parse_sub_key_len)):
-        #     parsed_package.append(parse_keys[parse_sub_key_len[i]:
-        #                            (parse_sub_key_len[i]+parse_sub_key_len[
-        #                            i])])
-        print('221:', 'parsed_package ''='' ', parsed_package)
-        print('215:', 'len(parsed_package) ''='' ', len(parsed_package))
-        print('216:', 'len(row_parse_keys) ''='' ', len(row_parse_keys))
-        assert len(parsed_package) == len(row_parse_keys)
-        for i in range(len(parsed_package)):
-            print('219:', 'parsed_package[i] ''='' ', parsed_package[i])
-            print('220:', 'row_parse_keys[i] ''='' ', row_parse_keys[i])
-            assert len(parsed_package[i]) == len(row_parse_keys[i])
-        # for i in
-        # range(len(parse_sub_key_len)-1)])
-        # range(len(parse_sub_key_len)
-        print('211:', 'parse_sub_key_len ''='' ', sub_key_lens)
-        print('211:', 'parsed_package ''='' ', parsed_package)
-        print('212:', 'row_parse_keys ''='' ', row_parse_keys)
-        print('229:', *parsed_package, sep='\n')
         target.send(parsed_package)
 
 
