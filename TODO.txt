@@ -61,10 +61,10 @@ row_parse_key_gen--> returns the parsing key for parse_data_row - DONE
         -infer data type--> sample the line and return a string - DONE
         -sample data row(take in parse key) - DONE
             sample data row call next  #now at data lines - DONE
-    data_reader --> cast - WIP
+    data_reader --> cast - DONE
 
     headers extract gets sent user defined headers,
-    and sends those to filters
+    and sends those to filters - WIP
 
     filter_predicates --> recieves tracking headers yield 1
 
