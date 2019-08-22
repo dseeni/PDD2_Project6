@@ -190,27 +190,27 @@ def row_key_gen(target):
         data_rows = yield
         # print('189:', 'data_rows ''='' ', data_rows)
         row_parse_keys = deepcopy(data_rows)
-        for parse_keys in row_parse_keys:
-            for value in parse_keys:
-                if value is None:
-                    (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(value)]) = None
-                elif all(c.isdigit() for c in value):
-                    (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(value)]) = int
-                elif value.count('.') == 1:
-                    try:
-                        float(value)
-                        (row_parse_keys[row_parse_keys.index(parse_keys)]
-                         [parse_keys.index(value)]) = float
-                    except ValueError:
-                        (row_parse_keys[row_parse_keys.index(parse_keys)]
-                         [parse_keys.index(value)]) = str
-                else:
-                    (row_parse_keys[row_parse_keys.index(parse_keys)]
-                     [parse_keys.index(value)]) = str
-        # print('target from row =', target)
-        target.send(row_parse_keys)
+        parse_sub_key_len = [len(sub_key) for sub_key in row_parse_keys]
+        parse_keys = list(chain.from_iterable((value for value in parse_keys)
+                                              for parse_keys in row_parse_keys))
+        for value in parse_keys:
+            if value is None:
+                parse_keys[parse_keys.index(value)] = None
+            elif all(c.isdigit() for c in value):
+                parse_keys[parse_keys.index(value)] = int
+            elif value.count('.') == 1:
+                try:
+                    float(value)
+                    parse_keys[parse_keys.index(value)] = float
+                except ValueError:
+                    parse_keys[parse_keys.index(value)] = str
+            else:
+                parse_keys[parse_keys.index(value)] = str
+        parsed_package = [parse_keys[:parse_sub_key_len[i]]
+                          for i in range(len(parse_sub_key_len))]
+        print('211:', 'parsed_package ''='' ', parsed_package)
+        print('212:', 'row_parse_keys ''='' ', row_parse_keys)
+        target.send(parsed_package)
 
 
 @coroutine
