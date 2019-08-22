@@ -154,6 +154,9 @@ def test_date_lambda_parser(test_sink):
 
 
 def test_data_parser(test_sink):
+    date_key1 = '%m/%d/%Y'
+    date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+    date_keys = (date_key1, date_key1)
     with file_readers(data_package) as readers:
         parse_data = data_parser(test_sink)
         date_key = date_key_gen(parse_data)
@@ -171,5 +174,5 @@ def test_data_parser(test_sink):
         # row_cycler.send(row_key)
         # date_key.send(first_delimited_row)
         # row_key.send(first_delimited_row)
-        print(*(getgeneratorlocals(test_sink)['ml']), ' ', sep='\n')
+        print(*getgeneratorlocals(test_sink)['ml'], sep='\n')
         raise

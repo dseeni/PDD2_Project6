@@ -283,27 +283,46 @@ def gen_field_names(target):  # sends to data_caster
 def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
     data_row_tuple = yield  # <-- from gen_field_names list of field names
-    print('286:', 'data_row_tuple ''='' ', data_row_tuple)
+    # print('286:', 'data_row_tuple ''='' ', data_row_tuple)
     parse_keys = yield  # <-- from gen_date_parse_key list of lists
-    print('288:', 'parse_keys ''='' ', parse_keys)
+    # print('288:', 'parse_keys ''='' ', parse_keys)
+    print('parse_keys', *parse_keys, sep='\n')
+    print('290:', 'len(parse_keys) ''='' ', len(parse_keys))
     # needs file_name, parse_keys, headers, single_class_name:
     while True:
         raw_data_rows = yield  # list of lists
-        print('291:', 'raw_data_rows ''='' ', raw_data_rows)
-        result = []
-        # zipped = []
+        parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
+                   for i in range(len(parse_keys))]
+        print('301:', *parsers, sep='\n')
+        print(len(parsers))
 
-        # for parse_key in parse_keys:
-        zipped = [tuple(tuple(zip(parse_key, raw_data_row))
-                        for raw_data_row in raw_data_rows
-                        for parse_key in parse_keys)]
+        parsed = [tuple(fn(item) for fn, item in parsers[i]) for i in range(len(
+            parsers))]
+        print('302:', 'len(parsed) ''='' ', len(parsed))
+        print('302:', 'parsed ''='' ', parsed)
+
+
+
+        
+        # print(*parsers, sep='\n')
+        # print('300:', 'len(parsers) ''='' ', len(parsers))
+
+        parsed = []
+        # for parser_key in parsers:
+        #     print('301:', 'parser_key ''='' ', parser_key)
+        #     for parser in parser_key:
+        #         print('parser', parser)
+        #         # parsed = [fn(item) for fn, item in parser]
+
+        # parsed = tuple(fn(item) for zip_row in zipped for fn, item in zip_row)
+        # print('300:', 'parsed ''='' ', parsed)
         # print('300:', *zipped, sep='\n')
         # print('297:', 'len(zipped) ''='' ', len(zipped))
         # result.append([fn(item) for key in zipped for fn, item in key])
         # print('**********************')
         # print('295:', 'result ''='' ', result)
         # print('**********************')
-        target.send(zipped)
+        # target.send(zipped)
         # try:
         #     DataTuple = namedtuple(single_class_name, headers)
         #     yield (DataTuple(*(fn(value) for value, fn
