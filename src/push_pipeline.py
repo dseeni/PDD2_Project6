@@ -221,9 +221,11 @@ def date_key_gen(target):
     delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
         partial_keys = yield
-        keys_copy = deepcopy(partial_keys)  # list of lists
+        keys_copy = list(chain.from_iterable(deepcopy(partial_keys)))
+        # of lists
         # print('230:', 'type(keys_copy) ''='' ', type(keys_copy))
-        # print('230:', 'keys_copy ''='' ', keys_copy)
+        print('230:', 'keys_copy ''='' ', keys_copy)
+        raise
         keys_idxs = [tuple(i for i in range(len(sub_key))) for sub_key
                      in keys_copy]
         parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
@@ -267,7 +269,7 @@ def gen_field_names(target):  # sends to data_caster
     while True:
         nt_class_names = yield  # from pipeline_coro a list of lists
         header_row_package = yield  # from header_extract a list of lists
-        print('headers', header_row_package)
+        # print('headers', header_row_package)
         data_fields = [namedtuple(nt_class_names[i], header_row_package[i])
                        for i in range(len(nt_class_names))]
         target.send(data_fields)
