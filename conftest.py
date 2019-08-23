@@ -55,7 +55,8 @@ def date_tester():
                      date_format_key_idxs, output_idxs, date_strs):
         for s in range(len(date_strs)):
             date_parser = date_key_gen(sink)
-            gen_row_key = row_key_gen(date_parser)
+            row_key_gen_targets = (sink, date_parser)
+            gen_row_key = row_key_gen(row_key_gen_targets)
             date_parser.send((date_keys[date_format_key_idxs[s]],
                               date_keys[date_format_key_idxs[s]]))
             date_parser.send(reader_rows)

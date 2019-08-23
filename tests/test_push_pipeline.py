@@ -16,7 +16,7 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_header_extract(test_sink):
     with file_readers(data_package) as readers:
         headers = header_extract(test_sink)
@@ -30,7 +30,7 @@ def test_header_extract(test_sink):
         assert len(header_rows[0]) == 5
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_cycle_rows(test_sink):
     row_cycler = cycle_rows(test_sink)
     with file_readers(data_package) as readers:
@@ -42,7 +42,7 @@ def test_cycle_rows(test_sink):
         assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_gen_field_names(test_sink):
     with file_readers(data_package) as readers:
         field_names_gen = gen_field_names(test_sink)
@@ -88,7 +88,7 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     f_idxs = (0, 2, 4)
@@ -98,12 +98,13 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
     raw_date_strs = ('10/5/2016', '2016-01-24T21:19:30Z',
                      '2017-10-07T00:14:42Z')
 
-    date_tester(test_sink, sample_reader_rows(f_idxs), get_test_date,
-                key_names=sink_keys, date_format_key_idxs=date_key_idxs,
+    date_tester(test_sink, sample_reader_rows(f_idxs),
+                get_test_date, key_names=sink_keys,
+                date_format_key_idxs=date_key_idxs,
                 output_idxs=out_idxs, date_strs=raw_date_strs)
+    print(getgeneratorlocals(test_sink)['ml'])
 
-
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_row_key_gen(test_sink, sample_reader_rows):
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
@@ -139,7 +140,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 # # ----------------------------------------------------------------------------
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_date_lambda_parser(test_sink):
     dk2 = '%Y-%m-%dT%H:%M:%SZ'
     dk1 = '%m/%d/%Y'
