@@ -102,20 +102,12 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
 
 # @pytest.mark.skip
 def test_row_key_gen(test_sink, sample_reader_rows):
-    # # cars.csv
-    # delimited_row0 = test_data_rows[0]
-    # # nyc_parking_tickets_extract.csv
-    # delimited_row1 = test_data_rows[1]
-    # # update_status.csv
-    # delimited_row2 = test_data_rows[2]
-
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
     # nyc_parking_tickets_extract.csv
     test_key1 = (int, str, str, str, str, int, str, str, str)
     # update_status.csv
     test_key2 = (str, str, str)
-
     unpacked_test_keys = [*chain(test_key0, test_key1, test_key2)]
     # print(unpacked_test_keys)
     f_idxs = (0, 2, 4)
@@ -123,7 +115,6 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     def check_key(row_keys, ref_keys):
         for value, ref in list(zip(row_keys, ref_keys)):
             return value == ref
-
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(sample_reader_rows(f_idxs))
     # print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
@@ -131,6 +122,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     # print('p0', parsed_key0)
     assert check_key(parsed_key0, unpacked_test_keys)
+
 # # ----------------------------------------------------------------------------
     # old:
     # parsed_key1 = getgeneratorlocals(test_sink)['ml'][0][1]

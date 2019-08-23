@@ -184,12 +184,30 @@ def header_extract(target):  # --> send to gen_field_names
         target.send(headers)
 
 
+def gen_sub_key_ranges(package):
+    sub_key_lens = [0, *[len(sub_key) for sub_key in package]]
+    range_start = 0
+    sub_key_ranges = []
+    for i in range(len(sub_key_lens)):
+        sub_key_ranges.append(sub_key_lens[i] + range_start)
+        range_start += sub_key_lens[i]
+    return sub_key_ranges
+
+
+def pack(unpacked, sub_key_ranges):
+    packed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
+                      for i in range(len(sub_key_ranges) - 1)]
+    return packed_package
+
+
 @coroutine
-def row_key_gen(target):
+def row_key_gen(targets):
     while True:
         data_rows = yield
         row_parse_keys = deepcopy(data_rows)
         sub_key_ranges = gen_sub_key_ranges(row_parse_keys)
+        # send to data_parser:
+        targets[0].send(sub_key_ranges)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
         for value in parse_keys:
@@ -205,23 +223,8 @@ def row_key_gen(target):
                     parse_keys[parse_keys.index(value)] = str
             else:
                 parse_keys[parse_keys.index(value)] = str
-        target.send([parse_keys, sub_key_ranges])
-
-
-def gen_sub_key_ranges(package):
-    sub_key_lens = [0, *[len(sub_key) for sub_key in package]]
-    range_start = 0
-    sub_key_ranges = []
-    for i in range(len(sub_key_lens)):
-        sub_key_ranges.append(sub_key_lens[i] + range_start)
-        range_start += sub_key_lens[i]
-    return sub_key_ranges
-
-
-def pack(unpacked, sub_key_ranges):
-    packed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
-                      for i in range(len(sub_key_ranges) - 1)]
-    return packed_package
+        # send to date_key_gen:
+        targets[1].send([parse_keys, sub_key_ranges])
 
 
 @coroutine
@@ -277,6 +280,11 @@ def gen_field_names(target):  # sends to data_caster
 def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
     data_row_tuples = yield  # <-- from gen_field_names list of field names
+    sub_key_ranges = yield
+
+    # use pack() here to pack unpacked data into named_tuples based on
+    # sub_key_ranges
+
     # print('286:', 'data_row_tuples ''='' ', data_row_tuples)
     parse_keys = yield  # <-- from gen_date_parse_key list of lists
     # print('288:', 'parse_keys ''='' ', parse_keys)
