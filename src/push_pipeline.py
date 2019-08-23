@@ -189,7 +189,7 @@ def row_key_gen(target):
     while True:
         data_rows = yield
         row_parse_keys = deepcopy(data_rows)
-        sub_key_ranges = unpack(row_parse_keys)
+        sub_key_ranges = gen_sub_key_ranges(row_parse_keys)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
         for value in parse_keys:
@@ -205,10 +205,10 @@ def row_key_gen(target):
                     parse_keys[parse_keys.index(value)] = str
             else:
                 parse_keys[parse_keys.index(value)] = str
-        target.send((parse_keys, sub_key_ranges))
+        target.send([parse_keys, sub_key_ranges])
 
 
-def unpack(package):
+def gen_sub_key_ranges(package):
     sub_key_lens = [0, *[len(sub_key) for sub_key in package]]
     range_start = 0
     sub_key_ranges = []
@@ -219,9 +219,9 @@ def unpack(package):
 
 
 def pack(unpacked, sub_key_ranges):
-    parsed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
+    packed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
                       for i in range(len(sub_key_ranges) - 1)]
-    return parsed_package
+    return packed_package
 
 
 @coroutine
@@ -230,6 +230,7 @@ def date_key_gen(target):
     delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
         partial_keys = yield
+        print(type(partial_keys))
         flat_keys = list(chain.from_iterable(deepcopy(partial_keys[0])))
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
         keys_idxs = [i for i in range(len(flat_keys))]

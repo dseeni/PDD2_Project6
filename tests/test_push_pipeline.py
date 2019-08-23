@@ -115,6 +115,9 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     test_key1 = (int, str, str, str, str, int, str, str, str)
     # update_status.csv
     test_key2 = (str, str, str)
+
+    unpacked_test_keys = [*chain(test_key0, test_key1, test_key2)]
+    # print(unpacked_test_keys)
     f_idxs = (0, 2, 4)
 
     def check_key(row_keys, ref_keys):
@@ -123,18 +126,20 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(sample_reader_rows(f_idxs))
-    print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
+    # print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
           getgeneratorlocals(test_sink)['ml'])
-    raise
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     # print('p0', parsed_key0)
-    assert check_key(parsed_key0, test_key0)
-    parsed_key1 = getgeneratorlocals(test_sink)['ml'][1]
-    # print('p1', parsed_key1)
-    assert check_key(parsed_key1, test_key1)
-    parsed_key2 = getgeneratorlocals(test_sink)['ml'][2]
-    # print('p2', parsed_key2)
-    assert check_key(parsed_key2, test_key2)
+    assert check_key(parsed_key0, unpacked_test_keys)
+# # ----------------------------------------------------------------------------
+    # old:
+    # parsed_key1 = getgeneratorlocals(test_sink)['ml'][0][1]
+    # # print('p1', parsed_key1)
+    # assert check_key(parsed_key1, test_key1)
+    # parsed_key2 = getgeneratorlocals(test_sink)['ml'][0][2]
+    # # print('p2', parsed_key2)
+    # assert check_key(parsed_key2, test_key2)
+# # ----------------------------------------------------------------------------
 
 
 # @pytest.mark.skip
