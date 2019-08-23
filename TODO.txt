@@ -273,3 +273,26 @@ TEMP:
         #     data_row = yield
         #     broadcaster.send(data_row)
 # # ----------------------------------------------------------------------------
+REFACTOR TODO:
+-> use generator tuple comphrehensions unless with range
+-> use list if you look up a lot (like parse key should be list)
+
+-> unpack once, key and rows should be unpacked and parsed by data parser
+-> pack() should then take in named tuple class names, parsed row, and
+key_ranges, and then pack as named tuples
+
+-> data parser will then send out those named tuples to filters with appropriate
+ fitlers in data package
+
+-> factor out more nesting in datekey gen, utilize filter to elimiate non str
+keys, and hit only the str keys then with the date_keys tuple
+
+-> try to eliminate the use of deepcopy,
+
+-> test instantiaton of lists and lookup without range ... range a list and then
+ create tuple/list from it and time it..
+range is an iterable so creating tuple will obv be slower since you are creating
+it 1000s of times over and over to append next(range)....
+
+
+
