@@ -189,12 +189,7 @@ def row_key_gen(target):
     while True:
         data_rows = yield
         row_parse_keys = deepcopy(data_rows)
-        sub_key_lens = [0, *[len(sub_key) for sub_key in row_parse_keys]]
-        range_start = 0
-        sub_key_ranges = []
-        for i in range(len(sub_key_lens)):
-            sub_key_ranges.append(sub_key_lens[i]+range_start)
-            range_start += sub_key_lens[i]
+        sub_key_ranges = unpack(row_parse_keys)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
         for value in parse_keys:
@@ -210,9 +205,23 @@ def row_key_gen(target):
                     parse_keys[parse_keys.index(value)] = str
             else:
                 parse_keys[parse_keys.index(value)] = str
-        parsed_package = [parse_keys[sub_key_ranges[i]: sub_key_ranges[i+1]]
-                          for i in range(len(sub_key_ranges)-1)]
-        target.send(parsed_package)
+        target.send((parse_keys, sub_key_ranges))
+
+
+def unpack(package):
+    sub_key_lens = [0, *[len(sub_key) for sub_key in package]]
+    range_start = 0
+    sub_key_ranges = []
+    for i in range(len(sub_key_lens)):
+        sub_key_ranges.append(sub_key_lens[i] + range_start)
+        range_start += sub_key_lens[i]
+    return sub_key_ranges
+
+
+def pack(unpacked, sub_key_ranges):
+    parsed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
+                      for i in range(len(sub_key_ranges) - 1)]
+    return parsed_package
 
 
 @coroutine
@@ -221,20 +230,14 @@ def date_key_gen(target):
     delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
         partial_keys = yield
-        flat_keys = list(chain.from_iterable(deepcopy(partial_keys)))
+        flat_keys = list(chain.from_iterable(deepcopy(partial_keys[0])))
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
         keys_idxs = [i for i in range(len(flat_keys))]
-        sub_key_lens = [0, *[len(sub_key) for sub_key in partial_keys]]
-        range_start = 0
-        sub_key_ranges = []
-        for i in range(len(sub_key_lens)):
-            sub_key_ranges.append(sub_key_lens[i] + range_start)
-            range_start += sub_key_lens[i]
+        sub_key_ranges = partial_keys[1]
         print('235:', 'flat_keys ''='' ', flat_keys)
         print('230:', 'keys_idxs ''='' ', keys_idxs)
         print('230:', 'flat_rows ''='' ', flat_rows)
         print('237:', 'sub_key_ranges ''='' ', sub_key_ranges)
-        print('238:', 'sub_key_lens ''='' ', sub_key_lens)
         parse_guide = [*zip(flat_keys, flat_rows, keys_idxs)]
         print('243:', *parse_guide, sep='\n')
         for data_type, item, idx in parse_guide:
@@ -249,8 +252,8 @@ def date_key_gen(target):
                     except IndexError:
                         break
         print('254:', 'flat_keys ''='' ', flat_keys)
-        parsed_package = [flat_keys[sub_key_ranges[i]: sub_key_ranges[i+1]]
-                          for i in range(len(sub_key_ranges)-1)]
+
+        parsed_package = pack(flat_keys, sub_key_ranges)
         print('254:', 'parsed_package ''='' ', parsed_package)
         # raise
         target.send(parsed_package)

@@ -85,7 +85,7 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     f_idxs = (0, 2, 4)
@@ -108,7 +108,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     # delimited_row1 = test_data_rows[1]
     # # update_status.csv
     # delimited_row2 = test_data_rows[2]
-    # reference keys
+
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
     # nyc_parking_tickets_extract.csv
@@ -123,6 +123,9 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 
     gen_row_key = row_key_gen(test_sink)
     gen_row_key.send(sample_reader_rows(f_idxs))
+    print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
+          getgeneratorlocals(test_sink)['ml'])
+    raise
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
     # print('p0', parsed_key0)
     assert check_key(parsed_key0, test_key0)
@@ -153,7 +156,7 @@ def test_date_lambda_parser(test_sink):
     assert date_func2(date_str2).year == 2016
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_data_parser(test_sink):
     sink_list = []
     for d_key in date_keys:
