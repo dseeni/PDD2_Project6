@@ -788,47 +788,46 @@ from datetime import datetime
 
 # from src.push_pipeline import *
 
-
-ml = [1, 2, 3, 4]
-
-if iter(ml):
-    print(True)
-
-def myfunc():
-    return 2
-
-a = myfunc()
-
-if iter(a):
-    print(True)
-else:
-    pass
-
-# [('Chevrolet Chevelle Malibu', 18.0, 8, 307.0, 130.0, 3504.0, 12.0, 70, 'US'), ('Stiedemann-Bailey', 'Research and Developmen
-# t', '29-0890771', '100-53-9824'), (4006478550, 'VAD7274', 'VA', 'PAS', datetime.datetime(2016, 10, 5, 0, 0), 5, '4D', 'BMW',
-# 'BUS LANE VIOLATION'), ('100-53-9824', 'Sebastiano', 'Tester', 'Male', 'Icelandic'), ('100-53-9824', '2017-10-07T00:14:42Z',
-# '2016-01-24T21:19:30Z'), ('Buick Skylark 320', 15.0, 8, 350.0, 165.0, 3693.0, 11.5, 70, 'US'), ('Nicolas and Sons', 'Sales',
-# '41-6841359', '101-71-4702'), (4006462396, '22834JK', 'NY', 'COM', datetime.datetime(2016, 9, 30, 0, 0), 5, 'VAN', 'CHEVR', '
-# BUS LANE VIOLATION'), ('101-71-4702', 'Cayla', 'MacDonagh', 'Female', 'Lao'), ('101-71-4702', '2017-01-23T11:23:17Z', '2016-0
-# 1-27T04:32:57Z'), ('Chevrolet Chevelle Malibu', 18.0, 8, 307.0, 130.0, 3504.0, 12.0, 70, 'US'), ('Stiedemann-Bailey', 'Resear
-# ch and Development', '29-0890771', '100-53-9824'), (4006478550, 'VAD7274', 'VA', 'PAS', '10/5/2016', 5, '4D', 'BMW', 'BUS LAN
-# E VIOLATION'), ('100-53-9824', 'Sebastiano', 'Tester', 'Male', 'Icelandic'), ('100-53-9824', datetime.datetime(2017, 10, 7, 0
-# , 14, 42), datetime.datetime(2016, 1, 24, 21, 19, 30)), ('Buick Skylark 320', 15.0, 8, 350.0, 165.0, 3693.0, 11.5, 70, 'US'),
-#  ('Nicolas and Sons', 'Sales', '41-6841359', '101-71-4702'), (4006462396, '22834JK', 'NY', 'COM', '9/30/2016', 5, 'VAN', 'CHE
-# VR', 'BUS LANE VIOLATION'), ('101-71-4702', 'Cayla', 'MacDonagh', 'Female', 'Lao'), ('101-71-4702', datetime.datetime(2017, 1
-# , 23, 11, 23, 17), datetime.datetime(2016, 1, 27, 4, 32, 57))]
-# [('Chevrolet Chevelle Malibu', 18.0, 8, 307.0, 130.0, 3504.0, 12.0, 70, 'US'), ('Stiedemann-Bailey', 'Research and Developmen
-# t', '29-0890771', '100-53-9824'), (4006478550, 'VAD7274', 'VA', 'PAS', datetime.datetime(2016, 10, 5, 0, 0), 5, '4D', 'BMW',
-# 'BUS LANE VIOLATION'), ('100-53-9824', 'Sebastiano', 'Tester', 'Male', 'Icelandic'), ('100-53-9824', '2017-10-07T00:14:42Z',
-# '2016-01-24T21:19:30Z'), ('Buick Skylark 320', 15.0, 8, 350.0, 165.0, 3693.0, 11.5, 70, 'US'), ('Nicolas and Sons', 'Sales',
-# '41-6841359', '101-71-4702'), (4006462396, '22834JK', 'NY', 'COM', datetime.datetime(2016, 9, 30, 0, 0), 5, 'VAN', 'CHEVR', '
-# BUS LANE VIOLATION'), ('101-71-4702', 'Cayla', 'MacDonagh', 'Female', 'Lao'), ('101-71-4702', '2017-01-23T11:23:17Z', '2016-0
-# 1-27T04:32:57Z'), ('Chevrolet Chevelle Malibu', 18.0, 8, 307.0, 130.0, 3504.0, 12.0, 70, 'US'), ('Stiedemann-Bailey', 'Resear
-# ch and Development', '29-0890771', '100-53-9824'), (4006478550, 'VAD7274', 'VA', 'PAS', '10/5/2016', 5, '4D', 'BMW', 'BUS LAN
-# E VIOLATION'), ('100-53-9824', 'Sebastiano', 'Tester', 'Male', 'Icelandic'), ('100-53-9824', datetime.datetime(2017, 10, 7, 0
-# , 14, 42), datetime.datetime(2016, 1, 24, 21, 19, 30)), ('Buick Skylark 320', 15.0, 8, 350.0, 165.0, 3693.0, 11.5, 70, 'US'),
-#  ('Nicolas and Sons', 'Sales', '41-6841359', '101-71-4702'), (4006462396, '22834JK', 'NY', 'COM', '9/30/2016', 5, 'VAN', 'CHE
-# VR', 'BUS LANE VIOLATION'), ('101-71-4702', 'Cayla', 'MacDonagh', 'Female', 'Lao'), ('101-71-4702', datetime.datetime(2017, 1
-# , 23, 11, 23, 17), datetime.datetime(2016, 1, 27, 4, 32, 57))]
-# 183: date =  2016-01-27T04:32:57Z
+# ml = [1, 2, 3, 4]
 #
+# if iter(ml):
+#     print(True)
+#
+# def myfunc():
+#     return 2
+#
+# a = myfunc()
+#
+# if iter(a):
+#     print(True)
+# else:
+#     pass
+
+# # ----------------------------------------------------------------------------
+# from timeit import timeit
+#
+# ml = list(i for i in range(100000))
+#
+#
+# def tup(lst):
+#     _ = tuple(i for i in lst)
+#     return [_[i] for i in range(1000)]
+#
+#
+# def lit(lst):
+#     _ = list(i for i in lst)
+#     return [_[i] for i in range(1000)]
+#
+# print(timeit('tup(ml)', setup="from src.playground import tup,ml",
+#              number=10000))
+#
+# print(timeit('lit(ml)', setup="from src.playground import tup,ml,lit",
+#              number=10000))
+# # ----------------------------------------------------------------------------
+
+ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
+
+row = []
+row.append(ml)
+print(row)
+

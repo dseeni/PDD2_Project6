@@ -23,20 +23,23 @@ def test_header_extract(test_sink):
         row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
         header_rows = getgeneratorlocals(test_sink)['ml']
-        assert header_rows[0][0] == 'car'
-        assert header_rows[1][0] == 'employer'
-        assert header_rows[2][0] == 'summons_number'
-        assert len(header_rows) == 5
+        print('26:', 'header_rows ''='' ', header_rows)
+        assert header_rows[0][0][0] == 'car'
+        assert header_rows[0][1][0] == 'employer'
+        assert header_rows[0][2][0] == 'summons_number'
+        assert len(header_rows[0]) == 5
 
 
 # @pytest.mark.skip
-def test_cycle_rows(test_sink, sample_reader_rows):
+def test_cycle_rows(test_sink):
     row_cycler = cycle_rows(test_sink)
     with file_readers(data_package) as readers:
         row_cycler.send(readers)
-        assert len(getgeneratorlocals(test_sink)['ml']) == 5
-        assert getgeneratorlocals(test_sink)['ml'][0][0] == 'Car'
-        assert getgeneratorlocals(test_sink)['ml'][4][0] == 'ssn'
+        print('38:', 'readers ''='' ', readers)
+        print(getgeneratorlocals(test_sink))
+        assert len(getgeneratorlocals(test_sink)['ml'][0]) == 5
+        assert getgeneratorlocals(test_sink)['ml'][0][0][0] == 'Car'
+        assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
 
 
 # @pytest.mark.skip
@@ -47,9 +50,9 @@ def test_gen_field_names(test_sink):
                              data_package))  # send class_names
         headers = header_extract(field_names_gen)
         cycle_rows(headers).send(readers)
-        dummy_nt = getgeneratorlocals(test_sink)['ml']
+        dummy_nt = getgeneratorlocals(test_sink)['ml'][0]
         print(dummy_nt)
-        data_fields = getgeneratorlocals(test_sink)['ml']
+        data_fields = getgeneratorlocals(test_sink)['ml'][0]
         assert len(data_fields) == len(tuple
                                        (input_data[1]
                                         for input_data, output_data
@@ -111,16 +114,18 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     unpacked_test_keys = [*chain(test_key0, test_key1, test_key2)]
     # print(unpacked_test_keys)
     f_idxs = (0, 2, 4)
+    test_sink_tuple = (test_sink, test_sink)
 
     def check_key(row_keys, ref_keys):
         for value, ref in list(zip(row_keys, ref_keys)):
             return value == ref
-    gen_row_key = row_key_gen(test_sink)
+        
+    gen_row_key = row_key_gen(test_sink_tuple)
     gen_row_key.send(sample_reader_rows(f_idxs))
-    # print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
-    #       getgeneratorlocals(test_sink)['ml'])
-    parsed_key0 = getgeneratorlocals(test_sink)['ml'][0]
-    # print('p0', parsed_key0)
+    print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
+          getgeneratorlocals(test_sink)['ml'])
+    parsed_key0 = getgeneratorlocals(test_sink)['ml'][1]
+    print('p0', parsed_key0)
     assert check_key(parsed_key0, unpacked_test_keys)
 
 # # ----------------------------------------------------------------------------

@@ -21,11 +21,8 @@ def test_sink():
             row = yield ml
             if row == 'clear':
                 ml.clear()
-            elif type(row) == list:
-                for i in row:
-                    ml.append(i)
             else:
-                ml.append(row)
+                ml.append(list(row))
     return _test_sink()
 
 

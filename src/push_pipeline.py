@@ -151,6 +151,8 @@ def cycle_rows(targets):
                     target.send(row_package)
             else:
                 targets.send(row_package)
+                print('154:', 'targets ''='' ', targets)
+                print('154:', 'row_package ''='' ', row_package)
             row_package.clear()
             targets = yield
         next(counter)
@@ -224,7 +226,7 @@ def row_key_gen(targets):
             else:
                 parse_keys[parse_keys.index(value)] = str
         # send to date_key_gen:
-        targets[1].send([parse_keys, sub_key_ranges])
+        targets[1].send(parse_keys)
 
 
 @coroutine
@@ -237,11 +239,9 @@ def date_key_gen(target):
         flat_keys = list(chain.from_iterable(deepcopy(partial_keys[0])))
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
         keys_idxs = [i for i in range(len(flat_keys))]
-        sub_key_ranges = partial_keys[1]
         print('235:', 'flat_keys ''='' ', flat_keys)
         print('230:', 'keys_idxs ''='' ', keys_idxs)
         print('230:', 'flat_rows ''='' ', flat_rows)
-        print('237:', 'sub_key_ranges ''='' ', sub_key_ranges)
         parse_guide = [*zip(flat_keys, flat_rows, keys_idxs)]
         print('243:', *parse_guide, sep='\n')
         for data_type, item, idx in parse_guide:
@@ -255,12 +255,7 @@ def date_key_gen(target):
                         continue
                     except IndexError:
                         break
-        print('254:', 'flat_keys ''='' ', flat_keys)
-
-        parsed_package = pack(flat_keys, sub_key_ranges)
-        print('254:', 'parsed_package ''='' ', parsed_package)
-        # raise
-        target.send(parsed_package)
+        target.send(flat_keys)
 
 
 @coroutine
@@ -291,6 +286,12 @@ def data_parser(target):
     # needs file_name, parse_keys, headers, single_class_name:
     while True:
         raw_data_rows = yield  # list of lists
+
+# # ----------------------------------------------------------------------------
+        # unpack all the rows, then parse, then repack with namedtuple,
+        # then send
+# # ----------------------------------------------------------------------------
+
         parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
                    for i in range(len(parse_keys))]
         parsed = [tuple(fn(item) for fn, item in parsers[i])
