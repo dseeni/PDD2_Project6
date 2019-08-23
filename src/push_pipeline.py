@@ -221,47 +221,39 @@ def date_key_gen(target):
     delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
         partial_keys = yield
-        keys_copy = list(chain.from_iterable(deepcopy(partial_keys)))
-        # of lists
-        # print('230:', 'type(keys_copy) ''='' ', type(keys_copy))
-        print('230:', 'keys_copy ''='' ', keys_copy)
-        raise
-        keys_idxs = [tuple(i for i in range(len(sub_key))) for sub_key
-                     in keys_copy]
-        parse_guide = [list(zip(keys_copy[i], delimited_rows[i], keys_idxs[i]))
-                       for i in range(len(keys_copy))]
+        flat_keys = list(chain.from_iterable(deepcopy(partial_keys)))
+        flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
+        keys_idxs = [i for i in range(len(flat_keys))]
+        sub_key_lens = [0, *[len(sub_key) for sub_key in partial_keys]]
+        range_start = 0
+        sub_key_ranges = []
+        for i in range(len(sub_key_lens)):
+            sub_key_ranges.append(sub_key_lens[i] + range_start)
+            range_start += sub_key_lens[i]
+        print('235:', 'flat_keys ''='' ', flat_keys)
+        print('230:', 'keys_idxs ''='' ', keys_idxs)
+        print('230:', 'flat_rows ''='' ', flat_rows)
+        print('237:', 'sub_key_ranges ''='' ', sub_key_ranges)
+        print('238:', 'sub_key_lens ''='' ', sub_key_lens)
+        parse_guide = [*zip(flat_keys, flat_rows, keys_idxs)]
         print('243:', *parse_guide, sep='\n')
-        # date_func = None
-        for parser in parse_guide:
-            for data_type, item, idx in parser:
-                if data_type == str:
-                    for _ in range(len(date_keys_tuple)):
-                        # print('inspect:', keys_copy[parse_guide.index(
-                        #     parser)])
-                        try:
-                            datetime.strptime(item, date_keys_tuple[_])
-                            # if date_keys_tuple[_] == '%m/%d/%Y':
-                            #     key = '%m/%d/%YT%H:%M:%SZ'
-                            #     # key = '%m/%d/%YT%H:%M:%SZ'
-                            # # "%Y-%m-%dT%H:%M:%S.%fZ"
-                            # else:
-                            key = date_keys_tuple[_]
-                            (keys_copy[parse_guide.index(parser)]
-                             [idx]) = lambda v: datetime.strptime(v, key)
-                            # print('dfid', date_keys_tuple[_], id(date_func))
-                            # print(parse_guide.index(parser), idx,
-                            #       date_keys_tuple[_])
-                            # print('date found')
-                            # print(item, 'item')
-                            continue
-                        except ValueError:
-                            continue
-                        # except ValueError:
-                        #     continue
-                        except IndexError:
-                            break
-        # print('257:', *keys_copy, sep='\n')
-        target.send(keys_copy)
+        for data_type, item, idx in parse_guide:
+            if data_type == str:
+                for _ in range(len(date_keys_tuple)):
+                    try:
+                        datetime.strptime(item, date_keys_tuple[_])
+                        key = date_keys_tuple[_]
+                        flat_keys[idx] = (lambda v: datetime.strptime(v, key))
+                    except ValueError:
+                        continue
+                    except IndexError:
+                        break
+        print('254:', 'flat_keys ''='' ', flat_keys)
+        parsed_package = [flat_keys[sub_key_ranges[i]: sub_key_ranges[i+1]]
+                          for i in range(len(sub_key_ranges)-1)]
+        print('254:', 'parsed_package ''='' ', parsed_package)
+        # raise
+        target.send(parsed_package)
 
 
 @coroutine

@@ -153,6 +153,7 @@ def test_date_lambda_parser(test_sink):
     assert date_func2(date_str2).year == 2016
 
 
+# @pytest.mark.skip
 def test_data_parser(test_sink):
     sink_list = []
     for d_key in date_keys:
