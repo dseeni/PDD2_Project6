@@ -1,22 +1,833 @@
-from src.constants import *
-import csv
-from itertools import islice
+# from src.constants import *
+# from src.push_pipeline import *
+# from collections import namedtuple
+# from contextlib import contextmanager
+# import csv
+# from itertools import islice
+# from datetime import datetime
+# import os
+# from inspect import getgeneratorstate, getgeneratorlocals
+# from collections import namedtuple
+# # from src.constants import *
+# from itertools import chain
+# from src.constants import *
+# from datetime import datetime
+# # from src.push_pipeline import *
+# from pytest import yield_fixture
+# from pytest import fixture
+# from itertools import compress
+# from src.constants import fnames
 
+# # ----------------------------------------------------------------------------
+# cars_header = header_extract(fcars)
+# cars = data_reader(fcars, cars_parser, cars_header, cars__name)
+#
+# with cars as c:
+#     # for row in c:
+#     #     print(row)
+#     print('20:', *list(islice(c, 100)), sep='\n')
 
-def data_reader(f_name):
-    f = open(f_name)
-    try:
-        dialect = csv.Sniffer().sniff(f.read(2000))
-        f.seek(0)
-        reader = csv.reader(f, dialect=dialect)
-        yield from reader
-    finally:
-        f.close()
+# # ----------------------------------------------------------------------------
 
-
-cars = data_reader(fcars)
-
-
-# print('20:', *list(islice(cars, 10)), sep='\n')
+# # ----------------------------------------------------------------------------
 # for row in cars:
-#     print(row)
+#     print('17:', *list(row), sep='\n')
+
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# file open context manager, coroutine context manager, test within it thats
+# the first thing that you need to right
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# extract headers as variable
+# determine filter names that correspond to these:
+#  Car Cheverlot
+#  MPG
+#  Cylinders
+#  Displacement
+#  Horsepower
+#  Weight
+#  Acceleration
+#  Model Monte Carlo Landau
+#  Origin
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# Constants:
+# Headers -- NamedTuple
+# idx_*headers -- Headers.horsepower etc?
+# Input_file -- cars.csv
+# Types str in etc
+# Output files based on filter names {}
+
+
+# # ----------------------------------------------------------------------------
+# def infer_data_type(self):
+#     for value in self.data_key:
+#         if value is None:
+#             self.data_key[self.data_key.index(value)] = None
+#         elif all(c.isdigit() for c in value):
+#             self.data_key[self.data_key.index(value)] = int(value)
+#
+#         elif value.count('.') == 1:
+#             try:
+#                 self.data_key[self.data_key.index(value)] = float(value)
+#             except ValueError:
+#                 self.data_key[self.data_key.index(value)] = str(value)
+#
+#         else:
+#             self.data_key[self.data_key.index(value)] = str(value)
+# with pipeline() as pipe:
+#         data = data_parser()
+#         for row in data:
+#                 pipe.send(row)
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# def infer_data_type():
+#     data_key = yield
+#     for value in data_key:
+#         if value is None:
+#             data_key[data_key.index(value)] = None
+#         elif all(c.isdigit() for c in value):
+#             data_key[data_key.index(value)] = int(value)
+#
+#         elif value.count('.') == 1:
+#             try:
+#                 data_key[data_key.index(value)] = float(value)
+#             except ValueError:
+#                 data_key[data_key.index(value)] = str(value)
+#
+#         else:
+#             data_key[data_key.index(value)] = str(value)
+
+# try date first, then literal, then str
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# print(type(ast.literal_eval('6.2')))
+#
+# print(type(ast.literal_eval('6.')))
+# print(type(ast.literal_eval('6')))
+# try:
+#     print(type(ast.literal_eval('6-2')))
+# except ValueError:
+#     print(str)
+# try:
+#     print(type(ast.literal_eval('6A2')))
+# except Exception:
+#     print(str)
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+#     return datetime.strptime(value, fmt)
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# def date_getter():
+#     # for datekey in date_keys:
+#     #     try:
+#     #         parse_date('12/12/12', fmt=datekey)
+#     #     except Exception:
+#     #         return str('none')
+#     for datekey in date_keys:
+#         try:
+#             print(datetime.stiptime('12/12/12', datekey))
+#         except Exception:
+#             print('cant do it')
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# test_date = next(parse_date('2017-10-07T00:14:42Z', date_keys))
+# print(test_date.year)
+# print(test_date.month)
+# print(test_date.day)
+# print(test_date)
+# print(type(test_date))
+# print(type(next(parse_date('12/x2/2012', date_keys))) == str)
+# print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))))
+# print(type(next(parse_date('12/12/2012', date_keys))) == datetime)
+# print(type(next(parse_date('2017-10-07T00:14:42Z', date_keys))) == datetime)
+# print(type(next(parse_date('12/x2/2012', date_keys))) == str)
+# # ----------------------------------------------------------------------------
+
+
+# @coroutine
+# # ----------------------------------------------------------------------------
+# def myvar():
+#     container = []
+#     while True:
+#         var = yield
+#         container.append(var)
+#         yield container
+#
+#
+# cvars = myvar()
+#
+# for i in range(1000):
+#     print(cvars.send('hi'))
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# h = header_extract(cvars)
+# file_obj = open(fnames[0])
+# h.send(file_obj)
+
+# sample_row = "Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US"
+# ml = sample_row.split(';')
+# print(ml)
+# print(type(ml))
+
+
+# @coroutine
+# def test_sink():
+#     ml = []
+#     while True:
+#         # try:
+#         row = yield
+#         if row is not None:
+#             print('sink got data')
+#             for element in row:
+#                 ml.append(element)
+#             print('sink yielding list')
+#         yield ml
+#
+# sink = test_sink()
+# print(sink.send('hi sink'))
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# working on constants.. shape them into UserDict
+
+# a dictionary of filters:
+# {tuple(file_name_1, data row name): 'function_name': lambda_func
+# tuple(file_name_2, data row name): 'function_name': lambda_func
+# tuple(file_name_3, data row name): 'function_name': lambda_func}
+
+# file_and_row_tup = tuple(zip(fnames, _names))
+# print(*file_and_row_tup, sep='\n')
+
+
+# example:...                               |output_file
+# where in d is data_row:
+# lambda d: d[idx_color].lower() == 'pink', out_pink_cars
+
+
+# example:...                               |output_file
+# def pred_ford_green(data_row):
+#     return (data_row[idx_make].lower() == 'ford'
+#             and data_row[idx_color].lower() == 'green')
+
+# lambda d where d is data_row...
+# example predicate: 'lambda d: d[idx_color].lower()'
+
+# filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+# filter_older = filter_data(lambda d: d[idx_year] = 2010, out_older)
+
+# filters = (filter_pink_cars, filter_ford_green, filter_older)
+
+# cars:
+# 'Car;MPG;Cylinders;Displacement;Horsepower;Weight;Acceleration;Model;Origin'
+# 'Chevrolet Chevelle Malibu;18.0;8;307.0;130.0;3504.;12.0;70;US'
+
+# employment.csv
+# 'employer,department,employee_id,ssn'
+# 'Stiedemann-Bailey,Research and Development,29-0890771,100-53-9824'
+
+# nyc_parking_tickets_extract.csv
+# 'employer,department,employee_id,ssn'
+# '4006478550,VAD7274,VA,PAS,10/5/2016,5,4D,BMW,BUS LANE VIOLATION'
+
+# personal_info.csv
+# 'ssn,first_name,last_name,gender,language'
+# '100-53-9824,Sebastiano,Tester,Male,Icelandic'
+
+# update_status.csv
+# 'ssn,last_updated,created'
+# '100-53-9824,2017-10-07T00:14:42Z,2016-01-24T21:19:30Z'
+
+# files and named tuples can be zipped
+# predicates and output files can be zipped
+
+# print(*input_package, sep='\n')
+# print(list(output_package))
+# print('230:', *output_package, sep='\n')
+
+# with file_handler(fnames[0]) as f:
+#     for row in f:
+#         print(next(f))
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# @coroutine
+# def dummy_test():
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#             ml = row
+#             yield ml
+#     return test_sink()
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# @yield_fixture
+# @coroutine
+# def dummy_target():
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#                 ml.append(row)
+#             else:
+#                 ml.append(row)
+#             print('28:', 'ml ''='' ', ml)
+#             yield ml
+#     return test_sink()
+# dummy = dummy_target()
+#
+# print(dummy.send('hello'))
+# print(getgeneratorlocals(dummy))
+# # ----------------------------------------------------------------------------
+
+
+# # ----------------------------------------------------------------------------
+# print(_names[0])
+# @fixture
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# @coroutine
+# def dummy_target():
+#     # @coroutine
+#     def test_sink():
+#         ml = []
+#         while True:
+#             # try:
+#             row = yield
+#             if row is not None:
+#                 print('sink got data')
+#                 print('row I recieved', row)
+#                 if type(row) == list:
+#                     for element in row:
+#                         ml.append(element)
+#                         print('sink yielding list')
+#                 ml.append(row)
+#                 print('28:', 'ml ''='' ', ml)
+#                 yield row
+#     return test_sink()
+# dummy = dummy_target()
+# dummy.send('hello')
+# print(getgeneratorlocals(dummy))
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# you can use functions without instancing them
+# @coroutine
+# def mgen(target):
+#     while True:
+#         value = yield
+#         target.send(value)
+#
+# @coroutine
+# def agen():
+#     while True:
+#         value = yield
+#         print(value)
+#
+# mgen(agen()).send('hi from agen')
+
+# g = 'hi'
+# d = 'bye'
+#
+# ml = [None, None, None, g]
+# al = [d, d, d, d]
+# gl = [i for i in range(len(al))]
+
+# print(list(compress(al, ml)))
+
+# # ----------------------------------------------------------------------------
+# first pass row to data parser, which returns dates as strings, then date
+# parser will go over the row again, only evaluting entires that are
+# strings.. thereby reducing the work that date_parser needs to do.
+# because right now you're checking dates len(row) * 3 or more keys-- 24 calls
+# you can automatically reduce the work if you just use date parser last,
+# only on those entries that are of type(str)
+# parse_guide = list(zip(ml, al, gl))
+#
+# for j, k, l in parse_guide:
+#     print(j, k, l)
+#
+# ids = [i for i in range(len(parse_guide))]
+# print(ids)
+
+# f_idxs = [0, 2, 4]
+# partial_files = list(fnames[i] for i in f_idxs)
+# print(partial_files)
+#
+# row_parse_key = [1, 2, 3, 1, 'hi']
+# # value = 1
+# for value in row_parse_key:
+#     if value == 1:
+#         print('found 1')
+#         row_parse_key[row_parse_key.index(value)] = 'hahah'
+# print(row_parse_key)
+
+# # ----------------------------------------------------------------------------
+# from src.constants import *
+# from datetime import datetime
+# date_keys_tuple = date_keys
+# from copy import deepcopy
+#
+#
+# key = [(str, '100-53-9824', 0), (str, '2017-10-07T00:14:42Z', 1),
+#        (str, '2016-01-24T21:19:30; Z', 2)]
+#
+# key_copy = deepcopy(key)
+#
+# for data_type, item, idx in key:
+#     # try to cast any str_key as potential date
+#     if data_type == str:
+#         for _ in range(len(date_keys_tuple)):
+#             try:
+#                 if datetime.strptime(item, date_keys_tuple[_]):
+#                     date_func = (lambda v: datetime.strptime
+#                     (v, date_keys_tuple[_]))
+#                     key_copy[idx] = date_func
+#                     continue
+#             except ValueError:
+#                 # _ += 1
+#                 continue
+#             except IndexError:
+#                 # print('Unrecognizable Date Format: cast as str')
+#                 # row_key_gen.send(None)
+#                 break
+# print(key_copy)
+
+#
+# for data_type, item, idx in key:
+#        print(data_type, item, idx)
+#
+#
+# date_func = (lambda v: datetime.strptime(v, date_keys_tuple[_]))
+
+
+# ------------------------------------------------------------------------------
+# from copy import deepcopy
+# from src.push_pipeline import coroutine
+# from inspect import getgeneratorlocals
+#
+#
+# delimited_row3 = ['4006478550', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5',
+# '4D',
+#                   'BMW', 'BUS LANE VIOLATION']
+#
+# @coroutine
+# def row_key_gen(target):  # from coro to date parser:--
+#     while True:
+#         data_row = yield  # from pipeline_coro
+#         row_parse_key = deepcopy(data_row)
+#         for value in row_parse_key:
+#             if value is None:
+#                 row_parse_key[row_parse_key.index(value)] = None
+#             elif all(c.isdigit() for c in value):
+#                 row_parse_key[row_parse_key.index(value)] = int
+#             elif value.count('.') == 1:
+#                 try:
+#                     float(value)
+#                     row_parse_key[row_parse_key.index(value)] = float
+#                 except ValueError:
+#                     row_parse_key[row_parse_key.index(value)] = str
+#             else:
+#                 row_parse_key[row_parse_key.index(value)] = str
+#         target.send(row_parse_key)
+
+# ------------------------------------------------------------------------------
+# @coroutine
+# def sink():
+#     while True:
+#         incoming = yield
+#         # yield incoming
+#
+# s = sink()
+# row_gen = row_key_gen(s)
+# row_gen.send(delimited_row3)
+# print(getgeneratorlocals(s))
+
+# ------------------------------------------------------------------------------
+# from contextlib import contextmanager, ExitStack
+# import csv
+# #     readers = list(reader for reader in fh)
+# #     print(readers)
+# #     headers = (next(reader) for reader in fh)
+# #     for header in headers:
+# #         print(header)
+# #     print(list(next(reader) for reader in fh), sep='\n')
+# #
+# # # input_pack = {inputfile1: {filters:outputfile}
+# # #               inputfile2: {filters:outputfile}
+# # #               inputfile3: {filters:outputfile}
+# # #               inputfile4: {filters:outputfile}}
+# print(list(file.closed for file in files))
+
+# ------------------------------------------------------------------------------
+# with ExitStack() as stack:
+#     files = [stack.enter_context(open(fname)) for fname in fnames]
+#     for file in files:
+#         print('495:', next(file), sep='\n')
+
+# ------------------------------------------------------------------------------
+# print('512:', *input_packages, sep='\n')
+# print('513:', *output_packages, sep='\n')
+# print('513:', data_package_dict, sep='\n')
+# print(data_package_dict)
+
+# print(len(list(input_packages)), len(list(output_packages)))
+# for input_data, output_data in data_package:
+#     print(input_data, '===========', output_data, sep='\n')
+
+# for input_data, output_data in data_package:
+#     print(*input_data, sep='\n')
+#     print(*output_data, sep='\n')
+#     print('')
+
+
+# for output_package in output_packages:
+#     print('217:', *output_package, sep='\n')
+
+# # filesnames and names
+# input_dict = {k: v for k,v in input_packages, output_packages}
+#
+# print(*input_dict, sep='\n')
+
+# # ----------------------------------------------------------------------------
+# from src.constants import *
+# from contextlib import contextmanager, ExitStack
+# import csv
+#
+# def display_data_package():
+#     for input_data, output_data in data_package:
+#         print(*input_data, sep='\n')
+#         print(*output_data, sep='\n')
+#         print('')
+#
+#
+# print(display_data_package())
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# # with file_reader(data_package) as fr:
+#     for reader in fr:
+#         print(next(reader))
+
+
+# from src.constants import *
+# data_dict = {input:output for input, output in data_package}
+#
+# for input, output in data_package:
+#     fnames = [input[0]]
+#     es = [input[1]]
+#     print(fnames)
+#     print(es)
+#
+#     # print(input)
+#     # print(' ')
+#     # print(data_dict[input])
+#     # print(' ')
+# # ----------------------------------------------------------------------------
+
+# # ----------------------------------------------------------------------------
+# # file_readers unit testing:
+# # ----------------------------------------------------------------------------
+# from src.push_pipeline import *
+# #
+# from contextlib import ExitStack, contextmanager
+# import csv
+# from itertools import islice
+#
+# lines = []
+# with file_readers(data_package) as rd:
+#     for _ in range(len(rd)):
+#         try:
+#             while True:
+#                 lines.append(next(rd[_]))
+#         except StopIteration:
+#             continue
+#         except IndexError:
+#             break
+# print(*lines, sep='\n')
+# print(len(lines))
+# # for i in range(10000):
+#     #     try:
+#     #         for r in rd:
+#     #             lines.append(next(r))
+#     #     except StopIteration:
+#     #         continue
+# # 4407
+#
+#         # try:
+#         #     print(list(islice(r,100000)))
+#         # except StopIteration:
+#         #     print('done')
+# # ----------------------------------------------------------------------------
+
+# pipeline_coro
+# @sub-contextmanager-ExitStack:
+# with file_readers as readers:
+#     for each reader in readers --
+# cycle through the list of readers
+# exception stop iteration, then skip that file
+# keep going until every file is exhausted.
+
+# from itertools import cycle, islice
+# from src.push_pipeline import *
+#
+#
+# # cycle through them yielding a row
+# # except if exhausted, mark as closed and skip it..
+# def rowcycle(data):
+#     with file_readers(data) as readers: # a list of readers
+#         reader_idx_list = list(range(len(readers))) # 5 in our case
+#         idx_tracker = readers_idx_list = list(range(len(readers)))
+#         cycler = cycle(readers_idx_list)
+#         while True:
+#             reader_idx = next(cycler)
+#             try:
+#                 if all(idx is None for idx in reader_idx_list):
+#                     break
+#                 if idx_tracker[reader_idx] is None:
+#                     continue
+#                 else:
+#                     yield next(readers[reader_idx])
+#             except StopIteration:
+#                 reader_idx_list[reader_idx] = None
+#                 continue
+#
+#         # while True:
+#         #     i = next(cycler)
+#         #     try:
+#         #         yield next(readers[i])
+#         #     except StopIteration:
+#         #         break
+#
+#
+#     # print(list(islice(cycle(ml), len(ml) * 5)))
+# cl = rowcycle(data_package)
+# print(list(cl))
+# print(len(list(cl)))
+# # print(list(rowcycle(data_package)))
+# # print(len(list(rowcycle(data_package))))
+#
+# # ml = list(range(5))
+# # print(ml)
+# # cml = cycle(ml)
+# # ----------------------------------------------------------------------------
+#
+# ml = [['Chevrolet Chevelle Malibu', '18.0', '8', '307.0', '130.0', '3504.',
+#        '12.0', '70', 'US'],
+#
+#       ['4006478550 ', 'VAD7274', 'VA', 'PAS', '10/5/2016', '5', '4D', 'BMW',
+#        'BUS LANE VIOLATION'],
+#
+#       ['100-53-9824', '2017-10-07T00:14:42Z', '201 6-01-24T21:19:30Z']]
+#
+# # key_idx = [i for i in range(len(sub_key)) for sub_key in key_copy]
+#
+# nl = tuple(tuple(zip(sublist, sublist)) for sublist in ml)
+# print(*nl, sep='\n')
+#
+# key_idx = [tuple(i for i in range(len(sub_key))) for sub_key in ml]
+# print(key_idx)
+#
+# parse_guide = list(zip(ml, ml, key_idx))
+#
+# pg = []
+# # how to zip up 3 way list of lists
+# for x, y, z in ml, nl, key_idx:
+#     pg.append(list(zip(x, y, z)))
+#
+# # pg = [tuple(tuple(zip(x, y, z) for x, y, z key_copy, delmited_row,
+# key_idx))]
+#
+# print(*parse_guide)
+# print(*pg)
+#
+# for parse_key in ml:
+#     for sub_key in parse_key:
+#         if all(c.isdigit() for c in sub_key):
+#             ml[ml.index(parse_key)][parse_key.index(sub_key)] = int
+#
+# print(ml)
+# key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1,
+# 2)]
+# parse_guide = [
+#     [[('str', 'int', 'str'), ('float', 'str', 'str'), ('int', 'str', 'str')],
+#      [('Chevrolet Chevelle Malibu', '4006478550', '100-53-9824'),
+#       ('18.0', 'VAD7274', '2017 -10-07T00:14:42Z'),
+#       ('8', 'VA', '2016-01-24T21:19:30Z')],
+#      [(0, 0, 0), (1, 1, 1), (2, 2, 2)]]]
+#
+# answer2 = [[[print(x)  for x in y]
+#             if type(y) == list else print(y) for y in z]for z in nested_lists]
+#
+
+
+key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+key_idy = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
+
+# print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
+from src.constants import date_keys
+from datetime import datetime
+
+# date_func = (lambda v: datetime.strptime(v, date_keys[0]))
+
+# print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
+
+'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'
+
+# # ----------------------------------------------------------------------------
+
+# GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
+# ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
+# def _test_date(date_key, *args):
+#     l = [arg for arg in args]
+#     current = list(ml)
+#     for i in range(len(l)):
+#         try:
+#             if iter(current[l[i]]):
+#                 current = current[l[i]]
+#         except TypeError:
+#             continue
+#     return current
+# print(_test_date(100, 1, 2, 2, 2))
+
+# # ----------------------------------------------------------------------------
+
+# ml = [['str', 'float', 'int', 'float', 'float', 'float', 'float', 'int', 'str'],
+#       ['int', 'str', 'str', 'str', 'datefunc1', 'int', 'str', 'str', 'str'],
+#       ['str', 'datefunc2.1', 'datefunc2.2']]
+
+
+# GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
+
+# ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
+
+#
+# def _test_date(list_name, gen_name, *args):
+#     nested_list = getgeneratorlocals(gen_name)[str(list_name)]
+#     idx = [arg for arg in args]
+#     current = list(nested_list)
+#     for i in range(len(idx)):
+#         try:
+#             if iter(current[idx[i]]):
+#                 current = current[idx[i]]
+#         except TypeError:
+#             continue
+#
+# def _test_date(*args):
+#     l = [arg for arg in args]
+#     current = list(ml)
+#     for i in range(len(l)):
+#         try:
+#             if iter(current[l[i]]):
+#                 current = current[l[i]]
+#         except TypeError:
+#             continue
+#     return current
+# print(_test_date(1,4))
+# print(_test_date(2,1))
+# print(_test_date(2,2))
+#
+# from datetime import datetime
+# date_key1 = '%m/%d/%Y'
+# # date_key2 = '%m/%d/%Y'
+# date_key2 = '%Y-%m-%dT%H:%M:%SZ'
+# # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
+# date_keys = (date_key1, date_key2)
+# date_str1 = '10/5/2016'
+# print(datetime.strptime(date_str1, date_key1))
+
+
+# def test_date_key_gen(test_sink, test_file_reader, test_date):
+#     def date_tester(sink, reader, date_getter, date_key_idx, retrieval_idx,
+#                     date_str):
+#         date_parser = date_key_gen(sink)
+#         gen_row_key = row_key_gen(date_parser)
+#         date_parser.send((date_keys[date_key_idx],))
+#         date_parser.send(reader)
+#         gen_row_key.send(reader)
+#         get_date_func = date_getter(sink, 'ml', retrieval_idx)
+#         date1 = get_date_func('10/5/2016')
+#         assert date1 == datetime.strptime(date_str, date_key_idx)
+# from src.push_pipeline import file_readers
+
+# from src.push_pipeline import *
+
+# ml = [1, 2, 3, 4]
+#
+# if iter(ml):
+#     print(True)
+#
+# def myfunc():
+#     return 2
+#
+# a = myfunc()
+#
+# if iter(a):
+#     print(True)
+# else:
+#     pass
+
+# # ----------------------------------------------------------------------------
+# from timeit import timeit
+#
+# ml = list(i for i in range(100000))
+#
+#
+# def tup(lst):
+#     _ = tuple(i for i in lst)
+#     return [_[i] for i in range(1000)]
+#
+#
+# def lit(lst):
+#     _ = list(i for i in lst)
+#     return [_[i] for i in range(1000)]
+#
+# print(timeit('tup(ml)', setup="from src.playground import tup,ml",
+#              number=10000))
+#
+# print(timeit('lit(ml)', setup="from src.playground import tup,ml,lit",
+#              number=10000))
+# # ----------------------------------------------------------------------------
+
+ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
+
+row = []
+row.append(ml)
+print(row)
+
