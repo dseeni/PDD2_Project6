@@ -824,10 +824,12 @@ from datetime import datetime
 # print(timeit('lit(ml)', setup="from src.playground import tup,ml,lit",
 #              number=10000))
 # # ----------------------------------------------------------------------------
-
-ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
-
-row = []
-row.append(ml)
-print(row)
-
+#
+# ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
+#
+# row = []
+# row.append(ml)
+# print(row)
+from itertools import count
+counter = count(0)
+print(next(counter))
