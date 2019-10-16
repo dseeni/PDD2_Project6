@@ -61,76 +61,75 @@ def coroutine(fn):
 @coroutine
 def pipeline_coro():
     with file_readers(data_package) as readers:
-        for input_data, output_data in data_package:
+        # for input_data, output_data in data_package:
 
-            # CONSTANTS:
-            nt_classes = input_data[1]
-            output_files = output_data[0]
-            filters = output_data[1]
+        # CONSTANTS:
+        nt_classes = [data[0][1] for data in data_package]
+        filters = [data[1][1][1] for data in data_package]
+        output_files = [data[1][1][0] for data in data_package]
 
-            # DECLARE --> From the bottom up stack
-            filters = None
-            broadcaster = broadcast(filters)
-            parse_data = data_parser(broadcaster)
-            date_key = date_key_gen(parse_data)
-            row_key = row_key_gen(date_key)
-            field_name_gen = gen_field_names(parse_data)
-            headers = header_extract(field_name_gen)
-            row_cycler = cycle_rows(headers)
+        # DECLARE --> From the bottom up stack
+        broadcaster = broadcast(filters)
+        parse_data = data_parser(broadcaster)
+        date_key = date_key_gen(parse_data)
+        row_key = row_key_gen(date_key)
+        field_name_gen = gen_field_names(parse_data)
+        headers = header_extract(field_name_gen)
+        row_cycler = cycle_rows(headers)
 
-            # pipeline sends gen_date_key the date_keys_tuple
-            # once for parse_key generation and once for processing
-            # send the first data row twice
-            # read header and send to data_fields gen
-            # right away to field_name_generator
+        # pipeline sends gen_date_key the date_keys_tuple
+        # once for parse_key generation and once for processing
+        # send the first data row twice
+        # read header and send to data_fields gen
+        # right away to field_name_generator
 
-            # SEND DATA:
-            # send class_names and header_row
+        # SEND DATA:
+        # send class_names and header_row
 
-            date_key.send(date_keys)
-            field_name_gen.send(nt_classes)
-            row_cycler.send(readers)
-            row_cycler.send((date_key, row_key, parse_data))
-            row_cycler.send(parse_data)
+        date_key.send(date_keys)
+        field_name_gen.send(nt_classes)
+        row_cycler.send(readers)
+        row_cycler.send((date_key, row_key, parse_data))
+        row_cycler.send(parse_data)
 
-            # send next row to gen_row_parse_key
-            # named_tuple_gen sends to data_caster for parsing
-            # parser needs named tupel and data type key
-            # send the first row of the file to the header function
-            # send first row to gen_field_names
-            # header function sends to gen_field_name
-            # gen_parse key sends key to caster
-            # header_extract.send(next(f))  # --> send row for header extract
-            # row_parse_key_gen.send(next(f))
-            # date_parse gen
+        # send next row to gen_row_parse_key
+        # named_tuple_gen sends to data_caster for parsing
+        # parser needs named tupel and data type key
+        # send the first row of the file to the header function
+        # send first row to gen_field_names
+        # header function sends to gen_field_name
+        # gen_parse key sends key to caster
+        # header_extract.send(next(f))  # --> send row for header extract
+        # row_parse_key_gen.send(next(f))
+        # date_parse gen
 
-        # for data_package in data_packages:
-        #    for inputfile, classname, outputfile, predicate in datapackage:
-        #    do stuff:
-        # instantiate functions parameters..
-        # can you instantiate without symbol binding?
-        # # instance save data writers:
-        # out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
-        # out_ford_green = save_data('ford_green.csv', header_extract(fcars))
-        # out_older = save_data('older.csv', header_extract(fcars))
+    # for data_package in data_packages:
+    #    for inputfile, classname, outputfile, predicate in datapackage:
+    #    do stuff:
+    # instantiate functions parameters..
+    # can you instantiate without symbol binding?
+    # # instance save data writers:
+    # out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
+    # out_ford_green = save_data('ford_green.csv', header_extract(fcars))
+    # out_older = save_data('older.csv', header_extract(fcars))
 
-        # filter instances with predicates
-        # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
-        # 'pink',
-        #                                out_pink_cars)
+    # filter instances with predicates
+    # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
+    # 'pink',
+    #                                out_pink_cars)
 
-        # predicates can be defined as filters..
-        # def pred_ford_green(data_row):
-        #     return (data_row[idx_make].lower() == 'ford'
-        #             and data_row[idx_color].lower() == 'green')
-        # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-        # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-        # filters = (filter_pink_cars, filter_ford_green, filter_older)
-        # your brodcaster must send data from row
-        # broadcaster = broadcast(filters)
-        # while True:
-        #     data_row = yield
-        #     broadcaster.send(data_row)
+    # predicates can be defined as filters..
+    # def pred_ford_green(data_row):
+    #     return (data_row[idx_make].lower() == 'ford'
+    #             and data_row[idx_color].lower() == 'green')
+    # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
+    # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
+    # filters = (filter_pink_cars, filter_ford_green, filter_older)
+    # your brodcaster must send data from row
+    # broadcaster = broadcast(filters)
+    # while True:
+    #     data_row = yield
+    #     broadcaster.send(data_row)
 
 
 @coroutine
@@ -391,9 +390,9 @@ def save_data(targets):
     finally:
         os.chdir(dir_name)
         try:
-            with open(f_name, 'w', newline='') as f:
+            with open(dir_name, 'w', newline='') as f:
                 writer = csv.writer(f)
-                writer.writerow(headers)
+                writer.writerow(header_row)
                 while True:
                     data_row = yield
                     writer.writerow(data_row)
