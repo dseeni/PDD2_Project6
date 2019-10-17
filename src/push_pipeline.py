@@ -138,25 +138,22 @@ def cycle_rows(targets):
     reader_idx_list = list(range(len(readers)))  # 5 in our case
     idx_tracker = list(range(len(readers)))
     cycler = cycle(idx_tracker)
-    counter = count(0)
-    next(cycler)
+    counter = count(len(readers))
     headers = [next(reader) for reader in readers]
     targets.send(headers)
     targets = yield
+    row_package = []
     while True:
-        reader_idx = next(cycler)
-        if (next(counter) >= (len(readers) - 1)
-                and reader_idx % len(readers) == 0):
+        # check if single or multiple targets and send every 5 rows
+        if len(row_package) == len(readers):
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
                     target.send(row_package)
+                row_package.clear()
             else:
                 targets.send(row_package)
-                # print('154:', 'targets ''='' ', targets)
-                # print('154:', 'row_package ''='' ', row_package)
-        else:
-            row_package = [next(reader) for reader in readers]
-            targets.send(row_package)
+                row_package.clear()
+        reader_idx = next(cycler)
         next(counter)
         try:
             # go until all readers are exhausted
@@ -166,11 +163,9 @@ def cycle_rows(targets):
             if idx_tracker[reader_idx] is None:
                 next(counter)
                 continue
-            else:
-                row_package.append(next(readers[reader_idx]))
-                next(counter)
+            row_package.append(next(readers[reader_idx]))
         except StopIteration:  # skip over exhausted readers
-            reader_idx_list[reader_idx] = None
+            idx_tracker[reader_idx] = None
             next(counter)
             continue
 

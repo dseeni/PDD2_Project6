@@ -34,13 +34,18 @@ def test_header_extract(test_sink):
 # @pytest.mark.skip
 def test_cycle_rows(test_sink):
     row_cycler = cycle_rows(test_sink)
+    ml = print(getgeneratorlocals(test_sink)['ml'])
     with file_readers(data_package) as readers:
         row_cycler.send(readers)
         # raise
-        print(getgeneratorlocals(test_sink)['ml'])
         assert len(getgeneratorlocals(test_sink)['ml'][0]) == 5
         assert getgeneratorlocals(test_sink)['ml'][0][0][0] == 'Car'
         assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
+        test_sink.send('clear')
+        row_cycler.send(test_sink)
+        print(ml)
+        raise
+
 
 @pytest.mark.skip
 def test_gen_field_names(test_sink):
