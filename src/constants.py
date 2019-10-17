@@ -213,5 +213,5 @@ output_packages = (vehicle_output_package, emp_output_package,
 
 data_package = tuple(zip(input_packages, output_packages))
 output_dir = 'output_data'
-print(*data_package, sep='\n')
+# print(*data_package, sep='\n')
 

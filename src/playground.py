@@ -713,18 +713,19 @@ from datetime import datetime
 # # ----------------------------------------------------------------------------
 
 # GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
-# ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
-# def _test_date(date_key, *args):
-#     l = [arg for arg in args]
-#     current = list(ml)
-#     for i in range(len(l)):
-#         try:
-#             if iter(current[l[i]]):
-#                 current = current[l[i]]
-#         except TypeError:
-#             continue
-#     return current
-# print(_test_date(100, 1, 2, 2, 2))
+ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
+def _test_date(date_key, *args):
+    l = [arg for arg in args]
+    print(l)
+    current = list(ml)
+    for i in range(len(l)):
+        try:
+            if iter(current[l[i]]):
+                current = current[l[i]]
+        except TypeError:
+            continue
+    return current
+print(_test_date(100, 1, 2, 2, 2))
 
 # # ----------------------------------------------------------------------------
 
@@ -830,6 +831,3 @@ from datetime import datetime
 # row = []
 # row.append(ml)
 # print(row)
-from itertools import count
-counter = count(0)
-print(next(counter))

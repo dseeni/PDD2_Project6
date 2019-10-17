@@ -28,10 +28,11 @@ def test_sink():
 
 @fixture('function')
 def get_test_date():
-    def _get_test_date(gen_name, list_name, output_idx):
+    def _get_test_date(gen_name, list_name, access_idxs):
         nested_list = getgeneratorlocals(gen_name)[list_name]
         print('37:', 'nested_list ''='' ', nested_list)
-        idx = [arg for arg in output_idx]
+        idx = [arg for arg in access_idxs]
+        print('35:', 'idx ''='' ', idx)
         current = list(nested_list)
         print('current',  current)
         for i in range(len(idx)):
@@ -41,9 +42,6 @@ def get_test_date():
             except TypeError:
                 continue
             finally:
-                print('current =', current)
-                print('idx -1', idx[-1])
-                print('48:', 'current ''='' ', current)
                 current = current[idx[-1]]
                 return current
     return _get_test_date
@@ -52,7 +50,7 @@ def get_test_date():
 @fixture('function')
 def date_tester():
     def _date_tester(sink, reader_rows, date_getter, key_names,
-                     date_format_key_idxs, output_idxs, date_strs):
+                     date_format_key_idxs, access_idxs, date_strs):
         for s in range(len(date_strs)):
             date_parser = date_key_gen(sink)
             row_key_gen_targets = (sink, date_parser)
@@ -61,8 +59,11 @@ def date_tester():
                               date_keys[date_format_key_idxs[s]]))
             date_parser.send(reader_rows)
             gen_row_key.send(reader_rows)
-            get_date_func = date_getter(sink, key_names[s], output_idxs[s])
+            get_date_func = date_getter(sink, key_names[s], access_idxs[s])
+            print('65:', 'get_date_func ''='' ', get_date_func)
             date1 = get_date_func(date_strs[s])
+            print('68:', 'date1 ''='' ', date1)
+            # raise
             assert date1 == datetime.strptime(date_strs[s], date_keys[
                 date_format_key_idxs[s]])
             sink.send('clear')
