@@ -831,3 +831,7 @@ print(_test_date(100, 1, 2, 2, 2))
 # row = []
 # row.append(ml)
 # print(row)
+
+ml = [None, None, None]
+if all(idx is None for idx in ml):
+    print(True)

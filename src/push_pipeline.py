@@ -137,15 +137,17 @@ def cycle_rows(targets):
     readers = yield
     reader_idx_list = list(range(len(readers)))  # 5 in our case
     idx_tracker = list(range(len(readers)))
+    print('140:', 'idx_tracker ''='' ', idx_tracker)
     cycler = cycle(idx_tracker)
-    counter = count(len(readers))
+    # counter = count(len(readers))
     headers = [next(reader) for reader in readers]
     targets.send(headers)
     targets = yield
     row_package = []
     while True:
-        # check if single or multiple targets and send every 5 rows
+        # sent out 5 lines at a time
         if len(row_package) == len(readers):
+            # check if single or multiple targets and send every 5 rows
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
                     target.send(row_package)
@@ -154,19 +156,20 @@ def cycle_rows(targets):
                 targets.send(row_package)
                 row_package.clear()
         reader_idx = next(cycler)
-        next(counter)
+        # go until all readers are exhausted
+        if all(idx is None for idx in idx_tracker):
+            print('all done')
+            break
+        # skip exhausted file readers
+        if idx_tracker[reader_idx] is None:
+            continue
         try:
-            # go until all readers are exhausted
-            if all(idx is None for idx in reader_idx_list):
-                break
-            # skip exhausted file readers
-            if idx_tracker[reader_idx] is None:
-                next(counter)
-                continue
-            row_package.append(next(readers[reader_idx]))
+            row = next(readers[reader_idx])
+            print('168:', 'row ''='' ', row)
+            row_package.append(row)
         except StopIteration:  # skip over exhausted readers
+            print('finished', idx_tracker[reader_idx])
             idx_tracker[reader_idx] = None
-            next(counter)
             continue
 
 
