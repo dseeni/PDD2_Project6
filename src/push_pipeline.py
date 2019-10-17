@@ -213,7 +213,6 @@ def row_key_gen(targets):
         target0, target1 = targets
         print('215:', 'target0 ''='' ', target0)
         print('215:', 'target1 ''='' ', target1)
-        raise
         target0.send(sub_key_ranges)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
@@ -241,14 +240,15 @@ def date_key_gen(target):
     while True:
         partial_keys = yield
         print(type(partial_keys))
-        flat_keys = list(chain.from_iterable(deepcopy(partial_keys[0])))
+        flat_keys = [*chain(deepcopy(partial_keys))]
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
+        print('245:', 'flat_rows ''='' ', flat_rows)
         keys_idxs = [i for i in range(len(flat_keys))]
         print('235:', 'flat_keys ''='' ', flat_keys)
         print('230:', 'keys_idxs ''='' ', keys_idxs)
         print('230:', 'flat_rows ''='' ', flat_rows)
         parse_guide = [*zip(flat_keys, flat_rows, keys_idxs)]
-        print('243:', *parse_guide, sep='\n')
+        print('251:', 'parse_guide ''='' ', parse_guide)
         for data_type, item, idx in parse_guide:
             if data_type == str:
                 for _ in range(len(date_keys_tuple)):

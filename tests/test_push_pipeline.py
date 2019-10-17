@@ -104,7 +104,8 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                 output_idxs=out_idxs, date_strs=raw_date_strs)
     print(getgeneratorlocals(test_sink)['ml'])
 
-@pytest.mark.skip
+
+# @pytest.mark.skip
 def test_row_key_gen(test_sink, sample_reader_rows):
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
@@ -113,7 +114,6 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     # update_status.csv
     test_key2 = (str, str, str)
     unpacked_test_keys = [*chain(test_key0, test_key1, test_key2)]
-    # print(unpacked_test_keys)
     f_idxs = (0, 2, 4)
     test_sink_tuple = (test_sink, test_sink)
 
@@ -123,10 +123,10 @@ def test_row_key_gen(test_sink, sample_reader_rows):
         
     gen_row_key = row_key_gen(test_sink_tuple)
     gen_row_key.send(sample_reader_rows(f_idxs))
-    print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
-          getgeneratorlocals(test_sink)['ml'])
+    # print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
+    #       getgeneratorlocals(test_sink)['ml'])
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][1]
-    print('p0', parsed_key0)
+    # print('p0', parsed_key0)
     assert check_key(parsed_key0, unpacked_test_keys)
 
 # # ----------------------------------------------------------------------------

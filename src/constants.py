@@ -1,4 +1,4 @@
-import src.push_pipeline
+# import src.push_pipeline
 from itertools import chain
 
 # cars.csv = 407 rows
@@ -178,16 +178,17 @@ personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
 
 # Filter Predicates for Update_Status
 # ------------------------------------------------------------------------------
+# TODO: update predicate filter for old / new date format
 def pred_new_updates_march18(data_row):
-    if (data_row.something >
-            src.push_pipeline.date_key_gen('2018-03-01T00:00:00ZZ')):
-        return data_row
+    # if (data_row.something >
+    # src.push_pipeline.date_key_gen('2018-03-01T00:00:00ZZ')):
+    return data_row
 
 
 def pred_old_updates_april17(data_row):
-    if (data_row.last_updated <
-            src.push_pipeline.date_key_gen('2017-04-01T00:00:00Z')):
-        return data_row
+    # if (data_row.last_updated <
+    # src.push_pipeline.date_key_gen('2017-04-01T00:00:00Z')):
+    return data_row
 
 
 update_predicates = (pred_new_updates_march18,
@@ -212,3 +213,5 @@ output_packages = (vehicle_output_package, emp_output_package,
 
 data_package = tuple(zip(input_packages, output_packages))
 output_dir = 'output_data'
+print(*data_package, sep='\n')
+

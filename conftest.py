@@ -74,6 +74,7 @@ def sample_reader_rows():
     def _sample_reader_rows(file_idxs, headers=False):
         raw_data_list = []
         partial_files = tuple(fnames[i] for i in file_idxs)
+        # faking a data package with no name_tuple or tuple (outfile,predicates)
         fnames_only_package = tuple(((i, None), None) for i in partial_files)
         with file_readers(fnames_only_package) as readers:
             # print('38:', 'readers ''='' ', readers)
@@ -86,5 +87,4 @@ def sample_reader_rows():
         # print('40:', 'raw_data_list ''='' ', raw_data_list)
         # returns a list of 5 rows
         return raw_data_list
-
     return _sample_reader_rows
