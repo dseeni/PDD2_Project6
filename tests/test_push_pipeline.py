@@ -139,6 +139,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     # print('p0', parsed_key0)
     assert check_key(parsed_key0, unpacked_test_keys)
 
+
 # # ----------------------------------------------------------------------------
     # old:
     # parsed_key1 = getgeneratorlocals(test_sink)['ml'][0][1]

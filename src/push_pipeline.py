@@ -207,12 +207,8 @@ def row_key_gen(targets):
         data_rows = yield
         row_parse_keys = deepcopy(data_rows)
         sub_key_ranges = gen_sub_key_ranges(row_parse_keys)
-        # send to data_parser:
-        # print('212:', 'targets ''='' ', targets)
-        # print('213:', 'type(targets) ''='' ', type(targets))
+        # target0, 1 --> send to parser sub_key_ranges, send to date_key_gen
         target0, target1 = targets
-        # print('215:', 'target0 ''='' ', target0)
-        # print('215:', 'target1 ''='' ', target1)
         target0.send(sub_key_ranges)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
