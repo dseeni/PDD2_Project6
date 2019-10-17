@@ -139,10 +139,13 @@ def cycle_rows(targets):
     idx_tracker = readers_idx_list = list(range(len(readers)))
     cycler = cycle(readers_idx_list)
     counter = count(0)
-    row_package = []
+    next(cycler)
+    headers = [next(reader) for reader in readers]
+    targets.send(headers)
     while True:
         # # yield every 5 rows
         reader_idx = next(cycler)
+        # skipping the header rows
         if (next(counter) >= (len(readers) - 1)
                 and reader_idx % len(readers) == 0):
             if isinstance(targets, tuple) and len(targets) > 1:
@@ -150,10 +153,12 @@ def cycle_rows(targets):
                     target.send(row_package)
             else:
                 targets.send(row_package)
-                print('154:', 'targets ''='' ', targets)
-                print('154:', 'row_package ''='' ', row_package)
-            row_package.clear()
-            targets = yield
+                # print('154:', 'targets ''='' ', targets)
+                # print('154:', 'row_package ''='' ', row_package)
+        else:
+            row_package = [next(reader) for reader in readers]
+            targets.send(row_package)
+        targets = yield
         next(counter)
         try:
             # go until all readers are exhausted
