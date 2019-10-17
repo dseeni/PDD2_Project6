@@ -92,7 +92,8 @@ def test_file_readers(test_sink):
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     # PYTEST BUG: On each test iteration, pytest can only test one date
-    # format string at a time, so we clear sink in date_tester
+    # format string at a time, so we clear sink in date_tester on each key
+    # iteratively to bypass this bug
 
     # the first date format is in file 2, then the other 2 are in file 4,
     # so we create a file index of 2, 4, 4
