@@ -136,16 +136,15 @@ def pipeline_coro():
 def cycle_rows(targets):
     readers = yield
     reader_idx_list = list(range(len(readers)))  # 5 in our case
-    idx_tracker = readers_idx_list = list(range(len(readers)))
-    cycler = cycle(readers_idx_list)
+    idx_tracker = list(range(len(readers)))
+    cycler = cycle(idx_tracker)
     counter = count(0)
     next(cycler)
     headers = [next(reader) for reader in readers]
     targets.send(headers)
+    targets = yield
     while True:
-        # # yield every 5 rows
         reader_idx = next(cycler)
-        # skipping the header rows
         if (next(counter) >= (len(readers) - 1)
                 and reader_idx % len(readers) == 0):
             if isinstance(targets, tuple) and len(targets) > 1:
@@ -158,7 +157,6 @@ def cycle_rows(targets):
         else:
             row_package = [next(reader) for reader in readers]
             targets.send(row_package)
-        targets = yield
         next(counter)
         try:
             # go until all readers are exhausted
