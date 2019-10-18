@@ -34,30 +34,11 @@ def test_header_extract(test_sink):
 
 
 # @pytest.mark.skip
-def test_cycle_rows(test_sink):
-    row_cycler = cycle_rows(test_sink)
-    ml = getgeneratorlocals(test_sink)['ml']
-    with file_readers(data_package) as readers:
-        row_cycler.send(readers)
-        assert len(getgeneratorlocals(test_sink)['ml'][0]) == 5
-        assert getgeneratorlocals(test_sink)['ml'][0][0][0] == 'Car'
-        assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
-        test_sink.send('clear')
-        try:
-            row_cycler.send(test_sink)
-        except StopIteration:
-            pass
-        assert len(ml) == 1000
-        # print(*ml, sep='\n')
-        # raise
-
-
-# @pytest.mark.skip
 def test_gen_field_names(test_sink):
     with file_readers(data_package) as readers:
         field_names_gen = gen_field_names(test_sink)
         field_names_gen.send(tuple(input_data[1] for input_data, output_data in
-                             data_package))  # send class_names
+                                   data_package))  # send class_names
         headers = header_extract(field_names_gen)
         cycle_rows(headers).send(readers)
         dummy_nt = getgeneratorlocals(test_sink)['ml'][0]
@@ -75,6 +56,25 @@ def test_gen_field_names(test_sink):
             print(' ')
             print(dir(data_fields[i]))
             print(' ')
+
+
+# @pytest.mark.skip
+def test_cycle_rows(test_sink):
+    row_cycler = cycle_rows(test_sink)
+    ml = getgeneratorlocals(test_sink)['ml']
+    with file_readers(data_package) as readers:
+        row_cycler.send(readers)
+        assert len(getgeneratorlocals(test_sink)['ml'][0]) == 5
+        assert getgeneratorlocals(test_sink)['ml'][0][0][0] == 'Car'
+        assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
+        test_sink.send('clear')
+        try:
+            row_cycler.send(test_sink)
+        except StopIteration:
+            pass
+        assert len(ml) == 1000
+        # print(*ml, sep='\n')
+        # raise
 
 
 # @pytest.mark.skip
