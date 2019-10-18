@@ -30,11 +30,12 @@ def test_sink():
 def get_test_date():
     def _get_test_date(gen_name, list_name, access_idxs):
         nested_list = getgeneratorlocals(gen_name)[list_name]
-        print('37:', 'nested_list ''='' ', nested_list)
+        # print('37:', 'nested_list ''='' ', nested_list)
         idx = [arg for arg in access_idxs]
-        print('35:', 'idx ''='' ', idx)
+        # print('35:', 'idx ''='' ', idx)
         current = list(nested_list)
-        print('current',  current)
+        # print(*current, sep='\n')
+        print('38:', 'current ''='' ', current)
         for i in range(len(idx)):
             try:
                 if iter(current[idx[i]]):

@@ -64,7 +64,7 @@ def pipeline_coro():
         # for input_data, output_data in data_package:
 
         # CONSTANTS:
-        nt_classes = [data[0][1] for data in data_package]
+        nt_class_names = [data[0][1] for data in data_package]
         filters = [data[1][1][1] for data in data_package]
         output_files = [data[1][1][0] for data in data_package]
 
@@ -84,7 +84,7 @@ def pipeline_coro():
         # right away to field_name_generator
 
         # SEND PREREQUISITES FIRST
-        field_name_gen.send(nt_classes)
+        field_name_gen.send(nt_class_names)
         date_key.send(date_keys)
         row_cycler.send(readers)
 
@@ -132,15 +132,14 @@ def pipeline_coro():
     #     broadcaster.send(data_row)
 
 
-
-
 @coroutine
-def cycle_rows(targets):
+def cycle_rows(target):
     readers = yield
     reader_idx_tracker = list(range(len(readers)))
     cycler = cycle(reader_idx_tracker)
     headers = [next(reader) for reader in readers]
-    targets.send(headers)
+    target.send(headers)
+    # after headers are sent once, new targets (date_gen, row_gen, parser)
     targets = yield
     row_package = []
     while True:
@@ -212,6 +211,8 @@ def row_key_gen(targets):
         target0.send(sub_key_ranges)
         parse_keys = list(chain.from_iterable((value for value in parse_keys)
                                               for parse_keys in row_parse_keys))
+        flat_raw_data = deepcopy(parse_keys)
+        target0.send(flat_raw_data)
         for value in parse_keys:
             if value is None:
                 parse_keys[parse_keys.index(value)] = None
@@ -232,19 +233,14 @@ def row_key_gen(targets):
 @coroutine
 def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
-    delimited_rows = yield  # <-sent by row_cycler ONCE per file
     while True:
-        partial_keys = yield
-        # print(type(partial_keys))
+        delimited_rows = yield  # <-sent by row_cycler
+        partial_keys = yield  # <-sent by row_key_gen flattened
+        # print('235:', 'partial_keys ''='' ', partial_keys)
         flat_keys = [*chain(deepcopy(partial_keys))]
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
-        # print('245:', 'flat_rows ''='' ', flat_rows)
         keys_idxs = [i for i in range(len(flat_keys))]
-        # print('235:', 'flat_keys ''='' ', flat_keys)
-        # print('230:', 'keys_idxs ''='' ', keys_idxs)
-        # print('230:', 'flat_rows ''='' ', flat_rows)
         parse_guide = [*zip(flat_keys, flat_rows, keys_idxs)]
-        # print('251:', 'parse_guide ''='' ', parse_guide)
         for data_type, item, idx in parse_guide:
             if data_type == str:
                 for _ in range(len(date_keys_tuple)):
@@ -263,9 +259,9 @@ def date_key_gen(target):
 def gen_field_names(target):  # sends to data_caster
     while True:
         nt_class_names = yield  # from pipeline_coro a list of lists
-        header_row_package = yield  # from header_extract a list of lists
+        raw_header_rows = yield  # from header_extract a list of lists
         # print('headers', header_row_package)
-        data_fields = [namedtuple(nt_class_names[i], header_row_package[i])
+        data_fields = [namedtuple(nt_class_names[i], raw_header_rows[i])
                        for i in range(len(nt_class_names))]
         target.send(data_fields)
 
@@ -274,37 +270,28 @@ def gen_field_names(target):  # sends to data_caster
 # TODO: make sure data_caster can handle None values
 @coroutine
 def data_parser(target):
-    # single_class_name = yield  # <-- from pipe_line_coro
-    sub_key_ranges = yield
-    data_row_tuples = yield  # <-- from gen_field_names list of field names
-
-    # use pack() here to pack unpacked data into named_tuples based on
-    # sub_key_ranges
-
-    # print('286:', 'data_row_tuples ''='' ', data_row_tuples)
-    parse_keys = yield  # <-- from gen_date_parse_key list of lists
-    # print('288:', 'parse_keys ''='' ', parse_keys)
     # needs file_name, parse_keys, headers, single_class_name:
+    nt_classes = yield  # <-- from gen_field_names list of field names
+
+    # parse then pack data:
     while True:
-        raw_data_rows = yield  # list of lists
+        sub_key_ranges = yield  # <-- from row_key_gen
+        flat_raw_data = yield
+        parse_keys = yield  # <-- from gen_date_parse_key list of lists
+        packed = pack(parse_keys, sub_key_ranges)
+        target.send(packed)
+        # use pack() here to pack unpacked data into named_tuples based on
 
-# # ----------------------------------------------------------------------------
-        # unpack all the rows, then parse, then repack with namedtuple,
-        # then send
-# # ----------------------------------------------------------------------------
+        # parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
+        #            for i in range(len(parse_keys))]
+        # parsed = [tuple(fn(item) for fn, item in parsers[i])
+        #           for i in range(len(parsers))]
+        # named_tuple_row = [(data_row_tuples[i](*parsed[i]))
+        #                    for i in range(len(data_row_tuples))]
+        # # print('297:', *named_tuple_row, sep='\n')
+        # target.send(named_tuple_row)
+        #
 
-        parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
-                   for i in range(len(parse_keys))]
-        parsed = [tuple(fn(item) for fn, item in parsers[i])
-                  for i in range(len(parsers))]
-        named_tuple_row = [(data_row_tuples[i](*parsed[i]))
-                           for i in range(len(data_row_tuples))]
-        # print('297:', *named_tuple_row, sep='\n')
-        target.send(named_tuple_row)
-
-
-
-        
         # print(*parsers, sep='\n')
         # print('300:', 'len(parsers) ''='' ', len(parsers))
 
