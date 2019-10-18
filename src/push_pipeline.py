@@ -214,12 +214,11 @@ def row_key_gen(targets):
         flat_raw_data = deepcopy(parse_keys)
         target0.send(flat_raw_data)
         for value in parse_keys:
-            if type(value) == str:
-                if len(value) == 0:
-                    parse_keys[parse_keys.index(value)] = None
+            if value is None:
+                parse_keys[parse_keys.index(value)] = None
             elif value is None:
                 parse_keys[parse_keys.index(value)] = None
-            elif all(c.isdigit() for c in value):
+            elif all(c.isdigit() for c in value) and len(value) > 0:
                 parse_keys[parse_keys.index(value)] = int
             elif value.count('.') == 1:
                 try:
@@ -285,6 +284,7 @@ def data_parser(target):
         zip_func_data = [*zip(parse_keys, flat_raw_data)]
         # raise
         casted = []
+        print(zip_func_data)
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
             # print('290:', 'func ''='' ', func)
