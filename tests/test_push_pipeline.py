@@ -29,6 +29,8 @@ def test_header_extract(test_sink):
         assert header_rows[0][2][0] == 'summons_number'
         assert len(header_rows[0]) == 5
         test_sink.send('clear')
+        # print(header_rows)
+        # raise
 
 
 # @pytest.mark.skip

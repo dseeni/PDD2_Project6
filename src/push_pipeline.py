@@ -83,10 +83,13 @@ def pipeline_coro():
         # read header and send to data_fields gen
         # right away to field_name_generator
 
-        # SEND DATA:
-        date_key.send(date_keys)
+        # SEND PREREQUISITES FIRST
         field_name_gen.send(nt_classes)
+        date_key.send(date_keys)
         row_cycler.send(readers)
+
+        # SEND DATA:
+        # this will engage row cyclers while loop
         row_cycler.send((row_key, parse_data))
 
         # send next row to gen_row_parse_key
@@ -145,7 +148,7 @@ def cycle_rows(targets):
         if len(row_package) == len(readers):
             # break out of function if all files are exhausted
             if all(row == [None] for row in row_package):
-                return
+                break
             # check if single or multiple targets and send every 5 rows
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
@@ -170,7 +173,6 @@ def cycle_rows(targets):
             continue
 
 
-# input_data parser needs headers and data_key sent to it
 @coroutine
 def header_extract(target):  # --> send to gen_field_names
     while True:
@@ -180,7 +182,7 @@ def header_extract(target):  # --> send to gen_field_names
             headers.append(tuple(map(lambda l: l.replace(" ", "_"),
                                  tuple(map(lambda l: l.lower(),
                                            (item for item in row))))))
-        target.send(headers)
+        target.send(headers)  # --> sending [list of tuples of headers]
 
 
 def gen_sub_key_ranges(package):
