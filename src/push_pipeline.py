@@ -214,7 +214,10 @@ def row_key_gen(targets):
         flat_raw_data = deepcopy(parse_keys)
         target0.send(flat_raw_data)
         for value in parse_keys:
-            if value is None:
+            if type(value) == str:
+                if len(value) == 0:
+                    parse_keys[parse_keys.index(value)] = None
+            elif value is None:
                 parse_keys[parse_keys.index(value)] = None
             elif all(c.isdigit() for c in value):
                 parse_keys[parse_keys.index(value)] = int
@@ -279,7 +282,21 @@ def data_parser(target):
         flat_raw_data = yield
         parse_keys = yield  # <-- from gen_date_parse_key list of lists
         packed = pack(parse_keys, sub_key_ranges)
-        target.send(packed)
+        zip_func_data = [*zip(parse_keys, flat_raw_data)]
+        # raise
+        casted = []
+        for unparsed_data in zip_func_data:
+            func = unparsed_data[0]
+            # print('290:', 'func ''='' ', func)
+            data = unparsed_data[1]
+            # print('292:', 'data ''='' ', data)
+            # print('294:', 'type(data) ''='' ', type(data))
+            if func is None:
+                casted.append(None)
+            else:
+                casted.append(func(data))
+
+        target.send(casted)
         # use pack() here to pack unpacked data into named_tuples based on
 
         # parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))

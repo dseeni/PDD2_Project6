@@ -162,35 +162,34 @@ def test_date_lambda_parser(test_sink):
 
 # @pytest.mark.skip
 def test_data_parser(test_sink):
-    # ml = getgeneratorlocals(test_sink)['ml']
-    # for d_key in date_keys:
-    with file_readers(data_package) as readers:
-        nt_class_names = [data[0][1] for data in data_package]
+    ml = getgeneratorlocals(test_sink)['ml']
+    for d_key in date_keys:
+        with file_readers(data_package) as readers:
+            nt_class_names = [data[0][1] for data in data_package]
 
-        parse_data = data_parser(test_sink)
-        date_key = date_key_gen(parse_data)
-        row_key = row_key_gen((parse_data, date_key))
-        field_name_gen = gen_field_names(parse_data)
-        headers = header_extract(field_name_gen)
-        row_cycler = cycle_rows(headers)
+            parse_data = data_parser(test_sink)
+            date_key = date_key_gen(parse_data)
+            row_key = row_key_gen((parse_data, date_key))
+            field_name_gen = gen_field_names(parse_data)
+            headers = header_extract(field_name_gen)
+            row_cycler = cycle_rows(headers)
 
 
-        # SEND PREREQUISITES FIRST
-        date_key.send(date_keys)
-        field_name_gen.send(nt_class_names)
-        row_cycler.send(readers)
+            # SEND PREREQUISITES FIRST
+            date_key.send((d_key, d_key))
+            field_name_gen.send(nt_class_names)
+            row_cycler.send(readers)
 
-        # SEND DATA:
-        # this will engage row cyclers while loop
-        while True:
-            try:
-                row_cycler.send((date_key, row_key))
-            except StopIteration:
-                break
-    test_sink.send('clear')
-        # print(*ml, sep='\n\n\n')
-        # print(len(ml))
-        # raise
+            # SEND DATA:
+            # this will engage row cyclers while loop
+            while True:
+                try:
+                    row_cycler.send((date_key, row_key))
+                except StopIteration:
+                    break
+            # print(*ml, sep='\n\n\n')
+            # print(len(ml))
+            # raise
 
     #         date_key.send((d_key, d_key))
     #         field_name_gen.send(tuple(input_data[1] for input_data, output_data
