@@ -218,6 +218,7 @@ def row_key_gen(targets):
                 parse_keys[parse_keys.index(value)] = None
             elif value is None:
                 parse_keys[parse_keys.index(value)] = None
+            # check if len(value) > 0 to guard against empty string
             elif all(c.isdigit() for c in value) and len(value) > 0:
                 parse_keys[parse_keys.index(value)] = int
             elif value.count('.') == 1:
