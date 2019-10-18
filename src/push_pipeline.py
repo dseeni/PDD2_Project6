@@ -72,7 +72,7 @@ def pipeline_coro():
         broadcaster = broadcast(filters)
         parse_data = data_parser(broadcaster)
         date_key = date_key_gen(parse_data)
-        row_key = row_key_gen(date_key)
+        row_key = row_key_gen(parse_data, date_key)
         field_name_gen = gen_field_names(parse_data)
         headers = header_extract(field_name_gen)
         row_cycler = cycle_rows(headers)
@@ -84,13 +84,10 @@ def pipeline_coro():
         # right away to field_name_generator
 
         # SEND DATA:
-        # send class_names and header_row
-
         date_key.send(date_keys)
         field_name_gen.send(nt_classes)
         row_cycler.send(readers)
-        row_cycler.send((date_key, row_key, parse_data))
-        row_cycler.send(parse_data)
+        row_cycler.send((row_key, parse_data))
 
         # send next row to gen_row_parse_key
         # named_tuple_gen sends to data_caster for parsing
@@ -135,11 +132,8 @@ def pipeline_coro():
 @coroutine
 def cycle_rows(targets):
     readers = yield
-    reader_idx_list = list(range(len(readers)))  # 5 in our case
-    idx_tracker = list(range(len(readers)))
-    # print('140:', 'idx_tracker ''='' ', idx_tracker)
-    cycler = cycle(idx_tracker)
-    # counter = count(len(readers))
+    reader_idx_tracker = list(range(len(readers)))
+    cycler = cycle(reader_idx_tracker)
     headers = [next(reader) for reader in readers]
     targets.send(headers)
     targets = yield
@@ -157,11 +151,11 @@ def cycle_rows(targets):
                 row_package.clear()
         reader_idx = next(cycler)
         # go until all readers are exhausted
-        if all(idx is None for idx in idx_tracker):
+        if all(idx is None for idx in reader_idx_tracker):
             # print('all done')
             break
-        # skip exhausted file readers
-        if idx_tracker[reader_idx] is None:
+        # mark exhausted file readers as [None]
+        if reader_idx_tracker[reader_idx] is None:
             row_package.append([None])
             continue
         try:
@@ -169,7 +163,7 @@ def cycle_rows(targets):
             row_package.append(next(readers[reader_idx]))
         except StopIteration:  # skip over exhausted readers
             # print('finished', idx_tracker[reader_idx])
-            idx_tracker[reader_idx] = None
+            reader_idx_tracker[reader_idx] = None
             row_package.append([None])
             continue
 
