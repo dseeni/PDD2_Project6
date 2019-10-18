@@ -45,7 +45,7 @@ def test_cycle_rows(test_sink):
             row_cycler.send(test_sink)
         except StopIteration:
             pass
-        print(*ml, sep='\n')
+        print(*ml, sep='\n\n\n')
         print(len(ml))
         print(len(ml)*5)
         raise

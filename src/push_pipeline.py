@@ -162,11 +162,11 @@ def cycle_rows(targets):
             break
         # skip exhausted file readers
         if idx_tracker[reader_idx] is None:
+            row_package.append([None])
             continue
         try:
-            row = next(readers[reader_idx])
             # print('168:', 'row ''='' ', row)
-            row_package.append(row)
+            row_package.append(next(readers[reader_idx]))
         except StopIteration:  # skip over exhausted readers
             # print('finished', idx_tracker[reader_idx])
             idx_tracker[reader_idx] = None
