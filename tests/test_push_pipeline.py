@@ -45,7 +45,9 @@ def test_cycle_rows(test_sink):
             row_cycler.send(test_sink)
         except StopIteration:
             pass
-        assert len(ml) == 1001
+        assert len(ml) == 1000
+        # print(*ml, sep='\n')
+        # raise
 
 
 # @pytest.mark.skip

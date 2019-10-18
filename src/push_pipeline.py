@@ -129,6 +129,8 @@ def pipeline_coro():
     #     broadcaster.send(data_row)
 
 
+
+
 @coroutine
 def cycle_rows(targets):
     readers = yield
@@ -141,6 +143,9 @@ def cycle_rows(targets):
     while True:
         # sent out 5 lines at a time
         if len(row_package) == len(readers):
+            # break out of function if all files are exhausted
+            if all(row == [None] for row in row_package):
+                return
             # check if single or multiple targets and send every 5 rows
             if isinstance(targets, tuple) and len(targets) > 1:
                 for target in targets:
@@ -149,11 +154,8 @@ def cycle_rows(targets):
             else:
                 targets.send(row_package)
                 row_package.clear()
+        # keep track of what file is being read with reader_idx
         reader_idx = next(cycler)
-        # go until all readers are exhausted
-        if all(idx is None for idx in reader_idx_tracker):
-            # print('all done')
-            break
         # mark exhausted file readers as [None]
         if reader_idx_tracker[reader_idx] is None:
             row_package.append([None])
@@ -271,8 +273,8 @@ def gen_field_names(target):  # sends to data_caster
 @coroutine
 def data_parser(target):
     # single_class_name = yield  # <-- from pipe_line_coro
-    data_row_tuples = yield  # <-- from gen_field_names list of field names
     sub_key_ranges = yield
+    data_row_tuples = yield  # <-- from gen_field_names list of field names
 
     # use pack() here to pack unpacked data into named_tuples based on
     # sub_key_ranges
