@@ -16,7 +16,7 @@ def test_save_data():
         assert next(tf) == 'this is a test line\n'
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_header_extract(test_sink):
     with file_readers(data_package) as readers:
         headers = header_extract(test_sink)
@@ -45,13 +45,10 @@ def test_cycle_rows(test_sink):
             row_cycler.send(test_sink)
         except StopIteration:
             pass
-        print(*ml, sep='\n\n\n')
-        print(len(ml))
-        print(len(ml)*5)
-        raise
+        assert len(ml) == 1001
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_gen_field_names(test_sink):
     with file_readers(data_package) as readers:
         field_names_gen = gen_field_names(test_sink)
@@ -76,7 +73,7 @@ def test_gen_field_names(test_sink):
             print(' ')
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_file_readers(test_sink):
     with file_readers(data_package) as readers:
         # check the first element in each files header row:
@@ -97,7 +94,7 @@ def test_file_readers(test_sink):
         assert len(data_rows) == 4406
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     # PYTEST BUG: On each test iteration, pytest can only test one date
@@ -124,7 +121,7 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
     # print(getgeneratorlocals(test_sink)['ml'])
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_row_key_gen(test_sink, sample_reader_rows):
     # cars.csv
     test_key0 = (str, float, int, float, float, float, float, int, str)
@@ -160,7 +157,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 # # ----------------------------------------------------------------------------
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_date_lambda_parser(test_sink):
     dk2 = '%Y-%m-%dT%H:%M:%SZ'
     dk1 = '%m/%d/%Y'
