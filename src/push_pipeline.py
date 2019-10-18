@@ -281,11 +281,10 @@ def data_parser(target):
         sub_key_ranges = yield  # <-- from row_key_gen
         flat_raw_data = yield
         parse_keys = yield  # <-- from gen_date_parse_key list of lists
-        packed = pack(parse_keys, sub_key_ranges)
         zip_func_data = [*zip(parse_keys, flat_raw_data)]
         # raise
         casted = []
-        print(zip_func_data)
+        # print(zip_func_data)
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
             # print('290:', 'func ''='' ', func)
@@ -296,8 +295,17 @@ def data_parser(target):
                 casted.append(None)
             else:
                 casted.append(func(data))
+        packed = pack(casted, sub_key_ranges)
+        packets = []
+        for i in range(len(packed)):
+        # for packet in packed:
+            if packed[i] == [None]:
+                packets.append(None)
+            else:
+                packets.append(nt_classes[i](*packed[i]))
+        
 
-        target.send(casted)
+        target.send(packets)
         # use pack() here to pack unpacked data into named_tuples based on
 
         # parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))

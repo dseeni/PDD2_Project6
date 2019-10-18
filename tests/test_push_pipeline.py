@@ -188,10 +188,10 @@ def test_data_parser(test_sink):
                     row_cycler.send((date_key, row_key))
                 except StopIteration:
                     break
-    # print(*ml, sep='\n\n\n')
-    # print(len(ml))
+    print(*ml, sep='\n\n\n')
+    print(len(ml))
     assert(len(ml)) == 2000
-    # raise
+    raise
 
     #         date_key.send((d_key, d_key))
     #         field_name_gen.send(tuple(input_data[1] for input_data, output_data
