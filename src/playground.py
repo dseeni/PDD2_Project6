@@ -832,6 +832,35 @@ print(_test_date(100, 1, 2, 2, 2))
 # row.append(ml)
 # print(row)
 
-ml = [None, None, None]
-if all(idx is None for idx in ml):
-    print(True)
+
+from itertools import chain, cycle
+
+ml = [[None], [0, 1, 2], [0, 1, 2], [0, 1, 2]]
+
+
+def gen_sub_key_ranges(package):
+    sub_key_lens = [0, *[len(sub_key) for sub_key in package]]
+    range_start = 0
+    sub_key_ranges = []
+    for i in range(len(sub_key_lens)):
+        sub_key_ranges.append(sub_key_lens[i] + range_start)
+        range_start += sub_key_lens[i]
+    return sub_key_ranges
+
+
+parse_keys = list(chain.from_iterable((value for value in parse_keys)
+                                      for parse_keys in ml))
+
+
+def pack(unpacked, sub_key_ranges):
+    packed_package = [unpacked[sub_key_ranges[i]: sub_key_ranges[i + 1]]
+                      for i in range(len(sub_key_ranges) - 1)]
+    return packed_package
+
+
+cycler = cycle([i for i in range(5)])
+
+print(gen_sub_key_ranges(ml))
+print(parse_keys)
+print(pack(parse_keys, gen_sub_key_ranges(ml)))
+

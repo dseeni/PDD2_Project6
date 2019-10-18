@@ -6,6 +6,7 @@ from itertools import chain
 # nyc_parking_ticket_extract.csv = 1001 rows
 # personal_info.csv = 1001 rows
 # update_status.csv = 1001 row
+# total = 4411 rows
 
 # ------------------------------------------------------------------------------
 # Date format keys

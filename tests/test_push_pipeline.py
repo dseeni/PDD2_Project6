@@ -41,8 +41,13 @@ def test_cycle_rows(test_sink):
         assert getgeneratorlocals(test_sink)['ml'][0][0][0] == 'Car'
         assert getgeneratorlocals(test_sink)['ml'][0][4][0] == 'ssn'
         test_sink.send('clear')
-        row_cycler.send(test_sink)
+        try:
+            row_cycler.send(test_sink)
+        except StopIteration:
+            pass
+        print(*ml, sep='\n')
         print(len(ml))
+        print(len(ml)*5)
         raise
 
 
