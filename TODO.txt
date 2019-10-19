@@ -64,7 +64,7 @@ row_parse_key_gen--> returns the parsing key for parse_data_row - DONE
     data_reader --> cast - DONE
 
     headers extract gets sent user defined headers,
-    and sends those to filters - WIP
+    and sends those to filters - DONE
 
     filter_predicates --> recieves tracking headers yield 1
 
@@ -232,60 +232,21 @@ with ExitStack() as stack:
                   inputfile4: {filters:outputfile}}
 
 # # ----------------------------------------------------------------------------
-TEMP:
-# # ----------------------------------------------------------------------------
-            # send next row to gen_row_parse_key
-            # named_tuple_gen sends to data_caster for parsing
-            # parser needs named tupel and data type key
-            # send the first row of the file to the header function
-            # send first row to gen_field_names
-            # header function sends to gen_field_name
-            # gen_parse key sends key to caster
-            # header_extract.send(next(f))  # --> send row for header extract
-            # row_parse_key_gen.send(next(f))
-            # date_parse gen
-
-        # for data_package in data_packages:
-        #    for inputfile, classname, outputfile, predicate in datapackage:
-        #    do stuff:
-        # instantiate functions parameters..
-        # can you instantiate without symbol binding?
-        # # instance save data writers:
-        # out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
-        # out_ford_green = save_data('ford_green.csv', header_extract(fcars))
-        # out_older = save_data('older.csv', header_extract(fcars))
-
-        # filter instances with predicates
-        # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
-        # 'pink',
-        #                                out_pink_cars)
-
-        # predicates can be defined as filters..
-        # def pred_ford_green(data_row):
-        #     return (data_row[idx_make].lower() == 'ford'
-        #             and data_row[idx_color].lower() == 'green')
-        # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-        # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-        # filters = (filter_pink_cars, filter_ford_green, filter_older)
-        # your brodcaster must send data from row
-        # broadcaster = broadcast(filters)
-        # while True:
-        #     data_row = yield
-        #     broadcaster.send(data_row)
-# # ----------------------------------------------------------------------------
-REFACTOR TODO:
--> use generator tuple comphrehensions unless with range
--> use list if you look up a lot (like parse key should be list)
-
--> unpack once, key and rows should be unpacked and parsed by data parser
+REFACTOR TIPS:
+-> use generator tuple comphrehensions unless with range -DONE
+-> use list if you look up a lot (like parse key should be list) -DONE
+-> unpack once, key and rows should be unpacked and parsed by data parser -DONE
 -> pack() should then take in named tuple class names, parsed row, and
-key_ranges, and then pack as named tuples
+    key_ranges, and then pack as named tuples -DONE
 
--> data parser will then send out those named tuples to filters with appropriate
- fitlers in data package
+-> data parser with parse all the data, repack, then send everything to
+broadcaster
+
+-> broadcaster will then send out those named tuples to filters with appropriate
+ fitlers in data package and skip over exhausted rows
 
 -> factor out more nesting in datekey gen, utilize filter to elimiate non str
-keys, and hit only the str keys then with the date_keys tuple
+keys, and hit only the str keys then with the date_keys tuple -DONE
 
 -> try to eliminate the use of deepcopy,
 
@@ -305,16 +266,22 @@ it 1000s of times over and over to append next(range)....
 # note that cycle_rows has to be able to mark a empty file with None,
 so that th ekey to each file is that they are split into (lists 0 - (files-1))
 
+# # ----------------------------------------------------------------------------
+TODO
+# broadcaster just tells fitler process this row with these predicates, allowing
+ for a large number of files/predicates, rather fan out the row to many
+ predicates forcing the user to instantiate 15 or more predicates in total
+
 # broadcaster pre-reqs:
     needs to track which row is from which file, if its None, skip over it
-    otherwise send the row to filter, along with the corresponding
-    filters/outputfiles
-
+    otherwise send the row and the corrsponding fitlers/outfiles(output package)
+     to filter funciton, which unpacks the fitlers,file names,
+        if the row is true for a filter,
+                it sends the row + file_name to writer
 
 filters, there are 5 filter functions that the target of broadcaster
     each filter function recieves as a prequisite, the corrsponding filter
     package, with filter/output file name??????
-
 
     filters who to send to, outputpackage
 # broadcaster gets datapacket
@@ -322,4 +289,11 @@ filters, there are 5 filter functions that the target of broadcaster
 filter_data pre-reqs:
 filters
 should take in a predicate list, and map between package row and
-corrsponding filters, and if passed send to corr
+corrsponding filters, and if passed send row/outputfile name to data_writer
+
+writer gets the row and file name
+data_writer gets filename and row, and writs it
+# writer pre-req --> just an output dir
+    create output dir if not exists
+    if file exists, open and write row, then close it
+    else create file w/filename, open write row and close it

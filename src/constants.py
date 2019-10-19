@@ -216,5 +216,15 @@ data_package = tuple(zip(input_packages, output_packages))
 output_dir = 'output_data'
 
 
-# outs = [d[1] for d in data_package]
+outs = [d[1] for d in data_package]
 # print(*outs, sep='\n\n\n')
+
+
+preds = [d[1] for data in outs for d in data]
+out_file_names = [d[0] for data in outs for d in data]
+assert len(out_file_names) == len(preds)
+
+
+
+
+
