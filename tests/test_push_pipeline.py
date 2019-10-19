@@ -262,7 +262,7 @@ def test_filter_data(test_sink):
             pass
     print(*ml, sep='\n')
     print(len(ml))
-    raise
+    # raise
 
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test

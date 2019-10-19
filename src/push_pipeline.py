@@ -296,9 +296,9 @@ def filter_data(target):
             output_file_name = output[0]
             predicate = output[1]
             if predicate(row) is not None:
-                print('298:', 'row ''='' ', row)
-                print('299:', 'output_file_name ''='' ', output_file_name)
-                print('300:', 'predicate ''='' ', predicate)
+                # print('298:', 'row ''='' ', row)
+                # print('299:', 'output_file_name ''='' ', output_file_name)
+                # print('300:', 'predicate ''='' ', predicate)
                 # raise
                 target.send(output_file_name)
                 target.send(row)

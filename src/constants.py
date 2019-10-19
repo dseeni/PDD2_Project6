@@ -182,7 +182,8 @@ personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
 # ------------------------------------------------------------------------------
 # TODO: update predicate filter for old / new date format
 def pred_new_updates_march18(data_row):
-    if data_row.last_updated > dt.strptime('2018-03-01T00:00:00ZZ'):
+    if (data_row.last_updated > dt.strptime
+       ('2018-03-01T00:00:00Z', date_keys[1])):
         return data_row
     # return None
 
@@ -216,7 +217,3 @@ output_packages = (vehicle_output_package, emp_output_package,
 
 data_package = tuple(zip(input_packages, output_packages))
 output_dir = 'output_data'
-
-
-
-
