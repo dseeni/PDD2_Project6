@@ -307,5 +307,3 @@ def save_data():
             os.chdir('..')
 
 
-pipeline_coro()
-
