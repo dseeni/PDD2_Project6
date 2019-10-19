@@ -281,4 +281,10 @@ def test_save_data():
     with open('test_file.csv') as tf:
         assert next(tf) == 'test_headers\n'
         assert next(tf) == 'this is a test line\n'
+    writer.send('test_file')
+    writer.send(['this is a test line'])
+    with open('test_file.csv') as tf:
+        assert next(tf) == 'test_headers\n'
+        assert next(tf) == 'this is a test line\n'
     os.remove('test_file.csv')
+    os.chdir('..')

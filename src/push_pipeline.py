@@ -207,8 +207,6 @@ def date_key_gen(target):
                         # flat_keys[idx] = ('date', _)
                     except ValueError:
                         continue
-                    except IndexError:
-                        break
         target.send(flat_keys)
 
 
@@ -216,7 +214,6 @@ def date_key_gen(target):
 def data_parser(target):
     # needs file_name, parse_keys, headers, single_class_name:
     nt_classes = yield  # <-- from gen_field_names list of field names
-    # parse then pack data:
     while True:
         sub_key_ranges = yield  # <-- from row_key_gen
         flat_raw_data = yield
@@ -228,13 +225,11 @@ def data_parser(target):
             data = unparsed_data[1]
             if func is None:
                 casted.append(None)
-            # elif type(func) == tuple:
-            #     casted.append(datetime.strptime(data, date_keys[func[1]]))
             else:
                 casted.append(func(data))
+        # pack data and convert [None] to None
         packed = pack(casted, sub_key_ranges)
         packets = []
-        # for packet in packed:
         for i in range(len(packed)):
             if packed[i] == [None]:
                 packets.append(None)

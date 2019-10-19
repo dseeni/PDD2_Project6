@@ -84,9 +84,9 @@ update_output_files = (new_updates_march18, old_updates_april17)
 # Filter Predicates for Vehicle_Info
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
-                               data_row.horsepower > 200,
+                               data_row.horsepower > 100,
                                data_row.origin == 'US',
-                               data_row.acceleration > 15)):
+                               data_row.acceleration > 14)):
         return data_row
 
 
