@@ -270,13 +270,10 @@ def gen_field_names(target):  # sends to data_caster
         target.send(data_fields)
 
 
-# TODO: Refactor out Data_Tuple, let header_extract take care of is
-# TODO: make sure data_caster can handle None values
 @coroutine
 def data_parser(target):
     # needs file_name, parse_keys, headers, single_class_name:
     nt_classes = yield  # <-- from gen_field_names list of field names
-
     # parse then pack data:
     while True:
         sub_key_ranges = yield  # <-- from row_key_gen
@@ -285,7 +282,6 @@ def data_parser(target):
         zip_func_data = [*zip(parse_keys, flat_raw_data)]
         # print(zip_func_data)
         casted = []
-
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
             # print('290:', 'func ''='' ', func)
@@ -298,7 +294,6 @@ def data_parser(target):
                 casted.append(func(data))
         packed = pack(casted, sub_key_ranges)
         packets = []
-
         # for packet in packed:
         for i in range(len(packed)):
             if packed[i] == [None]:
@@ -310,6 +305,7 @@ def data_parser(target):
 
 @coroutine
 def broadcast(targets):
+    output_data_package = yield  # sent ONCE from pipeline_coro()
     while True:
         data_row = yield
         for target in targets:

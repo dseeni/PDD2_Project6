@@ -290,6 +290,7 @@ filter_data pre-reqs:
 filters
 should take in a predicate list, and map between package row and
 corrsponding filters, and if passed send row/outputfile name to data_writer
+filter should handle potential None values
 
 writer gets the row and file name
 data_writer gets filename and row, and writs it
