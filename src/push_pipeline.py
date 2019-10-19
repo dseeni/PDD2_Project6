@@ -65,10 +65,11 @@ def pipeline_coro():
 
         # CONSTANTS:
         nt_class_names = [data[0][1] for data in data_package]
+        # not working filters
         filters = [data[1][1][1] for data in data_package]
-        output_files = [data[1][1][0] for data in data_package]
 
         # DECLARE --> From the bottom up stack
+        writer = save_data
         broadcaster = broadcast(filters)
         parse_data = data_parser(broadcaster)
         date_key = date_key_gen(parse_data)
@@ -282,9 +283,9 @@ def data_parser(target):
         flat_raw_data = yield
         parse_keys = yield  # <-- from gen_date_parse_key list of lists
         zip_func_data = [*zip(parse_keys, flat_raw_data)]
-        # raise
-        casted = []
         # print(zip_func_data)
+        casted = []
+
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
             # print('290:', 'func ''='' ', func)
@@ -297,74 +298,15 @@ def data_parser(target):
                 casted.append(func(data))
         packed = pack(casted, sub_key_ranges)
         packets = []
-        for i in range(len(packed)):
+
         # for packet in packed:
+        for i in range(len(packed)):
             if packed[i] == [None]:
                 packets.append(None)
             else:
                 packets.append(nt_classes[i](*packed[i]))
-        
-
         target.send(packets)
-        # use pack() here to pack unpacked data into named_tuples based on
 
-        # parsers = [tuple(zip(parse_keys[i], raw_data_rows[i]))
-        #            for i in range(len(parse_keys))]
-        # parsed = [tuple(fn(item) for fn, item in parsers[i])
-        #           for i in range(len(parsers))]
-        # named_tuple_row = [(data_row_tuples[i](*parsed[i]))
-        #                    for i in range(len(data_row_tuples))]
-        # # print('297:', *named_tuple_row, sep='\n')
-        # target.send(named_tuple_row)
-        #
-
-        # print(*parsers, sep='\n')
-        # print('300:', 'len(parsers) ''='' ', len(parsers))
-
-        # parsed = []
-        # for parser_key in parsers:
-        #     print('301:', 'parser_key ''='' ', parser_key)
-        #     for parser in parser_key:
-        #         print('parser', parser)
-        #         # parsed = [fn(item) for fn, item in parser]
-
-        # parsed = tuple(fn(item) for zip_row in zipped for fn, item in zip_row)
-        # print('300:', 'parsed ''='' ', parsed)
-        # print('300:', *zipped, sep='\n')
-        # print('297:', 'len(zipped) ''='' ', len(zipped))
-        # result.append([fn(item) for key in zipped for fn, item in key])
-        # print('**********************')
-        # print('295:', 'result ''='' ', result)
-        # print('**********************')
-        # target.send(zipped)
-        # try:
-        #     DataTuple = namedtuple(single_class_name, headers)
-        #     yield (DataTuple(*(fn(value) for value, fn
-        #                        in zip(row, parse_keys))) for row in reader)
-        # finally:
-        #     try:
-        #         next(file_obj)
-        #     except StopIteration:
-        #         pass
-        #     print('closing file')
-        #     file_obj.close()
-
-
-# # data reader --> sends out header, and sends out sample data row
-# @coroutine
-# def data_reader(file_name, header_targert, row_sample_target):
-#     while True:
-#         file_obj = open(file_name)
-#         # TODO: just yield to header
-#         #   yield to sample data
-#         #   then keep yielding removing the converter code below
-#         data = data_caster(file_name)
-#         next(data)  # skip header row
-#         # for row in data:
-#         #     parsed_row = [converter(item)
-#         #                   for converter, item in zip(converters, row)]
-#         #     yield parsed_row
-#
 
 @coroutine
 def broadcast(targets):

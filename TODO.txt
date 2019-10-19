@@ -301,5 +301,25 @@ it 1000s of times over and over to append next(range)....
 
 # # ----------------------------------------------------------------------------
 # lists are about 5 percent faster look up
-# note that cycle_rows has to be able to mark a empty file with None, 
+
+# note that cycle_rows has to be able to mark a empty file with None,
 so that th ekey to each file is that they are split into (lists 0 - (files-1))
+
+# broadcaster pre-reqs:
+    needs to track which row is from which file, if its None, skip over it
+    otherwise send the row to filter, along with the corresponding
+    filters/outputfiles
+
+
+filters, there are 5 filter functions that the target of broadcaster
+    each filter function recieves as a prequisite, the corrsponding filter
+    package, with filter/output file name??????
+
+
+    filters who to send to, outputpackage
+# broadcaster gets datapacket
+
+filter_data pre-reqs:
+filters
+should take in a predicate list, and map between package row and
+corrsponding filters, and if passed send to corr
