@@ -6,6 +6,7 @@ import csv
 import os
 from copy import deepcopy
 from itertools import cycle, chain
+from functools import partial
 
 
 @contextmanager
@@ -16,7 +17,6 @@ def file_readers(packaged_data):
         for data_in, data_out in packaged_data:
             input_files = [data_in[0]]
             input_file_objs = [open(input_file) for input_file in input_files]
-            # print(input_file_objs)
             for file_obj in input_file_objs:
                 dialect = csv.Sniffer().sniff(file_obj.read(2000))
                 file_obj.seek(0)
@@ -103,10 +103,8 @@ def cycle_rows(target):
             row_package.append([None])
             continue
         try:
-            # print('168:', 'row ''='' ', row)
             row_package.append(next(readers[reader_idx]))
         except StopIteration:  # skip over exhausted readers
-            # print('finished', idx_tracker[reader_idx])
             reader_idx_tracker[reader_idx] = None
             row_package.append([None])
             continue
@@ -130,7 +128,6 @@ def gen_field_names(target):  # sends to data_caster
     while True:
         nt_class_names = yield  # from pipeline_coro a list of lists
         raw_header_rows = yield  # from header_extract a list of lists
-        # print('headers', header_row_package)
         data_fields = [namedtuple(nt_class_names[i], raw_header_rows[i])
                        for i in range(len(nt_class_names))]
         target.send(data_fields)
@@ -170,7 +167,7 @@ def row_key_gen(targets):
                 parse_keys[parse_keys.index(value)] = None
             elif value is None:
                 parse_keys[parse_keys.index(value)] = None
-            # check if len(value) > 0 to guard against empty string
+            # check if len(value) > 0 to catch empty strings
             elif all(c.isdigit() for c in value) and len(value) > 0:
                 parse_keys[parse_keys.index(value)] = int
             elif value.count('.') == 1:
@@ -185,13 +182,16 @@ def row_key_gen(targets):
         target1.send(parse_keys)
 
 
+def date_key_format(format_key, date_string):
+    return datetime.strptime(date_string, format_key)
+
+
 @coroutine
 def date_key_gen(target):
     date_keys_tuple = yield  # <-sent by pipeline_coro ONCE per file run
     while True:
         delimited_rows = yield  # <-sent by row_cycler
         partial_keys = yield  # <-sent by row_key_gen flattened
-        # print('235:', 'partial_keys ''='' ', partial_keys)
         flat_keys = [*chain(deepcopy(partial_keys))]
         flat_rows = list(chain.from_iterable(deepcopy(delimited_rows)))
         keys_idxs = [i for i in range(len(flat_keys))]
@@ -202,8 +202,9 @@ def date_key_gen(target):
                     try:
                         datetime.strptime(item, date_keys_tuple[_])
                         key = date_keys_tuple[_]
-                        # flat_keys[idx] = (lambda v: datetime.strptime(v, key))
-                        flat_keys[idx] = ('date', _)
+                        datefunc = partial(date_key_format, key)
+                        flat_keys[idx] = datefunc
+                        # flat_keys[idx] = ('date', _)
                     except ValueError:
                         continue
                     except IndexError:
@@ -221,15 +222,14 @@ def data_parser(target):
         flat_raw_data = yield
         parse_keys = yield  # <-- from gen_date_parse_key list of lists
         zip_func_data = [*zip(parse_keys, flat_raw_data)]
-        # print(zip_func_data)
         casted = []
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
             data = unparsed_data[1]
             if func is None:
                 casted.append(None)
-            elif type(func) == tuple:
-                casted.append(datetime.strptime(data, date_keys[func[1]]))
+            # elif type(func) == tuple:
+            #     casted.append(datetime.strptime(data, date_keys[func[1]]))
             else:
                 casted.append(func(data))
         packed = pack(casted, sub_key_ranges)

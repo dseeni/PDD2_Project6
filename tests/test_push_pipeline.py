@@ -268,7 +268,6 @@ def test_filter_data(test_sink):
     # raise
 
 
-# TODO: Setup independent test_cars.csv folder/file and filters to test
 # @pytest.mark.skip
 def test_save_data():
     header_rows = ['test_headers']
