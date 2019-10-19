@@ -274,6 +274,9 @@ TODO
 
 # broadcaster pre-reqs:
     needs to track which row is from which file, if its None, skip over it
+    this is done to send the specific row to fitler with the corrsepodning
+    fitler funcitons and output files
+
     otherwise send the row and the corrsponding fitlers/outfiles(output package)
      to filter funciton, which unpacks the fitlers,file names,
         if the row is true for a filter,
@@ -294,7 +297,9 @@ filter should handle potential None values
 
 writer gets the row and file name
 data_writer gets filename and row, and writs it
-# writer pre-req --> just an output dir
-    create output dir if not exists
-    if file exists, open and write row, then close it
-    else create file w/filename, open write row and close it
+# writer pre-req -->
+    output dir
+    headers
+create output dir if not exists
+if file exists, open and write row, then close it
+else create file w/filename, open write row and close it

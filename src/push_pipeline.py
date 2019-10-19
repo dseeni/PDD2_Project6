@@ -57,37 +57,34 @@ def coroutine(fn):
         return g
     return inner
 
-
-@coroutine
 def pipeline_coro():
     with file_readers(data_package) as readers:
-        # for input_data, output_data in data_package:
-
         # CONSTANTS:
         nt_class_names = [data[0][1] for data in data_package]
-        # not working filters
-        filters = [data[1][1][1] for data in data_package]
+        output_package = [data[1] for data in data_package]
+
+        # outs = [d[1] for d in data_package]
+        # # print(*outs, sep='\n\n\n')
+        # preds = [d[1] for data in outs for d in data]
+        # out_file_names = [d[0] for data in outs for d in data]
+        # assert len(out_file_names) == len(preds)
 
         # DECLARE --> From the bottom up stack
-        writer = save_data
-        broadcaster = broadcast(filters)
+        writer = save_data()
+        data_filter = filter_data(writer)
+        broadcaster = broadcast(data_filter)
         parse_data = data_parser(broadcaster)
         date_key = date_key_gen(parse_data)
         row_key = row_key_gen(parse_data, date_key)
         field_name_gen = gen_field_names(parse_data)
-        headers = header_extract(field_name_gen)
+        headers = header_extract(field_name_gen, writer)
         row_cycler = cycle_rows(headers)
-
-        # pipeline sends gen_date_key the date_keys_tuple
-        # once for parse_key generation and once for processing
-        # send the first data row twice
-        # read header and send to data_fields gen
-        # right away to field_name_generator
 
         # SEND PREREQUISITES FIRST
         field_name_gen.send(nt_class_names)
         date_key.send(date_keys)
         row_cycler.send(readers)
+        writer.send(output_dir)
 
         # SEND DATA:
         # this will engage row cyclers while loop
@@ -174,7 +171,7 @@ def cycle_rows(target):
 
 
 @coroutine
-def header_extract(target):  # --> send to gen_field_names
+def header_extract(targets):  # --> send to gen_field_names
     while True:
         row_package = yield  # --> from row_cycle
         headers = []
@@ -182,7 +179,19 @@ def header_extract(target):  # --> send to gen_field_names
             headers.append(tuple(map(lambda l: l.replace(" ", "_"),
                                  tuple(map(lambda l: l.lower(),
                                            (item for item in row))))))
-        target.send(headers)  # --> sending [list of tuples of headers]
+        for target in targets:
+            target.send(headers)  # --> sending [list of tuples of headers]
+
+
+@coroutine
+def gen_field_names(target):  # sends to data_caster
+    while True:
+        nt_class_names = yield  # from pipeline_coro a list of lists
+        raw_header_rows = yield  # from header_extract a list of lists
+        # print('headers', header_row_package)
+        data_fields = [namedtuple(nt_class_names[i], raw_header_rows[i])
+                       for i in range(len(nt_class_names))]
+        target.send(data_fields)
 
 
 def gen_sub_key_ranges(package):
@@ -260,17 +269,6 @@ def date_key_gen(target):
 
 
 @coroutine
-def gen_field_names(target):  # sends to data_caster
-    while True:
-        nt_class_names = yield  # from pipeline_coro a list of lists
-        raw_header_rows = yield  # from header_extract a list of lists
-        # print('headers', header_row_package)
-        data_fields = [namedtuple(nt_class_names[i], raw_header_rows[i])
-                       for i in range(len(nt_class_names))]
-        target.send(data_fields)
-
-
-@coroutine
 def data_parser(target):
     # needs file_name, parse_keys, headers, single_class_name:
     nt_classes = yield  # <-- from gen_field_names list of field names
@@ -304,42 +302,54 @@ def data_parser(target):
 
 
 @coroutine
-def broadcast(targets):
+def broadcast(target):
     output_data_package = yield  # sent ONCE from pipeline_coro()
+    file_idx = [i for i in range(len(output_data_package))]
     while True:
-        data_row = yield
-        for target in targets:
-            target.send(data_row)
+        packed_rows = yield
+        for row in packed_rows:
+            if row is None:
+                continue
+            else:
+                output_data = output_data_package[packed_rows.index(row)]
+                target.send(row)
+                target.send(output_data)
 
+# outs = [d[1] for d in data_package]
+# # print(*outs, sep='\n\n\n')
+# preds = [d[1] for data in outs for d in data]
+# out_file_names = [d[0] for data in outs for d in data]
+# assert len(out_file_names) == len(preds)
 
 @coroutine
-def filter_data(filter_predicate, target):
+def filter_data(target):
     # sent the input_data tuple from reader
-    while True:
-        data_tuple = yield
-        if filter_predicate(data_tuple):
-            target.send(target)
+    # while True:
+    #     data_tuple = yield
+    #     if filter_predicate(data_tuple):
+    #         target.send(target)
+    pass
 
 
 @coroutine
-def save_data(targets):
+def save_data():
     # 'ff_name, headers, dir_name'
-    dir_name = yield
-    output_name = yield
-    header_row = yield
+    output_dir_name = yield
+    header_rows = yield
     try:
         output = yield
         # Create target Directory
-        os.mkdir(dir_name)
-        print("Directory ", dir_name, " Created ")
+        os.mkdir(output_dir_name)
+        print("Directory ", output_dir_name, " Created ")
     except FileExistsError:
-        print("Directory ", dir_name, " already exists")
+        print("Directory ", output_dir_name, " already exists")
     finally:
-        os.chdir(dir_name)
+        os.chdir(output_dir_name)
         try:
-            with open(dir_name, 'w', newline='') as f:
+            with open(output_dir_name, 'w', newline='') as f:
                 writer = csv.writer(f)
-                writer.writerow(header_row)
+                # FIX only write header rows if file does not exist yet!!!
+                writer.writerow(header_rows)
                 while True:
                     data_row = yield
                     writer.writerow(data_row)

@@ -6,7 +6,7 @@ from inspect import getgeneratorlocals
 # @pytest.mark.skip
 def test_header_extract(test_sink):
     with file_readers(data_package) as readers:
-        headers = header_extract(test_sink)
+        headers = header_extract((test_sink, test_sink))
         row_cycler = cycle_rows(headers)
         row_cycler.send(readers)
         header_rows = getgeneratorlocals(test_sink)['ml']
@@ -26,7 +26,7 @@ def test_gen_field_names(test_sink):
         field_names_gen = gen_field_names(test_sink)
         field_names_gen.send(tuple(input_data[1] for input_data, output_data in
                                    data_package))  # send class_names
-        headers = header_extract(field_names_gen)
+        headers = header_extract((field_names_gen, field_names_gen))
         cycle_rows(headers).send(readers)
         dummy_nt = getgeneratorlocals(test_sink)['ml'][0]
         print(dummy_nt)
@@ -165,24 +165,22 @@ def test_data_parser(test_sink):
     ml = getgeneratorlocals(test_sink)['ml']
     for i in range(len(date_keys)):
         with file_readers(data_package) as readers:
+             
             nt_class_names = [data[0][1] for data in data_package]
-
+            # DECLARE --> From the bottom up stack
             parse_data = data_parser(test_sink)
             date_key = date_key_gen(parse_data)
             row_key = row_key_gen((parse_data, date_key))
             field_name_gen = gen_field_names(parse_data)
-            headers = header_extract(field_name_gen)
+            headers = header_extract((field_name_gen, test_sink))
             row_cycler = cycle_rows(headers)
 
-
             # SEND PREREQUISITES FIRST
-            # date_key.send((d_key, d_key))
-            date_key.send((date_keys[i], date_keys[i]))
             field_name_gen.send(nt_class_names)
+            date_key.send((date_keys[i], date_keys[i]))
             row_cycler.send(readers)
 
             # SEND DATA:
-            # this will engage row cyclers while loop
             while True:
                 try:
                     row_cycler.send((date_key, row_key))
@@ -190,30 +188,68 @@ def test_data_parser(test_sink):
                     break
     print(*ml, sep='\n\n\n')
     print(len(ml))
-    assert(len(ml)) == 2000
+    assert(len(ml)) == 2002
     # raise
 
-    #         date_key.send((d_key, d_key))
-    #         field_name_gen.send(tuple(input_data[1] for input_data, output_data
-    #                                   in data_package))
-    #         row_cycler.send(readers)
-    #         row_cycler.send((date_key, row_key, parse_data))
-    #         row_cycler.send(parse_data)
-    #         # row_cycler.send(row_key)
-    #         # date_key.send(first_delimited_row)
-    #         # row_key.send(first_delimited_row)
-    #     sink_list.append(deepcopy(getgeneratorlocals(test_sink)['ml']))
-    #     # print(getgeneratorlocals(test_sink)['ml'])
-    #     test_sink.send('clear')
-    # # print('179:', *sink_list, sep='\n')
-    # assert sink_list[0][0][0] == 'Chevrolet Chevelle Malibu'
-    # assert sink_list[0][4][0] == '100-53-9824'
-    # assert sink_list[0][5][0] == 'Buick Skylark 320'
-    # assert sink_list[0][9][0] == '101-71-4702'
-    # date = sink_list[1][9][2]
-    # assert date.year == 2016
-    # # raise
 
+# def test_broadcast(test_sink):
+#     ml = getgeneratorlocals(test_sink)['ml']
+#     for i in range(len(date_keys)):
+#         with file_readers(data_package) as readers:
+#
+#             # for input_data, output_data in data_package:
+#
+#             # CONSTANTS:
+#             nt_class_names = [data[0][1] for data in data_package]
+#             output_package = [data[1] for data in data_package]
+#
+#             # outs = [d[1] for d in data_package]
+#             # # print(*outs, sep='\n\n\n')
+#             # preds = [d[1] for data in outs for d in data]
+#             # out_file_names = [d[0] for data in outs for d in data]
+#             # assert len(out_file_names) == len(preds)
+#
+#             # DECLARE --> From the bottom up stack
+#             writer = save_data()
+#             data_filter = filter_data(writer)
+#             broadcaster = broadcast(data_filter)
+#             parse_data = data_parser(broadcaster)
+#             date_key = date_key_gen(parse_data)
+#             row_key = row_key_gen(parse_data, date_key)
+#             field_name_gen = gen_field_names(parse_data)
+#             headers = header_extract(field_name_gen, writer)
+#             row_cycler = cycle_rows(headers)
+#
+#             # SEND PREREQUISITES FIRST
+#             field_name_gen.send(nt_class_names)
+#             date_key.send(date_keys)
+#             row_cycler.send(readers)
+#             writer.send(output_dir)
+#
+#             # SEND DATA:
+#             # this will engage row cyclers while loop
+#             row_cycler.send((row_key, parse_data))
+#
+#             nt_class_names = [data[0][1] for data in data_package]
+#             parse_data = data_parser(test_sink)
+#             date_key = date_key_gen(parse_data)
+#             row_key = row_key_gen((parse_data, date_key))
+#             field_name_gen = gen_field_names(parse_data)
+#             headers = header_extract(field_name_gen)
+#             row_cycler = cycle_rows(headers)
+#
+#             # SEND PREREQUISITES FIRST
+#             # date_key.send((d_key, d_key))
+#             date_key.send((date_keys[i], date_keys[i]))
+#             field_name_gen.send(nt_class_names)
+#             row_cycler.send(readers)
+#
+#             # SEND DATA:
+#             while True:
+#                 try:
+#                     row_cycler.send((date_key, row_key))
+#                 except StopIteration:
+#                     break
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
 @pytest.mark.skip
