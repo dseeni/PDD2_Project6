@@ -22,7 +22,10 @@ def test_sink():
             if row == 'clear':
                 ml.clear()
             else:
-                ml.append(list(row))
+                if iter(row) and type(row) is not str:
+                    ml.append(list(row))
+                else:
+                    ml.append(row)
     return _test_sink()
 
 

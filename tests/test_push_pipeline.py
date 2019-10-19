@@ -229,6 +229,42 @@ def test_broadcast(test_sink):
     # raise
 
 
+def test_filter_data(test_sink):
+    ml = getgeneratorlocals(test_sink)['ml']
+    with file_readers(data_package) as readers:
+
+        # CONSTANTS:
+        nt_class_names = [data[0][1] for data in data_package]
+        output_package = [data[1] for data in data_package]
+
+        # DECLARE --> From the bottom up stack
+        # writer = save_data()
+        data_filter = filter_data(test_sink)
+        broadcaster = broadcast(data_filter)
+        parse_data = data_parser(broadcaster)
+        date_key = date_key_gen(parse_data)
+        row_key = row_key_gen((parse_data, date_key))
+        field_name_gen = gen_field_names(parse_data)
+        headers = header_extract((field_name_gen, field_name_gen))
+        row_cycler = cycle_rows(headers)
+
+        # SEND PREREQUISITES FIRST
+        field_name_gen.send(nt_class_names)
+        date_key.send((date_keys[1], date_keys[1]))
+        row_cycler.send(readers)
+        broadcaster.send(output_package)
+        # writer.send(output_dir)
+
+        # SEND DATA:
+        try:
+            row_cycler.send((date_key, row_key))
+        except StopIteration:
+            pass
+    print(*ml, sep='\n')
+    print(len(ml))
+    raise
+
+
 # TODO: Setup independent test_cars.csv folder/file and filters to test
 @pytest.mark.skip
 def test_save_data():

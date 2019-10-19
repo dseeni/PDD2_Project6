@@ -269,9 +269,9 @@ def data_parser(target):
 @coroutine
 def broadcast(target):
     output_data_package = yield  # sent ONCE from pipeline_coro()
-    file_idx = [i for i in range(len(output_data_package))]
     while True:
         packed_rows = yield
+        assert len(packed_rows) == 5
         for row in packed_rows:
             if row is None:
                 continue
@@ -292,13 +292,16 @@ def filter_data(target):
     while True:
         output_data = yield
         row = yield
-        predicates = [d[1 for data ]]
-    # sent the input_data tuple from reader
-    # while True:
-    #     data_tuple = yield
-    #     if filter_predicate(data_tuple):
-    #         target.send(target)
-        pass
+        for output in output_data:
+            output_file_name = output[0]
+            predicate = output[1]
+            if predicate(row) is not None:
+                print('298:', 'row ''='' ', row)
+                print('299:', 'output_file_name ''='' ', output_file_name)
+                print('300:', 'predicate ''='' ', predicate)
+                # raise
+                target.send(output_file_name)
+                target.send(row)
 
 
 @coroutine

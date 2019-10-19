@@ -1,5 +1,6 @@
 # import src.push_pipeline
 from itertools import chain
+from datetime import datetime as dt
 
 # cars.csv = 407 rows
 # employment.csv = 1001 rows
@@ -114,7 +115,7 @@ vehicle_predicates = (pred_muscle_cars, pred_japanese_fuel,
 # ------------------------------------------------------------------------------
 # Filter Predicates for'Employment_Info'
 def pred_kohler_engineering_dept(data_row):
-    if 'Kohler' in data_row.employer():
+    if 'Kohler' in data_row.employer:
         return data_row
 
 
@@ -129,7 +130,7 @@ def pred_rd_employees(data_row):
 
 
 def pred_carroll_all_depts(data_row):
-    if 'Carroll' in data_row.employer():
+    if 'Carroll' in data_row.employer:
         return data_row
 
 
@@ -169,27 +170,28 @@ def pred_telugu_speakers(data_row):
 
 def pred_korean_men(data_row):
     if (data_row.language == 'Korean'
-            and data_row.gener == 'Male'):
+            and data_row.gender == 'Male'):
         return data_row
 
 
 personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
-                       pred_kohler_engineering_dept)
+                       pred_korean_men)
 
 
 # Filter Predicates for Update_Status
 # ------------------------------------------------------------------------------
 # TODO: update predicate filter for old / new date format
 def pred_new_updates_march18(data_row):
-    # if (data_row.something >
-    # src.push_pipeline.date_key_gen('2018-03-01T00:00:00ZZ')):
-    return data_row
+    if data_row.last_updated > dt.strptime('2018-03-01T00:00:00ZZ'):
+        return data_row
+    # return None
 
 
 def pred_old_updates_april17(data_row):
     # if (data_row.last_updated <
     # src.push_pipeline.date_key_gen('2017-04-01T00:00:00Z')):
-    return data_row
+    # return data_row
+    return None
 
 
 update_predicates = (pred_new_updates_march18,
