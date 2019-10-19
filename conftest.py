@@ -63,8 +63,9 @@ def date_tester():
             row_key_gen_targets = (sink, date_parser)
             gen_row_key = row_key_gen(row_key_gen_targets)
             # force the testing of only 1 date format key per iteration:
-            date_parser.send((date_keys[date_format_key_idxs[s]],
-                              date_keys[date_format_key_idxs[s]]))
+            # date_parser.send((date_keys[date_format_key_idxs[s]],
+            #                   date_keys[date_format_key_idxs[s]]))
+            date_parser.send(date_keys)
             date_parser.send(reader_rows)
             gen_row_key.send(reader_rows)
             get_date_func = date_getter(sink, key_names[s], access_idxs[s])

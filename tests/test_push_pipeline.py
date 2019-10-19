@@ -112,7 +112,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     test_sink.send('clear')
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     # PYTEST BUG: On each test iteration, pytest can only test one date
@@ -137,7 +137,7 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                 date_format_key_idxs=date_key_idxs,
                 access_idxs=sink_idxs, date_strs=raw_date_strs)
     print(getgeneratorlocals(test_sink)['ml'])
-    raise
+    # raise
     test_sink.send('clear')
 
 
