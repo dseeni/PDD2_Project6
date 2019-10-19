@@ -192,6 +192,7 @@ def test_data_parser(test_sink):
     # raise
 
 
+# @pytest.mark.skip
 def test_broadcast(test_sink):
     ml = getgeneratorlocals(test_sink)['ml']
     with file_readers(data_package) as readers:
@@ -229,6 +230,7 @@ def test_broadcast(test_sink):
     # raise
 
 
+# @pytest.mark.skip
 def test_filter_data(test_sink):
     ml = getgeneratorlocals(test_sink)['ml']
     with file_readers(data_package) as readers:
@@ -266,13 +268,17 @@ def test_filter_data(test_sink):
 
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_save_data():
-    data_writer = save_data('test_file.csv', ['test_headers'], 'output_data')
-    data_writer.send(['this is a test line'])
-    data_writer.close()
+    header_rows = ['test_headers']
+    writer = save_data()
+    writer.send(output_dir)
+    writer.send(header_rows)
+    writer.send('test_file.txt')
+    writer.send(['this is a test line'])
     # print('current_directory', os.getcwd())
     os.chdir('output_data')
-    with open('test_file.csv') as tf:
+    with open('test_file.txt') as tf:
         assert next(tf) == 'test_headers\n'
         assert next(tf) == 'this is a test line\n'
+    os.remove('test_file.txt')

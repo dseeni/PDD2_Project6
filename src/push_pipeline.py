@@ -6,7 +6,6 @@ import csv
 import os
 from copy import deepcopy
 from itertools import islice, cycle, count
-from inspect import getgeneratorlocals, getgeneratorstate
 
 
 # TODO: Look at the pulling example and rewrite it all as a push pipeline
@@ -60,15 +59,10 @@ def coroutine(fn):
 
 def pipeline_coro():
     with file_readers(data_package) as readers:
+
         # CONSTANTS:
         nt_class_names = [data[0][1] for data in data_package]
         output_package = [data[1] for data in data_package]
-
-        # outs = [d[1] for d in data_package]
-        # # print(*outs, sep='\n\n\n')
-        # preds = [d[1] for data in outs for d in data]
-        # out_file_names = [d[0] for data in outs for d in data]
-        # assert len(out_file_names) == len(preds)
 
         # DECLARE --> From the bottom up stack
         writer = save_data()
@@ -82,10 +76,10 @@ def pipeline_coro():
         row_cycler = cycle_rows(headers)
 
         # SEND PREREQUISITES FIRST
+        writer.send(output_dir)
         field_name_gen.send(nt_class_names)
         date_key.send(date_keys)
         row_cycler.send(readers)
-        writer.send(output_dir)
         broadcaster.send(output_package)
 
         # SEND DATA:
@@ -280,12 +274,6 @@ def broadcast(target):
                 target.send(output_data)
                 target.send(row)
 
-# outs = [d[1] for d in data_package]
-# # print(*outs, sep='\n\n\n')
-# preds = [d[1] for data in outs for d in data]
-# out_file_names = [d[0] for data in outs for d in data]
-# assert len(out_file_names) == len(preds)
-
 
 @coroutine
 def filter_data(target):
@@ -296,10 +284,6 @@ def filter_data(target):
             output_file_name = output[0]
             predicate = output[1]
             if predicate(row) is not None:
-                # print('298:', 'row ''='' ', row)
-                # print('299:', 'output_file_name ''='' ', output_file_name)
-                # print('300:', 'predicate ''='' ', predicate)
-                # raise
                 target.send(output_file_name)
                 target.send(row)
 
@@ -309,22 +293,31 @@ def save_data():
     # 'ff_name, headers, dir_name'
     output_dir_name = yield
     header_rows = yield
-    try:
-        output = yield
-        # Create target Directory
-        os.mkdir(output_dir_name)
-        print("Directory ", output_dir_name, " Created ")
-    except FileExistsError:
-        print("Directory ", output_dir_name, " already exists")
-    finally:
-        os.chdir(output_dir_name)
+    path = os.getcwd()
+    print('297:', 'path ''='' ', path)
+    while True:
+        output_file_name = yield
+        data_row = yield
         try:
-            with open(output_dir_name, 'w', newline='') as f:
-                writer = csv.writer(f)
-                # FIX only write header rows if file does not exist yet!!!
-                writer.writerow(header_rows)
-                while True:
-                    data_row = yield
-                    writer.writerow(data_row)
+            # Create target Directory
+            os.mkdir(output_dir_name)
+        except OSError:
+            pass
         finally:
+            print('307:', 'output_dir_name ''='' ', output_dir_name)
+            os.chdir(path + "/" + output_dir_name)
+            path = os.getcwd()
+            if os.path.isfile(output_file_name):
+                with open(output_file_name, 'a', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(data_row)
+            else:
+                with open(output_file_name, 'w+', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(header_rows)
+                    writer.writerow(data_row)
             os.chdir('..')
+
+
+pipeline_coro()
+
