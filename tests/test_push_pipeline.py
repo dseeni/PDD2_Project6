@@ -112,7 +112,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
     test_sink.send('clear')
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
     # PYTEST BUG: On each test iteration, pytest can only test one date
@@ -136,7 +136,8 @@ def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                 get_test_date, key_names=sink_keys,
                 date_format_key_idxs=date_key_idxs,
                 access_idxs=sink_idxs, date_strs=raw_date_strs)
-    # print(getgeneratorlocals(test_sink)['ml'])
+    print(getgeneratorlocals(test_sink)['ml'])
+    raise
     test_sink.send('clear')
 
 
@@ -177,7 +178,7 @@ def test_data_parser(test_sink):
 
             # SEND PREREQUISITES FIRST
             field_name_gen.send(nt_class_names)
-            date_key.send((date_keys[i], date_keys[i]))
+            date_key.send(date_keys)
             row_cycler.send(readers)
 
             # SEND DATA:
@@ -214,7 +215,7 @@ def test_broadcast(test_sink):
 
         # SEND PREREQUISITES FIRST
         field_name_gen.send(nt_class_names)
-        date_key.send((date_keys[0], date_keys[0]))
+        date_key.send((date_keys[0], date_keys[1]))
         row_cycler.send(readers)
         broadcaster.send(output_package)
         # writer.send(output_dir)
@@ -274,11 +275,11 @@ def test_save_data():
     writer = save_data()
     writer.send(output_dir)
     writer.send(header_rows)
-    writer.send('test_file.txt')
+    writer.send('test_file')
     writer.send(['this is a test line'])
     # print('current_directory', os.getcwd())
     os.chdir('output_data')
-    with open('test_file.txt') as tf:
+    with open('test_file.csv') as tf:
         assert next(tf) == 'test_headers\n'
         assert next(tf) == 'this is a test line\n'
-    os.remove('test_file.txt')
+    os.remove('test_file.csv')

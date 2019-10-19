@@ -1,29 +1,12 @@
-from src.constants import *
+from src.constants import data_package, date_keys, output_dir
 from collections import namedtuple
-from contextlib import contextmanager, ExitStack
+from contextlib import contextmanager
 from datetime import datetime
 import csv
 import os
 from copy import deepcopy
-from itertools import islice, cycle, count
+from itertools import cycle, chain
 
-
-# TODO: Look at the pulling example and rewrite it all as a push pipeline
-# We can do this be making the reader yield and row and send it to parser that
-# sends it to broadcaster
-
-# TODO: Parse the file with correct types, via type sniffing function
-# TODO: Make it as generic as possible to handle N filters and N files and N
-# destination files
-# And N source files!!!
-
-# TODO: Solution must take in arbitrary amount of filters
-# Any 3 filters will result with 2 records on the screen only
-# if you did it all right
-
-# TODO: Implement function to average length of lines in file
-# TODO: Lookup the print_file_row() function in Freds notes on GitHub.
-# TODO: Output File name = File Name + Filter Name?
 
 @contextmanager
 def file_readers(packaged_data):
@@ -219,7 +202,8 @@ def date_key_gen(target):
                     try:
                         datetime.strptime(item, date_keys_tuple[_])
                         key = date_keys_tuple[_]
-                        flat_keys[idx] = (lambda v: datetime.strptime(v, key))
+                        # flat_keys[idx] = (lambda v: datetime.strptime(v, key))
+                        flat_keys[idx] = ('date', _)
                     except ValueError:
                         continue
                     except IndexError:
@@ -241,12 +225,11 @@ def data_parser(target):
         casted = []
         for unparsed_data in zip_func_data:
             func = unparsed_data[0]
-            # print('290:', 'func ''='' ', func)
             data = unparsed_data[1]
-            # print('292:', 'data ''='' ', data)
-            # print('294:', 'type(data) ''='' ', type(data))
             if func is None:
                 casted.append(None)
+            elif type(func) == tuple:
+                casted.append(datetime.strptime(data, date_keys[func[1]]))
             else:
                 casted.append(func(data))
         packed = pack(casted, sub_key_ranges)
@@ -294,19 +277,19 @@ def save_data():
     output_dir_name = yield
     header_rows = yield
     path = os.getcwd()
-    print('297:', 'path ''='' ', path)
     while True:
         output_file_name = yield
         data_row = yield
+        output_file_name = output_file_name + '.csv'
         try:
             # Create target Directory
             os.mkdir(output_dir_name)
         except OSError:
             pass
         finally:
-            print('307:', 'output_dir_name ''='' ', output_dir_name)
-            os.chdir(path + "/" + output_dir_name)
+            os.chdir(output_dir)
             path = os.getcwd()
+            # raise
             if os.path.isfile(output_file_name):
                 with open(output_file_name, 'a', newline='') as f:
                     writer = csv.writer(f)
@@ -314,10 +297,15 @@ def save_data():
             else:
                 with open(output_file_name, 'w+', newline='') as f:
                     writer = csv.writer(f)
-                    writer.writerow(header_rows)
-                    writer.writerow(data_row)
+                    try:
+                        writer.writerow(data_row._fields)
+                        writer.writerow(data_row)
+                    except AttributeError:
+                        writer.writerow(header_rows)
+                    finally:
+                        writer.writerow(data_row)
             os.chdir('..')
 
 
-pipeline_coro()
+# pipeline_coro()
 

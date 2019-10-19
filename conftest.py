@@ -1,5 +1,6 @@
 from pytest import fixture
 from src.push_pipeline import *
+from src.constants import fnames
 # from inspect import getgeneratorstate, getgeneratorlocals
 from contextlib import ExitStack
 from inspect import getgeneratorlocals
@@ -68,11 +69,12 @@ def date_tester():
             gen_row_key.send(reader_rows)
             get_date_func = date_getter(sink, key_names[s], access_idxs[s])
             print('65:', 'get_date_func ''='' ', get_date_func)
-            date1 = get_date_func(date_strs[s])
-            print('68:', 'date1 ''='' ', date1)
-            # raise
-            assert date1 == datetime.strptime(date_strs[s], date_keys[
-                date_format_key_idxs[s]])
+            current_date_key = date_keys[get_date_func[1]]
+            print('73:', 'current_date_key ''='' ', current_date_key)
+            current_date_str = date_strs[s]
+            print('75:', 'current_date_str ''='' ', current_date_str)
+            assert (datetime.strptime(date_strs[s], current_date_key) ==
+            datetime.strptime(date_strs[s], date_keys[date_format_key_idxs[s]]))
             sink.send('clear')
     return _date_tester
 

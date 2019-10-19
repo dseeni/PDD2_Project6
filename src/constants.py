@@ -1,5 +1,3 @@
-# import src.push_pipeline
-from itertools import chain
 from datetime import datetime as dt
 
 # cars.csv = 407 rows
@@ -15,7 +13,7 @@ date_key1 = '%m/%d/%Y'
 # date_key2 = '%m/%d/%Y'
 date_key2 = '%Y-%m-%dT%H:%M:%SZ'
 # date_key1 = '%Y-%m-%dT%H:%M:%SZ'
-date_keys = (date_key2, date_key2)
+date_keys = (date_key1, date_key2)
 
 # ------------------------------------------------------------------------------
 # Input Files
