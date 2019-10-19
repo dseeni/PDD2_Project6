@@ -57,6 +57,7 @@ def coroutine(fn):
         return g
     return inner
 
+
 def pipeline_coro():
     with file_readers(data_package) as readers:
         # CONSTANTS:
@@ -75,9 +76,9 @@ def pipeline_coro():
         broadcaster = broadcast(data_filter)
         parse_data = data_parser(broadcaster)
         date_key = date_key_gen(parse_data)
-        row_key = row_key_gen(parse_data, date_key)
+        row_key = row_key_gen((parse_data, date_key))
         field_name_gen = gen_field_names(parse_data)
-        headers = header_extract(field_name_gen, writer)
+        headers = header_extract((field_name_gen, writer))
         row_cycler = cycle_rows(headers)
 
         # SEND PREREQUISITES FIRST
@@ -85,49 +86,13 @@ def pipeline_coro():
         date_key.send(date_keys)
         row_cycler.send(readers)
         writer.send(output_dir)
+        broadcaster.send(output_package)
 
         # SEND DATA:
-        # this will engage row cyclers while loop
-        row_cycler.send((row_key, parse_data))
-
-        # send next row to gen_row_parse_key
-        # named_tuple_gen sends to data_caster for parsing
-        # parser needs named tupel and data type key
-        # send the first row of the file to the header function
-        # send first row to gen_field_names
-        # header function sends to gen_field_name
-        # gen_parse key sends key to caster
-        # header_extract.send(next(f))  # --> send row for header extract
-        # row_parse_key_gen.send(next(f))
-        # date_parse gen
-
-    # for data_package in data_packages:
-    #    for inputfile, classname, outputfile, predicate in datapackage:
-    #    do stuff:
-    # instantiate functions parameters..
-    # can you instantiate without symbol binding?
-    # # instance save data writers:
-    # out_pink_cars = save_data('pink_cars.csv', header_extract(fcars))
-    # out_ford_green = save_data('ford_green.csv', header_extract(fcars))
-    # out_older = save_data('older.csv', header_extract(fcars))
-
-    # filter instances with predicates
-    # filter_pink_cars = filter_data(lambda d: d[idx_color].lower() ==
-    # 'pink',
-    #                                out_pink_cars)
-
-    # predicates can be defined as filters..
-    # def pred_ford_green(data_row):
-    #     return (data_row[idx_make].lower() == 'ford'
-    #             and data_row[idx_color].lower() == 'green')
-    # filter_ford_green = filter_data(pred_ford_green, out_ford_green)
-    # filter_older = filter_data(lambda d: d[idx_year] <= 2010, out_older)
-    # filters = (filter_pink_cars, filter_ford_green, filter_older)
-    # your brodcaster must send data from row
-    # broadcaster = broadcast(filters)
-    # while True:
-    #     data_row = yield
-    #     broadcaster.send(data_row)
+        try:
+            row_cycler.send((date_key, row_key))
+        except StopIteration:
+            pass
 
 
 @coroutine
@@ -312,8 +277,8 @@ def broadcast(target):
                 continue
             else:
                 output_data = output_data_package[packed_rows.index(row)]
-                target.send(row)
                 target.send(output_data)
+                target.send(row)
 
 # outs = [d[1] for d in data_package]
 # # print(*outs, sep='\n\n\n')
@@ -321,14 +286,19 @@ def broadcast(target):
 # out_file_names = [d[0] for data in outs for d in data]
 # assert len(out_file_names) == len(preds)
 
+
 @coroutine
 def filter_data(target):
+    while True:
+        output_data = yield
+        row = yield
+        predicates = [d[1 for data ]]
     # sent the input_data tuple from reader
     # while True:
     #     data_tuple = yield
     #     if filter_predicate(data_tuple):
     #         target.send(target)
-    pass
+        pass
 
 
 @coroutine

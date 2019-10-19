@@ -165,7 +165,7 @@ def test_data_parser(test_sink):
     ml = getgeneratorlocals(test_sink)['ml']
     for i in range(len(date_keys)):
         with file_readers(data_package) as readers:
-             
+
             nt_class_names = [data[0][1] for data in data_package]
             # DECLARE --> From the bottom up stack
             parse_data = data_parser(test_sink)
@@ -188,68 +188,46 @@ def test_data_parser(test_sink):
                     break
     print(*ml, sep='\n\n\n')
     print(len(ml))
-    assert(len(ml)) == 2002
+    assert (len(ml)) == 2002
     # raise
 
 
-# def test_broadcast(test_sink):
-#     ml = getgeneratorlocals(test_sink)['ml']
-#     for i in range(len(date_keys)):
-#         with file_readers(data_package) as readers:
-#
-#             # for input_data, output_data in data_package:
-#
-#             # CONSTANTS:
-#             nt_class_names = [data[0][1] for data in data_package]
-#             output_package = [data[1] for data in data_package]
-#
-#             # outs = [d[1] for d in data_package]
-#             # # print(*outs, sep='\n\n\n')
-#             # preds = [d[1] for data in outs for d in data]
-#             # out_file_names = [d[0] for data in outs for d in data]
-#             # assert len(out_file_names) == len(preds)
-#
-#             # DECLARE --> From the bottom up stack
-#             writer = save_data()
-#             data_filter = filter_data(writer)
-#             broadcaster = broadcast(data_filter)
-#             parse_data = data_parser(broadcaster)
-#             date_key = date_key_gen(parse_data)
-#             row_key = row_key_gen(parse_data, date_key)
-#             field_name_gen = gen_field_names(parse_data)
-#             headers = header_extract(field_name_gen, writer)
-#             row_cycler = cycle_rows(headers)
-#
-#             # SEND PREREQUISITES FIRST
-#             field_name_gen.send(nt_class_names)
-#             date_key.send(date_keys)
-#             row_cycler.send(readers)
-#             writer.send(output_dir)
-#
-#             # SEND DATA:
-#             # this will engage row cyclers while loop
-#             row_cycler.send((row_key, parse_data))
-#
-#             nt_class_names = [data[0][1] for data in data_package]
-#             parse_data = data_parser(test_sink)
-#             date_key = date_key_gen(parse_data)
-#             row_key = row_key_gen((parse_data, date_key))
-#             field_name_gen = gen_field_names(parse_data)
-#             headers = header_extract(field_name_gen)
-#             row_cycler = cycle_rows(headers)
-#
-#             # SEND PREREQUISITES FIRST
-#             # date_key.send((d_key, d_key))
-#             date_key.send((date_keys[i], date_keys[i]))
-#             field_name_gen.send(nt_class_names)
-#             row_cycler.send(readers)
-#
-#             # SEND DATA:
-#             while True:
-#                 try:
-#                     row_cycler.send((date_key, row_key))
-#                 except StopIteration:
-#                     break
+def test_broadcast(test_sink):
+    ml = getgeneratorlocals(test_sink)['ml']
+    with file_readers(data_package) as readers:
+
+        # CONSTANTS:
+        nt_class_names = [data[0][1] for data in data_package]
+        output_package = [data[1] for data in data_package]
+
+        # DECLARE --> From the bottom up stack
+        # writer = save_data()
+        # data_filter = filter_data(writer)
+        broadcaster = broadcast(test_sink)
+        parse_data = data_parser(broadcaster)
+        date_key = date_key_gen(parse_data)
+        row_key = row_key_gen((parse_data, date_key))
+        field_name_gen = gen_field_names(parse_data)
+        headers = header_extract((field_name_gen, field_name_gen))
+        row_cycler = cycle_rows(headers)
+
+        # SEND PREREQUISITES FIRST
+        field_name_gen.send(nt_class_names)
+        date_key.send((date_keys[0], date_keys[0]))
+        row_cycler.send(readers)
+        broadcaster.send(output_package)
+        # writer.send(output_dir)
+
+        # SEND DATA:
+        try:
+            row_cycler.send((date_key, row_key))
+        except StopIteration:
+            pass
+    print(*ml, sep='\n')
+    print(len(ml))
+    assert(len(ml)) == 8812
+    # raise
+
 
 # TODO: Setup independent test_cars.csv folder/file and filters to test
 @pytest.mark.skip

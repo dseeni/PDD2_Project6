@@ -218,5 +218,3 @@ output_dir = 'output_data'
 
 
 
-
-
