@@ -187,10 +187,9 @@ def pred_new_updates_march18(data_row):
 
 
 def pred_old_updates_april17(data_row):
-    # if (data_row.last_updated <
-    # src.push_pipeline.date_key_gen('2017-04-01T00:00:00Z')):
-    # return data_row
-    return None
+    if (data_row.created < dt.strptime
+       ('2017-04-01T00:00:00Z', date_keys[1])):
+        return data_row
 
 
 update_predicates = (pred_new_updates_march18,
