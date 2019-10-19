@@ -188,7 +188,7 @@ def pred_new_updates_march18(data_row):
 
 def pred_old_updates_april17(data_row):
     if (data_row.created < dt.strptime
-       ('2017-04-01T00:00:00Z', date_keys[1])):
+       ('2016-02-01T00:00:00Z', date_keys[1])):
         return data_row
 
 
