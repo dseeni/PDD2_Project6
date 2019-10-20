@@ -1,0 +1,44 @@
+car,mpg,cylinders,displacement,horsepower,weight,acceleration,model,origin
+Chevy C20,10.0,8,307.0,200.0,4376.0,15.0,70,US
+Hi 1200D,9.0,8,304.0,193.0,4732.0,18.5,70,US
+Plymouth Satellite Custom,16.0,6,225.0,105.0,3439.0,15.5,71,US
+Ford Gran Torino (sw),13.0,8,302.0,140.0,4294.0,16.0,72,US
+Ford Gran Torino,14.0,8,302.0,137.0,4042.0,14.5,73,US
+Plymouth Fury Gran Sedan,14.0,8,318.0,150.0,4237.0,14.5,73,US
+Plymouth Valiant,18.0,6,225.0,105.0,3121.0,16.5,73,US
+AMC Matador,16.0,6,258.0,110.0,3632.0,18.0,74,US
+Plymouth Satellite Sebring,18.0,6,225.0,105.0,3613.0,16.5,74,US
+Buick Century Luxus (sw),13.0,8,350.0,150.0,4699.0,14.5,74,US
+Ford Gran Torino (sw),14.0,8,302.0,140.0,4638.0,16.0,74,US
+AMC Matador (sw),14.0,8,304.0,150.0,4257.0,15.5,74,US
+Chevrolet Nova,18.0,6,250.0,105.0,3459.0,16.0,75,US
+Plymouth Grand Fury,16.0,8,318.0,150.0,4498.0,14.5,75,US
+Buick Century,17.0,6,231.0,110.0,3907.0,21.0,75,US
+Chevrolete Chevelle Malibu,16.0,6,250.0,105.0,3897.0,18.5,75,US
+AMC Matador,15.0,6,258.0,110.0,3730.0,19.0,75,US
+Buick Skyhawk,21.0,6,231.0,110.0,3039.0,15.0,75,US
+Chevrolet Nova,22.0,6,250.0,105.0,3353.0,14.5,76,US
+Pontiac Ventura SJ,18.5,6,250.0,110.0,3645.0,16.2,76,US
+Ford F108,13.0,8,302.0,130.0,3870.0,15.0,76,US
+Oldsmobile Cutlass Supreme,17.0,8,260.0,110.0,4060.0,19.0,77,US
+Mercury Cougar Brougham,15.0,8,302.0,130.0,4295.0,14.9,77,US
+Chevrolet Concours,17.5,6,250.0,110.0,3520.0,16.4,77,US
+Buick Skylark,20.5,6,231.0,105.0,3425.0,16.9,77,US
+Ford Thunderbird,16.0,8,351.0,149.0,4335.0,14.5,77,US
+Oldsmobile Cutlass Salon Brougham,19.9,8,260.0,110.0,3365.0,15.5,78,US
+Pontiac Phoenix LJ,19.2,6,231.0,105.0,3535.0,19.2,78,US
+Buick Century Special,20.6,6,231.0,105.0,3380.0,15.8,78,US
+Dodge Aspen,18.6,6,225.0,110.0,3620.0,18.7,78,US
+AMC Concord d/l,18.1,6,258.0,120.0,3410.0,15.1,78,US
+Pontiac Lemans V6,21.5,6,231.0,115.0,3245.0,15.4,79,US
+Dodge Aspen 6,20.6,6,225.0,110.0,3360.0,16.6,79,US
+Chevrolet Caprice Classic,17.0,8,305.0,130.0,3840.0,15.4,79,US
+Dodge St. Regis,18.2,8,318.0,135.0,3830.0,15.2,79,US
+Buick Estate Wagon (sw),16.9,8,350.0,155.0,4360.0,14.9,79,US
+Ford Country Squire (sw),15.5,8,351.0,142.0,4054.0,14.3,79,US
+Chevrolet Malibu Classic (sw),19.2,8,267.0,125.0,3605.0,15.0,79,US
+Cadillac Eldorado,23.0,8,350.0,125.0,3900.0,17.4,79,US
+Buick Century,22.4,6,231.0,110.0,3415.0,15.8,81,US
+Oldsmobile Cutlass LS,26.6,8,350.0,105.0,3725.0,19.0,81,US
+Buick Century Limited,25.0,6,181.0,110.0,2945.0,16.4,82,US
+Ford Grenada l,22.0,6,232.0,112.0,2835,14.7,82,US
