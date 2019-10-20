@@ -2,22 +2,24 @@
 
 ### Cooperative Multitasking Using Coroutines:
 
-- Coroutines Based Data Processing Pipeline:
-    - [x] handle any number of files for any amount of filters
+- Coroutine based Data Processing Pipeline:
+    - [x] Concurrent Data Flow processing  at every stage of the pipeline...
 
-    - [x] multitask across all input files, processing every row concurrently
+    - [x] handle any number of files, of any length, for any number of filters
 
-    - [x] evaluate each row against any number of user defined filters per file
+    - [x] multitask across all input files, broadcasting every row concurrently
+
+    - [x] evaluate each row against any number of defined filters per input file
     
     - [x] dynamically infer data types and parse data concurrently
 
+    - [x] robust error handling accounts for potential unclean data samples
+
     - [x] handle multiple date formats from a user defined format library
 
-    - [x] generate user defined named tuples for each file type for rich
-     comparisons
+    - [x] generate user defined named tuples for each row processed
     
-    - [x] output data into user defined directory and csv tables
+    - [x] write out multiple result files into custom directory / file names
 
-    - [x] robust error handling accounts for potential unclean data samples
 
 
