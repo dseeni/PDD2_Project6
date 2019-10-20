@@ -695,11 +695,11 @@
 #             if type(y) == list else print(y) for y in z]for z in nested_lists]
 #
 
-
+#
 key_idx = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 key_idy = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
 key_idz = [(0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2, 3, 4, 5, 6, 7, 8), (0, 1, 2)]
-
+#
 # print([list(zip(x, y, z)) for x in key_idx for y in key_idy for z in key_idz])
 from src.constants import date_keys
 from datetime import datetime
@@ -708,14 +708,15 @@ from datetime import datetime
 
 # print(type(datetime.strptime('10/5/2016', '%m/%d/%Y')))
 
-'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'
+# 'datetime.datetime.strptime(dateTime, "%Y-%m-%dT%H:%M:%S.%fZ")'
 
 # # ----------------------------------------------------------------------------
 
-# GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
+# # GETTING INTO A NESTED LIST VIA FUNCTION ARGUMENTS:
 # ml = [1, [1, 2, [4, 5, [6, 7, 8], 6]]]
 # def _test_date(date_key, *args):
 #     l = [arg for arg in args]
+#     print(l)
 #     current = list(ml)
 #     for i in range(len(l)):
 #         try:
@@ -824,10 +825,13 @@ from datetime import datetime
 # print(timeit('lit(ml)', setup="from src.playground import tup,ml,lit",
 #              number=10000))
 # # ----------------------------------------------------------------------------
+#
+# ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
+#
+# row = []
+# row.append(ml)
+# print(row)
 
-ml = [[1,2,3,4],[1,2,3,4],[1, 2, 3, 4]]
 
-row = []
-row.append(ml)
-print(row)
+from itertools import chain, cycle
 

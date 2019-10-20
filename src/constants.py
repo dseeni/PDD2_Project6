@@ -1,11 +1,11 @@
-import src.push_pipeline
-from itertools import chain
+from datetime import datetime as dt
 
 # cars.csv = 407 rows
 # employment.csv = 1001 rows
 # nyc_parking_ticket_extract.csv = 1001 rows
 # personal_info.csv = 1001 rows
 # update_status.csv = 1001 row
+# total = 4411 rows
 
 # ------------------------------------------------------------------------------
 # Date format keys
@@ -84,9 +84,9 @@ update_output_files = (new_updates_march18, old_updates_april17)
 # Filter Predicates for Vehicle_Info
 def pred_muscle_cars(data_row):
     if all(v is True for v in (data_row.cylinders > 4,
-                               data_row.horsepower > 200,
+                               data_row.horsepower > 100,
                                data_row.origin == 'US',
-                               data_row.acceleration > 15)):
+                               data_row.acceleration > 14)):
         return data_row
 
 
@@ -113,7 +113,7 @@ vehicle_predicates = (pred_muscle_cars, pred_japanese_fuel,
 # ------------------------------------------------------------------------------
 # Filter Predicates for'Employment_Info'
 def pred_kohler_engineering_dept(data_row):
-    if 'Kohler' in data_row.employer():
+    if 'Kohler' in data_row.employer:
         return data_row
 
 
@@ -128,7 +128,7 @@ def pred_rd_employees(data_row):
 
 
 def pred_carroll_all_depts(data_row):
-    if 'Carroll' in data_row.employer():
+    if 'Carroll' in data_row.employer:
         return data_row
 
 
@@ -168,25 +168,27 @@ def pred_telugu_speakers(data_row):
 
 def pred_korean_men(data_row):
     if (data_row.language == 'Korean'
-            and data_row.gener == 'Male'):
+            and data_row.gender == 'Male'):
         return data_row
 
 
 personal_predicates = (pred_icelandic_women, pred_telugu_speakers,
-                       pred_kohler_engineering_dept)
+                       pred_korean_men)
 
 
 # Filter Predicates for Update_Status
 # ------------------------------------------------------------------------------
+# TODO: update predicate filter for old / new date format
 def pred_new_updates_march18(data_row):
-    if (data_row.something >
-            src.push_pipeline.date_key_gen('2018-03-01T00:00:00ZZ')):
+    if (data_row.last_updated > dt.strptime
+       ('2018-03-01T00:00:00Z', date_keys[1])):
         return data_row
+    # return None
 
 
 def pred_old_updates_april17(data_row):
-    if (data_row.last_updated <
-            src.push_pipeline.date_key_gen('2017-04-01T00:00:00Z')):
+    if (data_row.created < dt.strptime
+       ('2016-02-01T00:00:00Z', date_keys[1])):
         return data_row
 
 
