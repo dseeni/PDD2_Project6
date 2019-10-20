@@ -225,10 +225,8 @@ def test_broadcast(test_sink):
             row_cycler.send((date_key, row_key))
         except StopIteration:
             pass
-    print(*ml, sep='\n')
-    print(len(ml))
-    assert(len(ml)) == 8812
-    # raise
+    # total rows of all files * 3 constant:
+    assert(len(ml)) == 13218
 
 
 # @pytest.mark.skip
@@ -270,21 +268,24 @@ def test_filter_data(test_sink):
 
 # @pytest.mark.skip
 def test_save_data():
-    header_rows = ['test_headers']
+    header_rows = [('test_headers', 'test_headers', 'test_headers')]
     writer = save_data()
     writer.send(output_dir)
     writer.send(header_rows)
+    # test create and write
     writer.send('test_file')
     writer.send(['this is a test line'])
-    # print('current_directory', os.getcwd())
+    writer.send(0)
+    # test append file
+    writer.send('test_file')
+    writer.send(['this is a test line'])
+    writer.send(0)
+
     os.chdir('output_data')
-    with open('test_file.csv') as tf:
-        assert next(tf) == 'test_headers\n'
-        assert next(tf) == 'this is a test line\n'
-    writer.send('test_file')
-    writer.send(['this is a test line'])
-    with open('test_file.csv') as tf:
-        assert next(tf) == 'test_headers\n'
-        assert next(tf) == 'this is a test line\n'
-    os.remove('test_file.csv')
-    os.chdir('..')
+    try:
+        with open('test_file.csv') as tf:
+            assert next(tf) == "test_headers,test_headers,test_headers\n"
+            assert next(tf) == 'this is a test line\n'
+    finally:
+        os.remove('test_file.csv')
+        os.chdir('..')

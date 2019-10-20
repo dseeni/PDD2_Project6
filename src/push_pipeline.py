@@ -165,8 +165,6 @@ def row_key_gen(targets):
         for value in parse_keys:
             if value is None:
                 parse_keys[parse_keys.index(value)] = None
-            elif value is None:
-                parse_keys[parse_keys.index(value)] = None
             # check if len(value) > 0 to catch empty strings
             elif all(c.isdigit() for c in value) and len(value) > 0:
                 parse_keys[parse_keys.index(value)] = int
@@ -249,8 +247,10 @@ def broadcast(target):
                 continue
             else:
                 output_data = output_data_package[packed_rows.index(row)]
+                header_idx = packed_rows.index(row)
                 target.send(output_data)
                 target.send(row)
+                target.send(header_idx)
 
 
 @coroutine
@@ -258,33 +258,32 @@ def filter_data(target):
     while True:
         output_data = yield
         row = yield
+        header_idx = yield
         for output in output_data:
             output_file_name = output[0]
             predicate = output[1]
             if predicate(row) is not None:
                 target.send(output_file_name)
                 target.send(row)
+                target.send(header_idx)
 
 
 @coroutine
 def save_data():
-    # 'ff_name, headers, dir_name'
     output_dir_name = yield
     header_rows = yield
-    path = os.getcwd()
     while True:
         output_file_name = yield
         data_row = yield
+        header_idx = yield
+        header = [*header_rows[header_idx]]
         output_file_name = output_file_name + '.csv'
         try:
-            # Create target Directory
             os.mkdir(output_dir_name)
         except OSError:
             pass
         finally:
             os.chdir(output_dir)
-            path = os.getcwd()
-            # raise
             if os.path.isfile(output_file_name):
                 with open(output_file_name, 'a', newline='') as f:
                     writer = csv.writer(f)
@@ -292,13 +291,8 @@ def save_data():
             else:
                 with open(output_file_name, 'w+', newline='') as f:
                     writer = csv.writer(f)
-                    try:
-                        writer.writerow(data_row._fields)
-                        writer.writerow(data_row)
-                    except AttributeError:
-                        writer.writerow(header_rows)
-                    finally:
-                        writer.writerow(data_row)
+                    writer.writerow(header)
+                    writer.writerow(data_row)
             os.chdir('..')
 
 
