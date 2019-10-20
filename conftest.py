@@ -1,8 +1,6 @@
 from pytest import fixture
 from src.push_pipeline import *
 from src.constants import fnames
-# from inspect import getgeneratorstate, getgeneratorlocals
-from contextlib import ExitStack
 from inspect import getgeneratorlocals
 
 
@@ -11,7 +9,7 @@ def set_test_directory():
     os.chdir('src/')
 
 
-# we send to dummy via the coroutines we're testing
+# we send to dummy via the coroutine we're testing
 # so we can't view a return value
 @fixture('function')
 def test_sink():

@@ -1,4 +1,3 @@
-import pytest
 from src.push_pipeline import *
 from inspect import getgeneratorlocals
 
@@ -16,8 +15,6 @@ def test_header_extract(test_sink):
         assert header_rows[0][2][0] == 'summons_number'
         assert len(header_rows[0]) == 5
         test_sink.send('clear')
-        # print(header_rows)
-        # raise
 
 
 # @pytest.mark.skip
@@ -81,8 +78,6 @@ def test_cycle_rows(test_sink):
         except StopIteration:
             pass
         assert len(ml) == 1000
-        # print(*ml, sep='\n')
-        # raise
     test_sink.send('clear')
 
 
@@ -104,10 +99,7 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 
     gen_row_key = row_key_gen(test_sink_tuple)
     gen_row_key.send(sample_reader_rows(f_idxs))
-    print('126:', 'getgeneratorlocals(test_sink)["ml"] ''='' ',
-          getgeneratorlocals(test_sink)['ml'])
     parsed_key0 = getgeneratorlocals(test_sink)['ml'][1]
-    # print('p0', parsed_key0)
     assert check_key(parsed_key0, unpacked_test_keys)
     test_sink.send('clear')
 
@@ -115,29 +107,20 @@ def test_row_key_gen(test_sink, sample_reader_rows):
 # @pytest.mark.skip
 def test_date_key_gen(test_sink, sample_reader_rows, get_test_date,
                       date_tester):
-    # PYTEST BUG: On each test iteration, pytest can only test one date
-    # format string at a time, so we clear sink in date_tester on each key
-    # iteratively to bypass this bug
-
-    # the first date format is in file 2, then the other one is in file 4,
     # so we create a file index of 2, 4, 4
     f_idxs = (2, 4, 4)
-
     # for each test run, the test sink key is ml, so 3 ml keys
     sink_keys = tuple('ml' for _ in range(3))
-
     # date format type 0, then 1, then 1 again
     date_key_idxs = (0, 1, 1)
     sink_idxs = ((2, 4), (2, 10), (2, 11))
     raw_date_strs = ('10/5/2016', '2016-01-24T21:19:30Z',
                      '2017-10-07T00:14:42Z')
-
     date_tester(test_sink, sample_reader_rows(f_idxs),
                 get_test_date, key_names=sink_keys,
                 date_format_key_idxs=date_key_idxs,
                 access_idxs=sink_idxs, date_strs=raw_date_strs)
     print(getgeneratorlocals(test_sink)['ml'])
-    # raise
     test_sink.send('clear')
 
 
@@ -167,7 +150,9 @@ def test_data_parser(test_sink):
     for i in range(len(date_keys)):
         with file_readers(data_package) as readers:
 
+            # CONSTANTS:
             nt_class_names = [data[0][1] for data in data_package]
+            
             # DECLARE --> From the bottom up stack
             parse_data = data_parser(test_sink)
             date_key = date_key_gen(parse_data)
@@ -203,8 +188,6 @@ def test_broadcast(test_sink):
         output_package = [data[1] for data in data_package]
 
         # DECLARE --> From the bottom up stack
-        # writer = save_data()
-        # data_filter = filter_data(writer)
         broadcaster = broadcast(test_sink)
         parse_data = data_parser(broadcaster)
         date_key = date_key_gen(parse_data)
@@ -239,7 +222,6 @@ def test_filter_data(test_sink):
         output_package = [data[1] for data in data_package]
 
         # DECLARE --> From the bottom up stack
-        # writer = save_data()
         data_filter = filter_data(test_sink)
         broadcaster = broadcast(data_filter)
         parse_data = data_parser(broadcaster)
@@ -254,7 +236,6 @@ def test_filter_data(test_sink):
         date_key.send((date_keys[1], date_keys[1]))
         row_cycler.send(readers)
         broadcaster.send(output_package)
-        # writer.send(output_dir)
 
         # SEND DATA:
         try:
@@ -263,7 +244,6 @@ def test_filter_data(test_sink):
             pass
     print(*ml, sep='\n')
     print(len(ml))
-    # raise
 
 
 # @pytest.mark.skip
