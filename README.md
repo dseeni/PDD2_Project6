@@ -1,6 +1,4 @@
-# Python Deep Dive Part 2 Project 6
-
-### Cooperative Multitasking Using Coroutines:
+# Data Parsing Using Cooperative Multitasking via Python Coroutines:
 
 - Coroutine Based Data Processing Pipeline:
     - [x] Concurrency at every stage of the data processing pipeline...
